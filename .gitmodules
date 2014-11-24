@@ -1,0 +1,3 @@
+[submodule "emacs.d/vendor/evil-rebellion"]
+	path = emacs.d/vendor/evil-rebellion
+	url = https://github.com/tarleb/evil-rebellion.git
