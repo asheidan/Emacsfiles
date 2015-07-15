@@ -11,32 +11,29 @@
       (scroll-bar-mode -1) ; Hide scrollbars
       ;(tabbar-mode -1) ; Disable tabbar
 	  ))
-;(menu-bar-mode -1)
-
-;(aquamacs-autoface-mode -1)
-;(set-face-attribute 'mode-line nil :inherit 'unspecified)
-;(set-face-attribute 'echo-area nil :family 'unspecified)
+(if (not (string-equal system-type "darwin"))
+	(menu-bar-mode -1))
 
 (setq inhibit-startup-message t
 	  initial-scratch-message nil)
 
 ; Include column number int mode-line
-(setq column-number-mode t)
-(setq line-number-mode t)
+(setq column-number-mode t
+	  line-number-mode t)
 
 ;;;; ENVIRONMENT
 (add-to-list 'load-path "~/.emacs.d/vendor/")
-(add-to-list 'load-path "~/.emacs.d/estimation/")
-(add-to-list 'load-path "~/.emacs.d/vendor/evil-rebellion/")
 (add-to-list 'custom-theme-load-path (file-name-as-directory "~/.emacs.d/replace-colorthemes/"))
-(let
-    ((path '("/usr/local/bin" "/usr/bin" "/bin"
-			 "/usr/local/sbin" "/usr/sbin" "/sbin"
-			 "/opt/X11/bin" "/opt/ImageMagick/bin"
-			 "/usr/local/MacGPG2/bin" "/usr/texbin")))
-  (progn
-    (set 'exec-path (delete-dups (append path exec-path)))
-    (setenv "PATH" (mapconcat 'identity path ":"))))
+
+(if (string-equal system-type "darwin")
+	(let
+		((path '("/usr/local/bin" "/usr/bin" "/bin"
+				 "/usr/local/sbin" "/usr/sbin" "/sbin"
+				 "/opt/X11/bin" "/opt/ImageMagick/bin"
+				 "/usr/local/MacGPG2/bin" "/usr/texbin")))
+	  (progn
+		(set 'exec-path (delete-dups (append path exec-path)))
+		(setenv "PATH" (mapconcat 'identity path ":")))))
 
 ;;;; PACKAGES
 
@@ -53,8 +50,8 @@
 	  (package-install 'use-package)))
 (require 'use-package)
 
-(require 'uniquify)
-(setq-default mode-line-buffer-identification
+(use-package uniquify
+  :config (setq-default mode-line-buffer-identification
 			  `(:eval
 				(let ((s (format-mode-line
 						  (propertized-buffer-identification (buffer-name)))))
@@ -66,26 +63,26 @@
 						(let ((start (if pre 0 base-len))
 							  (end (if pre (- full-len base-len) full-len)))
 						  (set-text-properties start end nil s)))))
-				  s)))
+				  s))))
 
 ; Pymacs in ~/.emacs.d/vendor/ (for ropemacs)
 
+;;;;; Adaptive prefix
+(use-package adaptive-wrap)
+
 ;;;;; Auto complete
-(with-eval-after-load "auto-complete"
+(use-package auto-complete
+  :config
   (add-to-list 'ac-dictionary-directories "~/.emacs.d/dict")
   (setq ac-use-menu-map t)
   (define-key ac-menu-map "\C-n" 'ac-next)
-  (define-key ac-menu-map "\C-p" 'ac-previous)
-  (message "After auto-complete")
-  )
+  (define-key ac-menu-map "\C-p" 'ac-previous))
 
 (with-eval-after-load "auto-complete-config"
   (ac-config-default)
   (when (file-exists-p (expand-file-name "~/.emacs.d/vendor/pymacs.el"))
     (ac-ropemacs-initialize)
-    (ac-ropemacs-setup))
-  (message "After auto-complete-config")
-  )
+	(ac-ropemacs-setup)))
 
 (with-eval-after-load "auto-complete-autoloads"
   (autoload 'auto-complete-mode "auto-complete" "enable auto-complete-mode" t nil)
@@ -99,9 +96,14 @@
   (message "After auto-complete-autoloads")
   )
 
+;;;;; Dash.app
+
+(use-package dash-at-point
+  :commands dash-at-point)
+
 ;;;;; Diminish
 
-(require 'diminish)
+(use-package diminish)
 ;Perhaps replace with rich-minority https://github.com/Bruce-Connor/rich-minority
 
 (with-eval-after-load "afafafdiminish"
@@ -116,23 +118,23 @@
 
 ;;;;; Estimation
 
-(require 'estimation)
-
-(with-eval-after-load "estimation"
+(use-package estimation
+  :mode ("\\.est\\'" . estimation-mode)
+  :interpreter ("estimation" . estimation-mode)
+  :load-path "estimation"
+  :config
   (add-hook 'estimation-mode-hook
-			(lambda () (progn
-						 (hs-minor-mode 1)
-						 (visual-line-mode 1)
-						 (adaptive-wrap-prefix-mode 1)))))
+	    (lambda () (progn
+			 (hs-minor-mode 1)
+			 (visual-line-mode 1)
+			 (adaptive-wrap-prefix-mode 1)))))
 
 ;;;;; Evil
 
 (defun my-move-key (keymap-from keymap-to key)
-  "Move key binding from one keymap to another, deleting from the old location."
+  "Move key binding for KEY from keymap KEYMAP-FROM to KEYMAP-TO, deleting from the old location."
   (define-key keymap-to key (lookup-key keymap-from key))
   (define-key keymap-from key nil))
-
-(require 'evil)
 
 ;;; esc quits
 ;(define-key evil-normal-state-map [escape] 'keyboard-quit)
@@ -148,7 +150,8 @@
 		(fn (cdr cmd)))
 	(evil-ex-define-cmd binding fn)))
 
-(with-eval-after-load "evil"
+(use-package evil
+  :config
   (evil-mode t)
 
   (define-key evil-normal-state-map "," nil)
@@ -162,18 +165,20 @@
 		'(("gstatus" . magit-status)
 		  ("whitespace" . whitespace-mode)
 		  ("test" . projectile-test-project)
+		  ("dash" . dash-at-point)
 		  ("ack" . ack-and-a-half)))
 
-  (require 'evil-rebellion)
-  (require 'evil-leader)
-  (require 'evil-surround))
+  (use-package evil-rebellion
+	:load-path "vendor/evil-rebellion/")
 
-(with-eval-after-load "evil-leader"
-  (global-evil-leader-mode)
-  (evil-leader/set-leader ","))
+  (use-package evil-leader
+	:config
+	(global-evil-leader-mode)
+	(evil-leader/set-leader ","))
 
-(with-eval-after-load "evil-surround"
-  (global-evil-surround-mode 1))
+  (use-package evil-surround
+	:config
+	(global-evil-surround-mode 1)))
 
 ;;;;; Flycheck
 ;;; Enable syntax-checking with flycheck
@@ -210,9 +215,11 @@
   (add-to-list 'imenu-generic-expression '("Subsection" "^;;;;; \\(.+\\)$" 1) t))
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
-(with-eval-after-load "helm-config"
+(use-package helm-config
+  :ensure helm
+  :config
 
-  (require 'helm-projectile)
+  (use-package helm-projectile)
 
   (with-eval-after-load "evil"
 
@@ -220,14 +227,15 @@
     (define-key evil-normal-state-map  ", o" 'helm-imenu)
     (define-key evil-normal-state-map ", b" 'helm-buffers-list)
 
+	(with-eval-after-load "lacarte"
+	  (define-key evil-normal-state-map ", m" 'helm-browse-menubar))
+
 	(with-eval-after-load "projectile"
 	  (define-key evil-normal-state-map ", n" 'helm-projectile)
 	  (define-key evil-normal-state-map  ", p" 'helm-projectile-switch-project))
 	
 	; Fix for updated projectile
 	(defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode)))
-
-(require 'helm-config)
 
 ;;;;; Ido
 
@@ -251,20 +259,26 @@
 
 (with-eval-after-load "ido-ubiquitous" (ido-ubiquitous-mode 1))
 
+;;;;; la Carte
+
+; Used by helm to browse menus
+(use-package lacarte
+  :ensure t)
+
 ;;;;; Magit
 
-(require 'magit)
-
-(with-eval-after-load "magit"
+(use-package magit
+  :config
   (setq magit-commit-show-notes t)
   (setq magit-last-seen-setup-instructions "1.4.0")
   (with-eval-after-load "evil"
-	(define-key evil-normal-state-map ",gs" 'magit-status)))
+(define-key evil-normal-state-map ",gs" 'magit-status)))
 
 ;;;;; Modeline-posn
 
-(require 'modeline-posn)
-(setq modelinepos-column-limit 70)
+(use-package modeline-posn
+  :init
+  (setq modelinepos-column-limit 70))
 
 ;;;;; Neotree
 
@@ -273,18 +287,16 @@
 
 ;;;;; Projectile
 
-(require 'projectile)
-
-(with-eval-after-load "projectile"
+(use-package projectile
+  :config
   (projectile-global-mode t)
   (with-eval-after-load "evil"
 	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
 
 ;;;;; Sr Speedbar
 
-(require 'sr-speedbar)
-
-(with-eval-after-load "sr-speedbar"
+(use-package sr-speedbar
+  :config
   (global-set-key [f2] 'sr-speedbar-toggle))
 
 
@@ -314,13 +326,40 @@
 
 ;;;; NON-PACKAGES
 
-(require 'ws-trim)
-
-(with-eval-after-load "ws-trim"
+(use-package ws-trim
+  :load-path "vendor"
+  :diminish ws-trim-mode
+  :config
   (global-ws-trim-mode 1)
-  (setq ws-trim-mode 1))
+  (setq ws-trim-mode 1)
+  (add-hook 'markdown-mode-hook
+			(lambda ()
+			  (ws-trim-mode nil)
+			  (adaptive-wrap-prefix-mode t)
+			  (visual-line-mode t))))
 
 ;;;; EXTENSIONS
+
+; Timestamps
+(defvar current-date-time-format "%Y-%m-%d %H:%M:%S"
+  "Format for date to insert with `insert-current-date-time. See help of `format-time-string' for possible replacements.")
+
+(defun insert-current-date-time ()
+  "Insert the current date and time into the current buffer"
+  (interactive)
+  (insert (format-time-string current-date-time-format (current-time))))
+
+(with-eval-after-load "evil"
+  (define-key evil-normal-state-map ",dt" 'insert-current-date-time))
+
+; Worklog
+(defun worklog-open-today ()
+  "Opens worklog-file for today."
+  (interactive)
+  (let ((file-name (format-time-string "~/Dropbox/Worklog/%Y/%m %B/%Y-%m-%d.wlog" (current-time))))
+	(find-file file-name)
+	(end-of-buffer)))
+
 
 ; Spelling stuff
 (with-eval-after-load "evil"
@@ -328,10 +367,15 @@
   (define-key evil-normal-state-map ",sl" 'ispell-change-dictionary))
 
 
-(defun enable-tabs ()
-  "Enables indentation with tabs."
+(defun tabs-enable ()
+  "Enable indentation with tabs."
   (interactive)
   (setq indent-tabs-mode t))
+
+(defun tabs-disable ()
+  "Disable indentation with tabs."
+  (interactive)
+  (setq indent-tabs-mode nil))
 
 
 (defvar marked-name)
@@ -412,6 +456,7 @@
  ;; If there is more than one, they won't work right.
  '(ecb-options-version "2.40")
  '(ediff-split-window-function (quote split-window-horizontally))
+ '(projectile-mode-line (quote (:eval (format " P[%s]" (projectile-project-name)))))
  '(show-paren-mode t)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(uniquify-separator ":"))
