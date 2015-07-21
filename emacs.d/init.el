@@ -352,6 +352,35 @@
 (with-eval-after-load "evil"
   (define-key evil-normal-state-map ",dt" 'insert-current-date-time))
 
+; Dropbox
+(define-minor-mode dropbox-mode
+  "For files located in dropbox.
+Turns off backup creation and auto saving."
+
+  ;; Initial value
+  nil
+
+  ;; Mode line indicator
+  " Db"
+
+  ;; Minor mode bindings
+  nil
+  (if (symbol-value dropbox-mode)
+	  (progn
+		;; Disable backups
+		(set (make-local-variable 'backup-inhibited) t)
+		;; Disable auto-save
+		(if auto-save-default
+			(auto-save-mode -1)))
+	; Resort to default value of backup-inhibited
+	(kill-local-variable 'backup-inhibited)
+	; Resort to default auto save setting
+	(if auto-save-default
+		(auto-save-mode 1))))
+(setq auto-mode-alist
+	  (append '(("/Dropbox/" . dropbox-mode))
+			  auto-mode-alist))
+
 ; Worklog
 (defun worklog-open-today ()
   "Opens worklog-file for today."
