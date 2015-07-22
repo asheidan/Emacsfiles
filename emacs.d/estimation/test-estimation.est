@@ -1,0 +1,12 @@
+- Testproject:
+    estimate:
+    description:
+      "nisse är en apa"
+      A test project which entails some tasks which needs to be estimated properly to allow for some testing of the estimation major-mode I have created myself
+    notes:
+    - A few notes which allows for testing hiding
+    - Showing a list
+    tasks:
+      - Stuff:
+          estimate: 4d
+          description: Stuff that wasn't otherwise obvious
