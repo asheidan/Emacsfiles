@@ -401,6 +401,11 @@ Turns off backup creation and auto saving."
 	(find-file file-name)
 	(end-of-buffer)))
 
+(defun worklog-new-entry ()
+  "Adds a new line with a timestamp."
+  (interactive)
+  (insert (format-time-string (concat "### " current-date-time-format) (current-time))))
+
 
 ; Spelling stuff
 (with-eval-after-load "evil"
