@@ -184,6 +184,9 @@
 ;;; Enable syntax-checking with flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
+(use-package flycheck)
+
+
 ; (with-eval-after-load "flycheck"
 ;   (flycheck-define-checker python3-pyflakes
 ;     "A Python syntax and style checker using the pyflakes utility.
@@ -221,11 +224,15 @@
 
   (use-package helm-projectile)
 
+  (use-package helm-flycheck)
+
   (with-eval-after-load "evil"
 
     (define-key evil-normal-state-map ", f" 'helm-find-files)
     (define-key evil-normal-state-map  ", o" 'helm-imenu)
-    (define-key evil-normal-state-map ", b" 'helm-buffers-list)
+	(define-key evil-normal-state-map ", b" 'helm-buffers-list)
+
+	(define-key evil-normal-state-map ", c" 'helm-flycheck)
 
 	(with-eval-after-load "lacarte"
 	  (define-key evil-normal-state-map ", m" 'helm-browse-menubar))
@@ -273,6 +280,16 @@
   (setq magit-last-seen-setup-instructions "1.4.0")
   (with-eval-after-load "evil"
 (define-key evil-normal-state-map ",gs" 'magit-status)))
+
+;;;;; Markdown-mode
+
+(use-package markdown-mode
+  :config
+  (add-hook 'markdown-mode-hook
+			(lambda ()
+			  (visual-line-mode t)
+			  (adaptive-wrap-prefix-mode t)
+			  (ws-trim-mode nil))))
 
 ;;;;; Modeline-posn
 
@@ -331,12 +348,7 @@
   :diminish ws-trim-mode
   :config
   (global-ws-trim-mode 1)
-  (setq ws-trim-mode 1)
-  (add-hook 'markdown-mode-hook
-			(lambda ()
-			  (ws-trim-mode nil)
-			  (adaptive-wrap-prefix-mode t)
-			  (visual-line-mode t))))
+  (setq ws-trim-mode 1))
 
 ;;;; EXTENSIONS
 
