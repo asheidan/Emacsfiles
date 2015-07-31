@@ -158,9 +158,14 @@
   (define-key evil-normal-state-map "\C-j" 'evil-jump-to-tag)
   (define-key evil-normal-state-map "\C-k" 'evil-jump-backward)
 
+  (define-key evil-normal-state-map "\C-f" nil)
+  (define-key evil-normal-state-map "\C-\M-wn" 'new-frame)
+  (define-key evil-normal-state-map "\C-\M-wc" 'delete-frame)
+  (define-key evil-normal-state-map "\C-\M-wl" 'ns-next-frame)
+  (define-key evil-normal-state-map "\C-\M-wh" 'ns-prev-frame)
+
   (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
   (my-move-key evil-motion-state-map evil-normal-state-map " ")
-
   (mapc 'ex-mode-mapping
 		'(("gstatus" . magit-status)
 		  ("whitespace" . whitespace-mode)
