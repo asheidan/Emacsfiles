@@ -151,6 +151,7 @@
 	(evil-ex-define-cmd binding fn)))
 
 (use-package evil
+  :ensure
   :config
   (evil-mode t)
 
@@ -222,9 +223,11 @@
   :ensure helm
   :config
 
-  (use-package helm-projectile)
+  (use-package helm-projectile
+    :ensure)
 
-  (use-package helm-flycheck)
+  (use-package helm-flycheck
+    :ensure)
 
   (with-eval-after-load "evil"
 
@@ -253,18 +256,21 @@
   (setq ido-use-faces nil) ; Use flx hightlits instead of ido faces
 
   ;; Fuzzy matching for ido with flx-ido
-  (require 'flx-ido)
+  (use-package flx-ido
+    :ensure
+    :config
+    (flx-ido-mode 1))
 
-  (require 'ido-ubiquitous) ; Ido everywhere!!!
+  (use-package ido-ubiquitous
+    :ensure
+    :config
+    (ido-ubiquitous-mode 1)) ; Ido everywhere!!!
 
   ;; Vertical list for ido
-  (require 'ido-vertical-mode))
-
-(with-eval-after-load "flx-ido" (flx-ido-mode 1))
-
-(with-eval-after-load "ido-vertical-mode" (ido-vertical-mode 1))
-
-(with-eval-after-load "ido-ubiquitous" (ido-ubiquitous-mode 1))
+  (use-package ido-vertical-mode
+    :ensure
+    :config
+    (ido-vertical-mode 1)))
 
 ;;;;; la Carte
 
@@ -275,25 +281,32 @@
 ;;;;; Magit
 
 (use-package magit
+  :ensure
   :config
   (setq magit-commit-show-notes t)
   (setq magit-last-seen-setup-instructions "1.4.0")
   (with-eval-after-load "evil"
-(define-key evil-normal-state-map ",gs" 'magit-status)))
+	(define-key evil-normal-state-map ",gs" 'magit-status)))
 
 ;;;;; Markdown-mode
 
 (use-package markdown-mode
+  :ensure
   :config
   (add-hook 'markdown-mode-hook
 			(lambda ()
 			  (visual-line-mode t)
 			  (adaptive-wrap-prefix-mode t)
 			  (ws-trim-mode nil))))
+(use-package markdown-mode+
+  :ensure)
+(use-package cm-mode
+  :ensure)
 
 ;;;;; Modeline-posn
 
 (use-package modeline-posn
+  :ensure
   :init
   (setq modelinepos-column-limit 70))
 
@@ -305,6 +318,7 @@
 ;;;;; Projectile
 
 (use-package projectile
+  :ensure
   :config
   (projectile-global-mode t)
   (with-eval-after-load "evil"
@@ -332,8 +346,11 @@
 ;(global-set-key [f2] 'speedbar)
 
 (setq-default tab-width 4)
-(smart-tabs-insinuate 'c
-					  'c++)
+(use-package smart-tabs-mode
+  :ensure
+  :config
+  (smart-tabs-insinuate 'c
+						'c++))
 
 
 ;;; Enable yasnippets
@@ -458,7 +475,10 @@ Turns off backup creation and auto saving."
   
 
 ;;;; THEME
-(load-theme 'flatui t)
+(use-package flatui-theme
+  :ensure
+  :config
+  (load-theme 'flatui t))
 (global-hl-line-mode)
 
 ; Switch mode-line color from flatuicolors.com
