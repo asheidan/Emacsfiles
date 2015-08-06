@@ -388,6 +388,12 @@
 (with-eval-after-load "evil"
   (define-key evil-normal-state-map ",dt" 'insert-current-date-time))
 
+; Filepath with number
+(defun file-path-with-number ()
+  "Sets clipboard to the path of the file corresponding to the current buffer"
+  (interactive)
+  (kill-new (concat buffer-file-name ":" (number-to-string (line-number-at-pos)))))
+
 ; Dropbox
 (define-minor-mode dropbox-mode
   "For files located in dropbox.
