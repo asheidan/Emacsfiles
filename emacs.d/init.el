@@ -290,8 +290,8 @@
   :config
   (setq magit-commit-show-notes t)
   (setq magit-last-seen-setup-instructions "1.4.0")
-  (with-eval-after-load "evil"
-	(define-key evil-normal-state-map ",gs" 'magit-status)))
+  :bind (:map evil-normal-state-map
+			  (",gs" . magit-status)))
 
 ;;;;; Markdown-mode
 
