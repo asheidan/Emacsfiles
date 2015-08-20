@@ -162,9 +162,14 @@
   (define-key evil-normal-state-map "\C-j" 'evil-jump-to-tag)
   (define-key evil-normal-state-map "\C-k" 'evil-jump-backward)
 
+  (define-key evil-normal-state-map "\C-f" nil)
+  (define-key evil-normal-state-map "\C-\M-wn" 'new-frame)
+  (define-key evil-normal-state-map "\C-\M-wc" 'delete-frame)
+  (define-key evil-normal-state-map "\C-\M-wl" 'ns-next-frame)
+  (define-key evil-normal-state-map "\C-\M-wh" 'ns-prev-frame)
+
   (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
   (my-move-key evil-motion-state-map evil-normal-state-map " ")
-
   (mapc 'ex-mode-mapping
 		'(("gstatus" . magit-status)
 		  ("whitespace" . whitespace-mode)
@@ -269,7 +274,8 @@
 (ido-mode 1)
 (setq ido-everywhere 1)
 
-(setq ido-use-faces nil) ; Use flx hightlits instead of ido faces
+(with-eval-after-load "ido"
+  (setq ido-use-faces nil)) ; Use flx hightlits instead of ido faces
 
 ;; Fuzzy matching for ido with flx-ido
 (use-package flx-ido
@@ -299,7 +305,7 @@
   (setq magit-commit-show-notes t)
   (setq magit-last-seen-setup-instructions "1.4.0")
   (with-eval-after-load "evil"
-(define-key evil-normal-state-map ",gs" 'magit-status)))
+	(define-key evil-normal-state-map ",gs" 'magit-status)))
 
 ;;;;; Markdown-mode
 
@@ -338,6 +344,8 @@
   :ensure
   :config
   (projectile-global-mode t)
+  (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
+  (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
   (with-eval-after-load "evil"
 	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
 
@@ -378,7 +386,6 @@
 
 (setq-default tab-width 4)
 
-
 ;;; Enable yasnippets
 ;(add-hook 'prog-mode-hook #'yas-minor-mode)
 
@@ -406,6 +413,12 @@
 
 (with-eval-after-load "evil"
   (define-key evil-normal-state-map ",dt" 'insert-current-date-time))
+
+; Filepath with number
+(defun file-path-with-number ()
+  "Sets clipboard to the path of the file corresponding to the current buffer"
+  (interactive)
+  (kill-new (concat buffer-file-name ":" (number-to-string (line-number-at-pos)))))
 
 ; Dropbox
 (define-minor-mode dropbox-mode
@@ -503,7 +516,7 @@ Turns off backup creation and auto saving."
 ;;;; THEME
 (use-package flatui-theme
   :ensure
-  :init
+  :config
   (load-theme 'flatui t))
 
 (global-hl-line-mode)
