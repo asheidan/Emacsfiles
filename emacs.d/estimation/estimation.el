@@ -11,7 +11,7 @@
    '("^[[:space:]]*-" . font-lock-builtin-face)
    '("" . font-lock-keyword-face)
    '("" . font-lock-string-face)
-   '("[+-~](\\|)" . font-lock-reference-face)
+   '("[+~-](\\|)" . font-lock-reference-face)
    '("\\<[[:digit:]]+\\(.[[:digit:]]+\\)?[hdwp]\\>" . font-lock-type-face)
    '("\\<\\(description\\|estimate\\|notes\\|questions\\|tasks\\):" . font-lock-variable-name-face))
   "Minimal highlighting expression for estimation mode")
