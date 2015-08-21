@@ -92,9 +92,7 @@
 	      (add-to-list 'ac-sources 'ac-source-ropemacs)
 	      (auto-complete-mode)
 	      (require 'nose)
-	      ))
-  (message "After auto-complete-autoloads")
-  )
+		  )))
 
 ;;;;; Dash.app
 
@@ -177,6 +175,11 @@
   (use-package evil-rebellion
 	:load-path "vendor/evil-rebellion/")
 
+  (use-package evil-jumper
+	:ensure
+	:config
+	(global-evil-jumper-mode t))
+
   (use-package evil-leader
 	:config
 	(global-evil-leader-mode)
@@ -206,7 +209,11 @@
 ;   (add-to-list 'flycheck-checkers 'python3-pyflakes))
 
 ;;;;; Flyspell
-(with-eval-after-load "flyspell"
+(use-package flyspell
+  :bind
+  (:map evil-normal-state-map
+		("zn" . flyspell-goto-next-error))
+  :config
   (setq flyspell-issue-welcome-flag nil
 		ispell-program-name "aspell"
 		ispell-list-command "list"))
@@ -289,6 +296,7 @@
   :ensure
   :config
   (setq magit-commit-show-notes t)
+  (setq magit-push-always-verify nil)
   (setq magit-last-seen-setup-instructions "1.4.0")
   :bind (:map evil-normal-state-map
 			  (",gs" . magit-status)))
@@ -333,10 +341,11 @@
 
 ;;;;; Sr Speedbar
 
-(use-package sr-speedbar
-  :config
-  (global-set-key [f2] 'sr-speedbar-toggle))
+;(use-package sr-speedbar
+;  :config
+;  (global-set-key [f2] 'sr-speedbar-toggle))
 
+(global-set-key [f2] 'speedbar)
 
 ;;;; BEHAVIOR
 ;; Fix option-key
@@ -550,6 +559,9 @@ Turns off backup creation and auto saving."
  '(mode-line-emphasis ((t (:inverse-video t :weight bold))))
  '(modelinepos-column-warning ((t (:foreground "white"))))
  '(modelinepos-region ((t (:foreground "white")))))
+
+
+(put 'narrow-to-region 'disabled nil)
 
 (provide 'init)
 ;;; init.el ends here

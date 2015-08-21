@@ -13,7 +13,7 @@
    '("" . font-lock-string-face)
    '("[+-~](\\|)" . font-lock-reference-face)
    '("\\<[[:digit:]]+\\(.[[:digit:]]+\\)?[hdwp]\\>" . font-lock-type-face)
-   '("\\<\\(description\\|estimate\\|notes\\|questions\\|tasks\\):" . font-lock-variable-name-face))
+   '("\\<\\(description\\|estimate\\|notes\\|questions\\|tasks\\|stories\\|sent estimate\\):" . font-lock-variable-name-face))
   "Minimal highlighting expression for estimation mode")
 
 (defun char-at-indent ()
