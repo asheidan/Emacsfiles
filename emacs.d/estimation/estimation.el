@@ -11,7 +11,7 @@
    '("^[[:space:]]*-" . font-lock-builtin-face)
    '("" . font-lock-keyword-face)
    '("" . font-lock-string-face)
-   '("[+-~](\\|)" . font-lock-reference-face)
+   '("[+~-](\\|)" . font-lock-reference-face)
    '("\\<[[:digit:]]+\\(.[[:digit:]]+\\)?[hdwp]\\>" . font-lock-type-face)
    '("\\<\\(description\\|estimate\\|notes\\|questions\\|tasks\\|stories\\|sent estimate\\):" . font-lock-variable-name-face))
   "Minimal highlighting expression for estimation mode")
@@ -65,6 +65,18 @@
   (modify-syntax-entry ?' "." estimation-mode-syntax-table)
   )
 
-
+(if ()
+	(progn
+	  ;;; Speedbar stuff
+	  ; Create keymap
+	  (setq estimation-speedbar-key-map (make-sparse-keymap))
+										; Make it a very special keymap
+	  (setq estimation-speedbar-key-map (speedbar-make-specialized-keymap))
+	  (if (featurep 'speedbar)
+		  (estimation-install-speedbar-whatever)
+		(add-hook 'speedbar-load-hook 'estimation-install-speedbar-whatever))
+	  (defun estimation-speedbar-buttons (buffer)
+		"Creates buttons for the current buffer"
+		)))
 
 (provide 'estimation)

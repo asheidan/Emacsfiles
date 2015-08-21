@@ -68,7 +68,8 @@
 ; Pymacs in ~/.emacs.d/vendor/ (for ropemacs)
 
 ;;;;; Adaptive prefix
-(use-package adaptive-wrap)
+(use-package adaptive-wrap
+  :ensure)
 
 ;;;;; Auto complete
 (use-package auto-complete
@@ -77,6 +78,8 @@
   (setq ac-use-menu-map t)
   (define-key ac-menu-map "\C-n" 'ac-next)
   (define-key ac-menu-map "\C-p" 'ac-previous))
+
+(use-package auto-omplete-clang)
 
 (with-eval-after-load "auto-complete-config"
   (ac-config-default)
@@ -173,7 +176,10 @@
 		  ("ack" . ack-and-a-half)))
 
   (use-package evil-rebellion
-	:load-path "vendor/evil-rebellion/")
+    :load-path "vendor/evil-rebellion/")
+
+  (use-package evil-jumper
+    :ensure)
 
   (use-package evil-jumper
 	:ensure
@@ -181,19 +187,28 @@
 	(global-evil-jumper-mode t))
 
   (use-package evil-leader
-	:config
-	(global-evil-leader-mode)
-	(evil-leader/set-leader ","))
+	:ensure
+    :config
+    (global-evil-leader-mode)
+    (evil-leader/set-leader ","))
+
+  (use-package evil-org
+    :ensure)
 
   (use-package evil-surround
-	:config
-	(global-evil-surround-mode 1)))
+	:ensure
+    :config
+    (global-evil-surround-mode 1))
+
+  (use-package evil-visualstar
+    :ensure))
 
 ;;;;; Flycheck
 ;;; Enable syntax-checking with flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(use-package flycheck)
+(use-package flycheck
+  :ensure)
 
 
 ; (with-eval-after-load "flycheck"
@@ -241,6 +256,8 @@
   (use-package helm-flycheck
     :ensure)
 
+  (use-package helm-themes)
+  
   (with-eval-after-load "evil"
 
     (define-key evil-normal-state-map ", f" 'helm-find-files)
@@ -265,24 +282,21 @@
 (setq ido-everywhere 1)
 
 (with-eval-after-load "ido"
-  (setq ido-use-faces nil) ; Use flx hightlits instead of ido faces
+  (setq ido-use-faces nil)) ; Use flx hightlits instead of ido faces
 
-  ;; Fuzzy matching for ido with flx-ido
-  (use-package flx-ido
-    :ensure
-    :config
-    (flx-ido-mode 1))
+;; Fuzzy matching for ido with flx-ido
+(use-package flx-ido
+  :ensure
+  :config (flx-ido-mode 1))
 
-  (use-package ido-ubiquitous
-    :ensure
-    :config
-    (ido-ubiquitous-mode 1)) ; Ido everywhere!!!
+(use-package ido-ubiquitous
+  :ensure
+  :config (ido-ubiquitous-mode 1)) ; Ido everywhere!!!
 
-  ;; Vertical list for ido
-  (use-package ido-vertical-mode
-    :ensure
-    :config
-    (ido-vertical-mode 1)))
+;; Vertical list for ido
+(use-package ido-vertical-mode
+  :ensure
+  :config (ido-vertical-mode 1))
 
 ;;;;; la Carte
 
@@ -328,6 +342,10 @@
 ; (with-eval-after-load "neotree"
 ;   (global-set-key [f2] 'neotree-toggle))
 
+;;;;; Org-mode
+
+(use-package org-mode)
+
 ;;;;; Projectile
 
 (use-package projectile
@@ -339,21 +357,35 @@
   (with-eval-after-load "evil"
 	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
 
+;;;;; Smart tabs
+
+(use-package smart-tabs-mode
+  :ensure
+  :config
+  (smart-tabs-insinuate 'c
+						'c++))
+
 ;;;;; Sr Speedbar
 
-;(use-package sr-speedbar
-;  :config
-;  (global-set-key [f2] 'sr-speedbar-toggle))
-
+;(use-package sr-speedbar :config (global-set-key [f2] 'sr-speedbar-toggle))
 (global-set-key [f2] 'speedbar)
+
+;;;;; Yaml-mode
+
+(use-package yaml-mode
+  :ensure)
 
 ;;;; BEHAVIOR
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
-(setq mac-option-modifier nil
-      mac-command-modifier 'meta
-      mac-allow-antialiasing t
-      mac-command-key-is-meta t)
+(if (string-equal system-type "darwin")
+    (setq mac-option-modifier nil
+	  mac-command-modifier 'meta
+	  mac-allow-antialiasing t
+	  mac-command-key-is-meta t))
+(if (string-equal system-type "gnu/linux")
+    (setq x-meta-keysym 'super
+	  x-super-keysym 'meta))
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
@@ -362,12 +394,6 @@
 ;(global-set-key [f2] 'speedbar)
 
 (setq-default tab-width 4)
-(use-package smart-tabs-mode
-  :ensure
-  :config
-  (smart-tabs-insinuate 'c
-						'c++))
-
 
 ;;; Enable yasnippets
 ;(add-hook 'prog-mode-hook #'yas-minor-mode)
@@ -501,6 +527,7 @@ Turns off backup creation and auto saving."
   :ensure
   :config
   (load-theme 'flatui t))
+
 (global-hl-line-mode)
 
 ; Switch mode-line color from flatuicolors.com
@@ -553,7 +580,6 @@ Turns off backup creation and auto saving."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:height 90 :width normal :foundry "nil" :family "ProfontIIx"))))
  '(mode-line ((t (:box nil))))
  '(mode-line-buffer-id ((t (:foreground "White"))))
  '(mode-line-emphasis ((t (:inverse-video t :weight bold))))
@@ -562,6 +588,16 @@ Turns off backup creation and auto saving."
 
 
 (put 'narrow-to-region 'disabled nil)
+
+(if (string-equal system-type "darwin")
+	;(:foundry "nil" :family "ProfontIIx")
+	(setq my-default-font-family "ProfontIIx"))
+(if (string-equal system-type "gnu/linux")
+	;(:foundry "unknown" :family "ProFontWindows")
+	(setq my-default-font-family "ProFontWindows"))
+
+(set-face-attribute 'default nil :height 90 :family my-default-font-family)
+
 
 (provide 'init)
 ;;; init.el ends here
