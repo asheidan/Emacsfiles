@@ -354,6 +354,7 @@
   (projectile-global-mode t)
   (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
   (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
+  (add-to-list 'projectile-globally-ignored-directories "virtualenv"):
   (with-eval-after-load "evil"
 	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
 
