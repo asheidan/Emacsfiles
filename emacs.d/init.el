@@ -371,6 +371,10 @@
 ;(use-package sr-speedbar :config (global-set-key [f2] 'sr-speedbar-toggle))
 (global-set-key [f2] 'speedbar)
 
+(use-package web-mode
+  :ensure t
+  :mode "\\.html\\.erb\\'")
+
 ;;;;; Yaml-mode
 
 (use-package yaml-mode
@@ -405,10 +409,36 @@
 
 (use-package ws-trim
   :load-path "vendor"
-  :diminish ws-trim-mode
+  ;:diminish ws-trim-mode
   :config
   (global-ws-trim-mode 1)
   (setq ws-trim-mode 1))
+
+;;;;; Email
+
+(defface message-double-quoted-text-face `((t (:foreground "blue"))) "Quote level 2")
+(defface message-multiple-quoted-text-face `((t (:foreground "green"))) "Quote level 3+")
+
+;(use-package bbdb
+;  :config
+;  (bbdb-initialize 'message)
+;  (bbdb-insinuate-message))
+
+(add-hook 'message-mode-hook
+		  (lambda ()
+			(visual-line-mode t)
+			(adaptive-wrap-prefix-mode t)
+			(font-lock-add-keywords nil
+									'(("^[ \t]*>[ \t]*>[ \t]*>.*$"
+									   (0 'message-multiple-quoted-text-face))
+									  ("^[ \t]*>[ \t]*>.*$"
+									   (0 'message-double-quoted-text-face))
+									  ))))
+
+;(add-hook 'mail-mode-hook
+;		  (lambda ()
+;			(visual-line-mode t)
+;			adaptive-wrap-prefix-mode t))
 
 ;;;; EXTENSIONS
 
