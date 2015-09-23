@@ -62,25 +62,38 @@
   (add-to-list 'ac-dictionary-directories "~/.emacs.d/dict")
   (setq ac-use-menu-map t)
   (define-key ac-menu-map "\C-n" 'ac-next)
-  (define-key ac-menu-map "\C-p" 'ac-previous))
+  (define-key ac-menu-map "\C-p" 'ac-previous)
+  (define-key ac-mode-map [(control tab)] 'auto-complete))
 
-(use-package auto-omplete-clang)
+(use-package auto-complete-clang
+  :config
+  (add-hook 'objc-mode-hook (lambda ()(add-to-list 'ac-sources 'ac-source-clang)))
+  (setq ac-clang-flags
+		(mapcar (lambda (item)(concat "-I" item))
+				(split-string "
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1
+ /usr/local/include
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/7.0.0/include
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
+ /usr/include
+ /System/Library/Frameworks
+ /Library/Frameworks"))))
 
-(with-eval-after-load "auto-complete-config"
-  (ac-config-default)
-  (when (file-exists-p (expand-file-name "~/.emacs.d/vendor/pymacs.el"))
-    (ac-ropemacs-initialize)
-	(ac-ropemacs-setup)))
+;(with-eval-after-load "auto-complete-config"
+;  (ac-config-default)
+;  (when (file-exists-p (expand-file-name "~/.emacs.d/vendor/pymacs.el"))
+;    (ac-ropemacs-initialize)
+;	(ac-ropemacs-setup)))
 
-(with-eval-after-load "auto-complete-autoloads"
-  (autoload 'auto-complete-mode "auto-complete" "enable auto-complete-mode" t nil)
-  (add-hook 'python-mode-hook
-	    (lambda ()
-	      (require 'auto-complete-config)
-	      (add-to-list 'ac-sources 'ac-source-ropemacs)
-	      (auto-complete-mode)
-	      (require 'nose)
-		  )))
+;(with-eval-after-load "auto-complete-autoloads"
+;  (autoload 'auto-complete-mode "auto-complete" "enable auto-complete-mode" t nil)
+;  (add-hook 'python-mode-hook
+;	    (lambda ()
+;	      (require 'auto-complete-config)
+;	      (add-to-list 'ac-sources 'ac-source-ropemacs)
+;	      (auto-complete-mode)
+;	      (require 'nose)
+;		  )))
 
 ;;;;; Dash.app
 
@@ -382,6 +395,11 @@
 (use-package yaml-mode
   :ensure)
 
+;;;;; Yasnippet
+(use-package yasnippet
+  :config
+  (yas-global-mode 1))
+
 ;;;; BEHAVIOR
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
@@ -402,9 +420,6 @@
 
 (setq-default tab-width 4)
 
-;;; Enable yasnippets
-;(add-hook 'prog-mode-hook #'yas-minor-mode)
-
 (server-start)
 
 ;;;; NON-PACKAGES
@@ -415,6 +430,8 @@
   :config
   (global-ws-trim-mode 1)
   (setq ws-trim-mode 1))
+
+;(use-package auto-complete-clang-objc :load-path "vendor/auto-complete-clang-objc")
 
 ;;;;; Email
 
@@ -593,6 +610,37 @@ Turns off backup creation and auto saving."
 			 (set-face-foreground 'mode-line (cdr color))
 			 ))))
   (add-hook 'post-command-hook current-color))
+
+; Trying to get ac-clang to look better
+(set-face-background 'ac-clang-candidate-face clouds-hover)
+(set-face-background 'popup-face clouds-hover)
+(set-face-background 'ac-candidate-face clouds-hover)
+(set-face-foreground 'ac-clang-candidate-face midnight)
+(set-face-foreground 'popup-face midnight)
+(set-face-foreground 'ac-candidate-face wet-asphalt-hover)
+
+(set-face-background 'ac-clang-selection-face belize-hole)
+(set-face-foreground 'ac-clang-selection-face clouds)
+
+(set-face-background 'popup-menu-mouse-face nephritis)
+(set-face-foreground 'popup-menu-mouse-face clouds)
+
+(set-face-foreground 'ac-completion-face asbestos)
+
+(set-face-background 'ac-selection-face wisteria)
+(set-face-foreground 'ac-selection-face clouds)
+
+(set-face-background 'popup-tip-face clouds-hover)
+(set-face-foreground 'popup-tip-face midnight)
+
+; Trying to get markdown to look better
+(set-face-foreground 'markdown-header-face belize-hole)
+(set-face-foreground 'markdown-header-face-1 belize-hole)
+(set-face-foreground 'markdown-header-face-2 nephritis)
+(set-face-foreground 'markdown-header-face-3 pumpkin)
+(set-face-foreground 'markdown-header-face-4 wisteria)
+(set-face-foreground 'markdown-header-face-5 belize-hole)
+(set-face-foreground 'markdown-header-face-6 nephritis)
 
 ; Previous font '(default ((t (:height 110 :width normal :foundry "nil" :family "Menlo"))))
 ;;;; CUSTOMIZE
