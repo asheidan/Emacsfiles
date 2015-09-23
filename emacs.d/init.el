@@ -50,21 +50,6 @@
 	  (package-install 'use-package)))
 (require 'use-package)
 
-(use-package uniquify
-  :config (setq-default mode-line-buffer-identification
-			  `(:eval
-				(let ((s (format-mode-line
-						  (propertized-buffer-identification (buffer-name)))))
-				  (when (and (boundp 'uniquify-managed) uniquify-managed)
-					(unless (string= (buffer-name) (uniquify-buffer-base-name))
-					  (let ((base-len (length (uniquify-buffer-base-name)))
-							(full-len (length (buffer-name)))
-							(pre (eq uniquify-buffer-name-style 'forward)))
-						(let ((start (if pre 0 base-len))
-							  (end (if pre (- full-len base-len) full-len)))
-						  (set-text-properties start end nil s)))))
-				  s))))
-
 ; Pymacs in ~/.emacs.d/vendor/ (for ropemacs)
 
 ;;;;; Adaptive prefix
@@ -354,7 +339,7 @@
   (projectile-global-mode t)
   (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
   (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
-  (add-to-list 'projectile-globally-ignored-directories "virtualenv"):
+  (add-to-list 'projectile-globally-ignored-directories "virtualenv")
   (with-eval-after-load "evil"
 	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
 
@@ -372,8 +357,25 @@
 (global-set-key [f2] 'speedbar)
 
 (use-package web-mode
-  :ensure t
+  :ensure
   :mode "\\.html\\.erb\\'")
+
+;;;;; Uniquify
+(use-package uniquify
+  :config
+  (setq-default mode-line-buffer-identification
+				`(:eval
+				  (let ((s (format-mode-line
+							(propertized-buffer-identification (buffer-name)))))
+					(when (and (boundp 'uniquify-managed) uniquify-managed)
+					  (unless (string= (buffer-name) (uniquify-buffer-base-name))
+						(let ((base-len (length (uniquify-buffer-base-name)))
+							  (full-len (length (buffer-name)))
+							  (pre (eq uniquify-buffer-name-style 'forward)))
+						  (let ((start (if pre 0 base-len))
+								(end (if pre (- full-len base-len) full-len)))
+							(set-text-properties start end nil s)))))
+					s))))
 
 ;;;;; Yaml-mode
 
