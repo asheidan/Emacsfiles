@@ -11,7 +11,8 @@
       (scroll-bar-mode -1) ; Hide scrollbars
       ;(tabbar-mode -1) ; Disable tabbar
 	  ))
-(if (not (string-equal system-type "darwin"))
+
+(if (not (and (display-graphic-p) (string-equal system-type "darwin")))
 	(menu-bar-mode -1))
 
 (setq inhibit-startup-message t
