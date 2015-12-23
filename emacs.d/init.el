@@ -287,29 +287,6 @@
 	; Fix for updated projectile
 	(defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode)))
 
-;;;;; Ido
-
-(ido-mode 1)
-(setq ido-everywhere 1)
-
-(with-eval-after-load "ido"
-  (setq ido-use-faces nil)) ; Use flx hightlits instead of ido faces
-
-;; Fuzzy matching for ido with flx-ido
-  ;; Fuzzy matching for ido with flx-ido
-  (use-package flx-ido
-	:ensure
-	:config (flx-ido-mode 1))
-
-  (use-package ido-ubiquitous
-	:ensure
-	:config (ido-ubiquitous-mode 1)) ; Ido everywhere!!!
-
-  ;; Vertical list for ido
-  (use-package ido-vertical-mode
-	:ensure
-	:config (ido-vertical-mode 1)))
-
 
   :ensure
   :config (ido-vertical-mode 1))
