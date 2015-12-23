@@ -231,6 +231,18 @@
 		ispell-program-name "aspell"
 		ispell-list-command "list"))
 
+
+;;;;; Git Gutter
+
+(use-package git-gutter
+  :ensure
+  :diminish git-gutter-mode
+  :bind
+  (:map evil-normal-state-map
+		(",gg" . git-gutter:toggle)
+		(",gn" . git-gutter:next-diff)
+		(",gp" . git-gutter:previous-diff)))
+
 ;;;;; Haskell
 
 ;; Sane indentation for haskell
