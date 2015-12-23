@@ -382,6 +382,22 @@
 			  (visual-line-mode t)
 			  (adaptive-wrap-prefix-mode t)
 			  (ws-trim-mode nil))))
+
+;;;;; Todo.txt mode
+(use-package todotxt-mode
+  :ensure
+  :config
+  (setq todotxt-default-file (expand-file-name "~/Dropbox/todo/todo.txt"))
+  :bind
+  (:map evil-normal-state-map
+		(",tt" . todotxt-open-file)
+		(",ta" . todotxt-add-todo)
+		(",td" . todotxt-toggle-done)
+		(",tf-" . todotxt-clear-filter)
+		(",tfs" . todotxt-filter-by-status)
+		(",tfp" . todotxt-filter-by-project)
+		(",tft" . todotxt-filter-by-tag)))
+
 ;;;;; Uniquify
 (use-package uniquify
   :config
