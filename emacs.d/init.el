@@ -159,7 +159,7 @@
   (define-key evil-normal-state-map "\C-k" 'evil-jump-backward)
 
   (define-key evil-normal-state-map "\C-f" nil)
-  (define-key evil-normal-state-map "\C-\M-wn" 'new-frame)
+  (define-key evil-normal-state-map "\C-\M-wn" 'make-frame)
   (define-key evil-normal-state-map "\C-\M-wc" 'delete-frame)
   (define-key evil-normal-state-map "\C-\M-wl" 'ns-next-frame)
   (define-key evil-normal-state-map "\C-\M-wh" 'ns-prev-frame)
