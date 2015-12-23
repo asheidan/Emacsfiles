@@ -373,6 +373,15 @@
   :ensure
   :mode "\\.html\\.erb\\'")
 
+;;;;; Textile-mode
+
+(use-package textile-mode
+  :config
+  (add-hook 'textile-mode-hook
+			(lambda ()
+			  (visual-line-mode t)
+			  (adaptive-wrap-prefix-mode t)
+			  (ws-trim-mode nil))))
 ;;;;; Uniquify
 (use-package uniquify
   :config
