@@ -258,6 +258,7 @@
 
 (use-package helm-config
   :ensure helm
+  :diminish helm-mode
   :config
 
   (use-package helm-projectile
@@ -434,6 +435,7 @@
 
 ;;;;; Yasnippet
 (use-package yasnippet
+  :diminish yas-minor-mode
   :config
   (yas-global-mode 1))
 
@@ -463,7 +465,7 @@
 
 (use-package ws-trim
   :load-path "vendor"
-  ;:diminish ws-trim-mode
+  :diminish ws-trim-mode
   :config
   (global-ws-trim-mode 1)
   (setq ws-trim-mode 1))
