@@ -241,8 +241,8 @@
   :bind
   (:map evil-normal-state-map
 		(",gg" . git-gutter:toggle)
-		(",gn" . git-gutter:next-diff)
-		(",gp" . git-gutter:previous-diff)))
+		(",gn" . git-gutter:next-hunk)
+		(",gp" . git-gutter:previous-hunk)))
 
 ;;;;; Haskell
 
