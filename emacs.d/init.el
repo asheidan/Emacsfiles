@@ -76,7 +76,7 @@
 
 ;;;;; Auto complete
 (use-package auto-complete
-  :defer t
+  ;:defer t
   :config
   (add-to-list 'ac-dictionary-directories "~/.emacs.d/dict")
   (setq ac-use-menu-map t)
@@ -223,7 +223,8 @@
 
   (use-package evil-org
     :ensure
-	:defer t)
+    ;:defer t
+    )
 
   (use-package evil-surround
 	:ensure
@@ -239,7 +240,7 @@
 
 (use-package flycheck
   :ensure t
-  :defer t
+  ;:defer t
   :init
   (add-hook 'after-init-hook #'global-flycheck-mode))
 
@@ -301,6 +302,7 @@
 
   (use-package helm-projectile
     :ensure)
+  ;:defer 1
 
   (use-package helm-flycheck
     :ensure)
@@ -333,7 +335,9 @@
 
 ; Used by helm to browse menus
 (use-package lacarte
-  :ensure t)
+  :ensure t
+  :config
+  (define-key evil-normal-state-map ", m" 'helm-browse-menubar))
 
 ;;;;; Magit
 
@@ -381,7 +385,6 @@
 
 (use-package modeline-posn
   :ensure
-  :defer t
   :init
   (defvar modelinepos-column-limit)
   (setq modelinepos-column-limit 70))
