@@ -236,7 +236,6 @@
 
 ;;;;; Flycheck
 ;;; Enable syntax-checking with flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
 
 (use-package flycheck
   :ensure t
@@ -262,10 +261,11 @@
   :bind
   (:map evil-normal-state-map
 		("zn" . flyspell-goto-next-error))
-  :config
+  :init
   (define-key evil-normal-state-map ",ss" 'flyspell-mode)
   (define-key evil-normal-state-map ",sl" 'ispell-change-dictionary)
 
+  :config
   (setq flyspell-issue-welcome-flag nil
 		ispell-program-name "aspell"
 		ispell-list-command "list"))
@@ -298,38 +298,28 @@
 (use-package helm-config
   :ensure helm
   :diminish helm-mode
-  :config
-
-  (use-package helm-projectile
-    :ensure)
   ;:defer 1
 
-  (use-package helm-flycheck
-    :ensure)
+  :config
+  (helm-mode 1)
 
-  (use-package helm-themes)
-  
-  (with-eval-after-load "evil"
+  (define-key evil-normal-state-map ", f" 'helm-find-files)
+  (define-key evil-normal-state-map  ", o" 'helm-imenu)
+  (define-key evil-normal-state-map ", b" 'helm-buffers-list)
 
-    (define-key evil-normal-state-map ", f" 'helm-find-files)
-    (define-key evil-normal-state-map  ", o" 'helm-imenu)
-	(define-key evil-normal-state-map ", b" 'helm-buffers-list)
+  (define-key evil-normal-state-map ", x" 'helm-M-x)
+  (global-set-key (kbd "M-x") 'helm-M-x)
 
-	(define-key evil-normal-state-map ", c" 'helm-flycheck)
-
-	(with-eval-after-load "lacarte"
-	  (define-key evil-normal-state-map ", m" 'helm-browse-menubar))
-
-	(with-eval-after-load "projectile"
-	  (define-key evil-normal-state-map ", n" 'helm-projectile)
-	  (define-key evil-normal-state-map  ", p" 'helm-projectile-switch-project))
-	
-	; Fix for updated projectile
-	(defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode)))
+  (define-key evil-normal-state-map ", c" 'helm-flycheck))
 
 
+;;;;; Indent guide
+(use-package indent-guide
   :ensure
-  :config (ido-vertical-mode 1))
+  ;:diminish indent-guide-mode
+  ;:init
+  ;(indent-guide-global-mode 1)
+  )
 
 ;;;;; la Carte
 
@@ -358,7 +348,7 @@
 
 (use-package markdown-mode
   :ensure
-  :mode ("\\.md\\'" "\\.mdown\'" "\\.markdown\\'")
+  :mode "\\.\\(md\\|mdown\\|markdown\\|wlog\\)\\'"
   :commands markdown-mode
   :config
 
@@ -501,17 +491,23 @@
 ;;;; BEHAVIOR
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
+(defvar mac-command-modifier)
+(defvar mac-allow-antialiasing)
+(defvar mac-command-key-is-meta)
 (if (string-equal system-type "darwin")
     (setq mac-option-modifier nil
 	  mac-command-modifier 'meta
 	  mac-allow-antialiasing t
 	  mac-command-key-is-meta t))
+(defvar x-meta-keysym)
+(defvar x-super-keysym)
 (if (string-equal system-type "gnu/linux")
     (setq x-meta-keysym 'super
-	  x-super-keysym 'meta))
+		  x-super-keysym 'meta))
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
+(defvar tags-revert-without-query)
 (setq tags-revert-without-query t)
 
 ;(global-set-key [f2] 'speedbar)
@@ -521,6 +517,10 @@
 (if (and (fboundp 'server-running-p)
 		 (not (server-running-p)))
 	(server-start))
+
+(use-package nxml-mode
+  :config
+  (setq nxml-child-indent 4))
 
 ;;;; NON-PACKAGES
 
@@ -535,8 +535,12 @@
 
 ;;;;; Email
 
-(defface message-double-quoted-text-face `((t (:foreground "blue"))) "Quote level 2")
-(defface message-multiple-quoted-text-face `((t (:foreground "green"))) "Quote level 3+")
+(defface message-double-quoted-text-face
+  `((t (:foreground "blue"))) "Quote level 2"
+  :group 'basic-faces)
+(defface message-multiple-quoted-text-face
+  `((t (:foreground "green"))) "Quote level 3+"
+  :group 'basic-faces)
 
 ;(use-package bbdb
 ;  :config
@@ -611,16 +615,20 @@ Turns off backup creation and auto saving."
 
 ; Worklog
 (defun worklog-open-today ()
-  "Opens worklog-file for today."
+  "Open worklog-file for today."
   (interactive)
   (let ((file-name (format-time-string "~/Dropbox/Worklog/%Y/%m %B/%Y-%m-%d.wlog" (current-time))))
 	(find-file file-name)
-	(end-of-buffer)))
+	(goto-char (point-max))
+	(markdown-mode)))
+(define-key evil-normal-state-map ",wt" 'worklog-open-today)
 
 (defun worklog-new-entry ()
-  "Adds a new line with a timestamp."
+  "Add a new line with a timestamp."
   (interactive)
-  (insert (format-time-string (concat "### " current-date-time-format) (current-time))))
+  (goto-char (point-max))
+  (insert (format-time-string (concat "\n## " current-date-time-format) (current-time))))
+(define-key evil-normal-state-map ",wn" 'worklog-new-entry)
 
 
 (defun tabs-enable ()
@@ -652,7 +660,7 @@ Turns off backup creation and auto saving."
                     (buffer-file-name))))
     (when filename
       (kill-new filename)
-      (message "Copied buffer file name '%s' to the clipboard." filename))))
+	  (message "Copied buffer file name '%s' to the clipboard." filename))))
 
 (with-eval-after-load "projectile"
   (defun copy-project-file-name-to-clipboard ()
@@ -705,12 +713,61 @@ Turns off backup creation and auto saving."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-faces-vector
+   [default bold shadow italic underline bold bold-italic bold])
+ '(ansi-color-names-vector
+   ["#ecf0f1" "#e74c3c" "#2ecc71" "#f1c40f" "#2492db" "#9b59b6" "#1abc9c" "#2c3e50"])
+ '(compilation-message-face (quote default))
+ '(custom-safe-themes
+   (quote
+	("3b24f986084001ae46aa29ca791d2bc7f005c5c939646d2b800143526ab4d323" "3a91205cfbbe87a78889e7871000b73e89783dde76550dc32fd6d379a1fe70da" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" default)))
  '(ecb-options-version "2.40")
  '(ediff-split-window-function (quote split-window-horizontally))
+ '(ediff-window-setup-function (quote ediff-setup-windows-plain))
+ '(fci-rule-color "#f1c40f")
+ '(frame-brackground-mode (quote dark))
+ '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
+ '(highlight-tail-colors
+   (quote
+	(("#49483E" . 0)
+	 ("#67930F" . 20)
+	 ("#349B8D" . 30)
+	 ("#21889B" . 50)
+	 ("#968B26" . 60)
+	 ("#A45E0A" . 70)
+	 ("#A41F99" . 85)
+	 ("#49483E" . 100))))
+ '(hl-paren-background-colors (quote ("#2492db" "#95a5a6" nil)))
+ '(hl-paren-colors (quote ("#ecf0f1" "#ecf0f1" "#c0392b")))
+ '(magit-diff-use-overlays nil)
  '(projectile-mode-line (quote (:eval (format " P[%s]" (projectile-project-name)))))
+ '(send-mail-function (quote mailclient-send-it))
  '(show-paren-mode t)
+ '(sml/active-background-color "#34495e")
+ '(sml/active-foreground-color "#ecf0f1")
+ '(sml/inactive-background-color "#dfe4ea")
+ '(sml/inactive-foreground-color "#34495e")
+ '(speedbar-directory-unshown-regexp "^\\(\\..*\\|__pycache__\\)\\'")
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
- '(uniquify-separator ":"))
+ '(uniquify-separator ":")
+ '(vc-annotate-background "#ecf0f1")
+ '(vc-annotate-color-map
+   (quote
+	((30 . "#e74c3c")
+	 (60 . "#c0392b")
+	 (90 . "#e67e22")
+	 (120 . "#d35400")
+	 (150 . "#f1c40f")
+	 (180 . "#d98c10")
+	 (210 . "#2ecc71")
+	 (240 . "#27ae60")
+	 (270 . "#1abc9c")
+	 (300 . "#16a085")
+	 (330 . "#2492db")
+	 (360 . "#0a74b9"))))
+ '(vc-annotate-very-old-color "#0a74b9")
+ '(weechat-color-list
+   (unspecified "#272822" "#49483E" "#A20C41" "#F92672" "#67930F" "#A6E22E" "#968B26" "#E6DB74" "#21889B" "#66D9EF" "#A41F99" "#FD5FF0" "#349B8D" "#A1EFE4" "#F8F8F2" "#F8F8F0")))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
