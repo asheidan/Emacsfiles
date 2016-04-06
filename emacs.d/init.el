@@ -215,11 +215,6 @@
   ;(use-package evil-rebellion
   ;  :load-path "vendor/evil-rebellion/")
 
-  (use-package evil-jumper
-	:ensure
-	:config
-	(global-evil-jumper-mode t))
-
   ;(use-package evil-leader
   ; :ensure
   ; :config
