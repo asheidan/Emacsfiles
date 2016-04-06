@@ -2,6 +2,10 @@
 ;;; Commentary:
 ;;; Code:
 
+; Profiling
+; /Applications/Emacs.app/Contents/MacOS/Emacs -Q -l ./vendor/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name\"~/.emacs.d/init.el\"))" -f profile-dotemacs
+
+
 ;;;; UI
 ;; Change UI early to prevent flickering
 
@@ -22,6 +26,19 @@
 (setq column-number-mode t
 	  line-number-mode t)
 
+;;;; Colors
+
+(setq green-sea "#16a085" turquoise "#1abc9c" turquoise-hover "#1ABC9C"
+      nephritis "#27ae60" emerald "#2ecc71" emerald-hover "#40d47e"
+      belize-hole "#2980b9" peter-river "#3498db" peter-river-hover "#4aa3df"
+      wisteria "#8e44ad" amethyst "#9b59b6" amethyst-hover "#a66bbe"
+      midnight "#2c3e5e" wet-asphalt "#34495e" wet-asphalt-hover "#3d566e"
+      orange "#f39c12" sun-flower "#f1c40f" sun-flower-hover "#f2ca27"
+      pumpkin "#d35400" carrot "#e67e22" carrot-hover "#e98b39"
+      pomegranate "#c0392b" alizarin "#e74c3c" alizarin-hover "#ea6153"
+      silver "#bdc3c7" clouds "#ecf0f1" clouds-hover "#fbfcfc"
+	  asbestos "#7f8c8d" concrete "#95a5a6" concrete-hover "#a3b1b2")
+
 ;;;; ENVIRONMENT
 (add-to-list 'load-path "~/.emacs.d/vendor/")
 (add-to-list 'custom-theme-load-path (file-name-as-directory "~/.emacs.d/replace-colorthemes/"))
@@ -41,7 +58,7 @@
 ;;; Add package repository
 (require 'package)
 (add-to-list 'package-archives
-	     '("melpa" . "http://melpa.milkbox.net/packages/") t)
+			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
 ; Make sure that we have use-package installed
@@ -59,16 +76,38 @@
 
 ;;;;; Auto complete
 (use-package auto-complete
+  :defer t
   :config
   (add-to-list 'ac-dictionary-directories "~/.emacs.d/dict")
   (setq ac-use-menu-map t)
   (define-key ac-menu-map "\C-n" 'ac-next)
   (define-key ac-menu-map "\C-p" 'ac-previous)
-  (define-key ac-mode-map [(control tab)] 'auto-complete))
+  (define-key ac-mode-map [(control tab)] 'auto-complete)
+
+  ; Trying to get ac-clang to look better
+  (set-face-background 'popup-face clouds-hover)
+  (set-face-foreground 'popup-face midnight)
+
+  (set-face-background 'popup-menu-mouse-face nephritis)
+  (set-face-foreground 'popup-menu-mouse-face clouds)
+
+  (set-face-background 'popup-tip-face clouds-hover)
+  (set-face-foreground 'popup-tip-face midnight)
+
+  (set-face-foreground 'ac-candidate-face wet-asphalt-hover)
+  (set-face-background 'ac-candidate-face clouds-hover)
+
+  (set-face-foreground 'ac-completion-face asbestos)
+
+  (set-face-background 'ac-selection-face wisteria)
+  (set-face-foreground 'ac-selection-face clouds))
 
 (use-package auto-complete-clang
+  :defer t
   :config
   (add-hook 'objc-mode-hook (lambda ()(add-to-list 'ac-sources 'ac-source-clang)))
+  (add-hook 'c++-mode-hook (lambda ()(add-to-list 'ac-sources 'ac-source-clang)))
+  (add-hook 'c-mode-hook (lambda ()(add-to-list 'ac-sources 'ac-source-clang)))
   (setq ac-clang-flags
 		(mapcar (lambda (item)(concat "-I" item))
 				(split-string "
@@ -78,43 +117,36 @@
  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include
  /usr/include
  /System/Library/Frameworks
- /Library/Frameworks"))))
+ /Library/Frameworks")))
 
-;(with-eval-after-load "auto-complete-config"
-;  (ac-config-default)
-;  (when (file-exists-p (expand-file-name "~/.emacs.d/vendor/pymacs.el"))
-;    (ac-ropemacs-initialize)
-;	(ac-ropemacs-setup)))
+  (set-face-background 'ac-clang-candidate-face clouds-hover)
+  (set-face-foreground 'ac-clang-candidate-face midnight)
 
-;(with-eval-after-load "auto-complete-autoloads"
-;  (autoload 'auto-complete-mode "auto-complete" "enable auto-complete-mode" t nil)
-;  (add-hook 'python-mode-hook
-;	    (lambda ()
-;	      (require 'auto-complete-config)
-;	      (add-to-list 'ac-sources 'ac-source-ropemacs)
-;	      (auto-complete-mode)
-;	      (require 'nose)
-;		  )))
+  (set-face-background 'ac-clang-selection-face belize-hole)
+  (set-face-foreground 'ac-clang-selection-face clouds))
+
+(use-package jedi
+  ;:defer t
+  :config
+  (add-hook 'python-mode-hook 'jedi:setup))
+
+
+;;;;; Company
+
+;(use-package company)
+;(use-package company-jedi
+;  :config
+;  (add-hook 'python-mode-hook (lambda () (add-to-list 'company-backends 'company-jedi))))
 
 ;;;;; Dash.app
 
 (use-package dash-at-point
-  :commands dash-at-point)
+  :commands dash-at-point
+  :config
+  (define-key evil-normal-state-map ", d" 'helm-dash))
 
-;;;;; Diminish
-
-(use-package diminish)
-;Perhaps replace with rich-minority https://github.com/Bruce-Connor/rich-minority
-
-(with-eval-after-load "afafafdiminish"
-  (with-eval-after-load "adaptive-wrap-prefix"
-	(diminish 'adaptive-wrap-prefix-mode))
-  (diminish 'hs-minor-mode)
-  (with-eval-after-load "projectile"
-	(diminish 'projectile-mode "P"))
-  (diminish 'undo-tree-mode)
-  (with-eval-after-load "ws-trim"
-	(diminish 'ws-trim-mode)))
+(use-package hideshow
+  :diminish hs-minor-mode)
 
 ;;;;; Estimation
 
@@ -146,6 +178,7 @@
 ;(define-key minibuffer-local-isearch-map [escape] 'minibuffer-keyboard-quit)
 
 (defun ex-mode-mapping (cmd)
+  "Bind CMD as a evil-ex command."
   (let ((binding (car cmd))
 		(fn (cdr cmd)))
 	(evil-ex-define-cmd binding fn)))
@@ -167,32 +200,35 @@
 
   (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
   (my-move-key evil-motion-state-map evil-normal-state-map " ")
+
   (mapc 'ex-mode-mapping
 		'(("gstatus" . magit-status)
 		  ("whitespace" . whitespace-mode)
 		  ("test" . projectile-test-project)
 		  ("dash" . dash-at-point)
-		  ("ack" . ack-and-a-half)))
+		  ("ack" . ack-and-a-half))))
 
-  (use-package evil-rebellion
-    :load-path "vendor/evil-rebellion/")
-
-  (use-package evil-jumper
-    :ensure)
+  (use-package evil-magit
+	:ensure t
+	;:defer t
+	)
+  ;(use-package evil-rebellion
+  ;  :load-path "vendor/evil-rebellion/")
 
   (use-package evil-jumper
 	:ensure
 	:config
 	(global-evil-jumper-mode t))
 
-  (use-package evil-leader
-	:ensure
-    :config
-    (global-evil-leader-mode)
-    (evil-leader/set-leader ","))
+  ;(use-package evil-leader
+  ; :ensure
+  ; :config
+  ; (global-evil-leader-mode)
+  ; (evil-leader/set-leader ","))
 
   (use-package evil-org
-    :ensure)
+    :ensure
+	:defer t)
 
   (use-package evil-surround
 	:ensure
@@ -200,14 +236,17 @@
     (global-evil-surround-mode 1))
 
   (use-package evil-visualstar
-    :ensure))
+    :ensure)
 
 ;;;;; Flycheck
 ;;; Enable syntax-checking with flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (use-package flycheck
-  :ensure)
+  :ensure t
+  :defer t
+  :init
+  (add-hook 'after-init-hook #'global-flycheck-mode))
 
 
 ; (with-eval-after-load "flycheck"
@@ -228,6 +267,9 @@
   (:map evil-normal-state-map
 		("zn" . flyspell-goto-next-error))
   :config
+  (define-key evil-normal-state-map ",ss" 'flyspell-mode)
+  (define-key evil-normal-state-map ",sl" 'ispell-change-dictionary)
+
   (setq flyspell-issue-welcome-flag nil
 		ispell-program-name "aspell"
 		ispell-list-command "list"))
@@ -303,32 +345,50 @@
 (use-package magit
   :ensure
   :config
+  (defvar magit-commit-show-notes)
   (setq magit-commit-show-notes t)
+  (defvar magit-push-always-verify)
   (setq magit-push-always-verify nil)
+  (defvar magit-last-seen-setup-instructions)
   (setq magit-last-seen-setup-instructions "1.4.0")
   :bind (:map evil-normal-state-map
-			  (",gs" . magit-status)))
+			  (",gs" . magit-status)
+			  (",gb" . magit-blame)))
 
 ;;;;; Markdown-mode
 
 (use-package markdown-mode
   :ensure
+  :mode ("\\.md\\'" "\\.mdown\'" "\\.markdown\\'")
+  :commands markdown-mode
   :config
+
+  ; Trying to get markdown to look better
+  (set-face-foreground 'markdown-header-face belize-hole)
+  (set-face-foreground 'markdown-header-face-1 belize-hole)
+  (set-face-foreground 'markdown-header-face-2 nephritis)
+  (set-face-foreground 'markdown-header-face-3 pumpkin)
+  (set-face-foreground 'markdown-header-face-4 wisteria)
+  (set-face-foreground 'markdown-header-face-5 belize-hole)
+  (set-face-foreground 'markdown-header-face-6 nephritis)
+
   (add-hook 'markdown-mode-hook
 			(lambda ()
 			  (visual-line-mode t)
 			  (adaptive-wrap-prefix-mode t)
 			  (ws-trim-mode nil))))
-(use-package markdown-mode+
-  :ensure)
+
+;;;;; Markdown critic-mode
 (use-package cm-mode
-  :ensure)
+	:ensure)
 
 ;;;;; Modeline-posn
 
 (use-package modeline-posn
   :ensure
+  :defer t
   :init
+  (defvar modelinepos-column-limit)
   (setq modelinepos-column-limit 70))
 
 ;;;;; Neotree
@@ -338,7 +398,7 @@
 
 ;;;;; Org-mode
 
-(use-package org-mode)
+(use-package org)
 
 ;;;;; Projectile
 
@@ -346,11 +406,23 @@
   :ensure
   :config
   (projectile-global-mode t)
+
   (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
+  (add-to-list 'projectile-globally-ignored-directories ".virtualenvs")
+  (add-to-list 'projectile-globally-ignored-directories ".virtualenv")
   (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
   (add-to-list 'projectile-globally-ignored-directories "virtualenv")
-  (with-eval-after-load "evil"
-	(define-key evil-normal-state-map ",ps" 'projectile-switch-project)))
+
+  (define-key evil-normal-state-map ", n" 'helm-projectile)
+  (define-key evil-normal-state-map ", B" 'helm-projectile-switch-to-buffer)
+  (define-key evil-normal-state-map ", p" 'helm-projectile-switch-project)
+	
+  ; Fix for updated projectile
+  (defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode))
+(use-package speedbar
+  :config
+  (speedbar-add-supported-extension ".jsx"))
+
 
 ;;;;; Smart tabs
 
@@ -360,18 +432,10 @@
   (smart-tabs-insinuate 'c
 						'c++))
 
-;;;;; Sr Speedbar
-
-;(use-package sr-speedbar :config (global-set-key [f2] 'sr-speedbar-toggle))
-(global-set-key [f2] 'speedbar)
-
-(use-package web-mode
-  :ensure
-  :mode "\\.html\\.erb\\'")
-
 ;;;;; Textile-mode
 
 (use-package textile-mode
+  :mode "\\.textile\\'"
   :config
   (add-hook 'textile-mode-hook
 			(lambda ()
@@ -393,6 +457,19 @@
 		(",tfs" . todotxt-filter-by-status)
 		(",tfp" . todotxt-filter-by-project)
 		(",tft" . todotxt-filter-by-tag)))
+
+;;;;; Web mode
+(use-package web-mode
+  :ensure
+  :mode ("\\.html\\'" "\\.erb\\'"
+		 "\\.js\\'" "\\.jsx\\'"))
+
+;;;;; Undo tree
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :config
+  (global-undo-tree-mode 1))
+
 
 ;;;;; Uniquify
 (use-package uniquify
@@ -419,6 +496,7 @@
 ;;;;; Yasnippet
 (use-package yasnippet
   :diminish yas-minor-mode
+  :defer t
   :config
   (yas-global-mode 1))
 
@@ -442,7 +520,9 @@
 
 (setq-default tab-width 4)
 
-(server-start)
+(if (and (fboundp 'server-running-p)
+		 (not (server-running-p)))
+	(server-start))
 
 ;;;; NON-PACKAGES
 
@@ -485,7 +565,8 @@
 
 ; Timestamps
 (defvar current-date-time-format "%Y-%m-%d %H:%M:%S"
-  "Format for date to insert with `insert-current-date-time. See help of `format-time-string' for possible replacements.")
+  "Format for date to insert with `insert-current-date-time.
+See help of `format-time-string' for possible replacements.")
 
 (defun insert-current-date-time ()
   "Insert the current date and time into the current buffer"
@@ -544,12 +625,6 @@ Turns off backup creation and auto saving."
   (insert (format-time-string (concat "### " current-date-time-format) (current-time))))
 
 
-; Spelling stuff
-(with-eval-after-load "evil"
-  (define-key evil-normal-state-map ",ss" 'flyspell-mode)
-  (define-key evil-normal-state-map ",sl" 'ispell-change-dictionary))
-
-
 (defun tabs-enable ()
   "Enable indentation with tabs."
   (interactive)
@@ -603,66 +678,26 @@ Turns off backup creation and auto saving."
 (global-hl-line-mode)
 
 ; Switch mode-line color from flatuicolors.com
-(setq green-sea "#16a085" turquoise "#1abc9c" turquoise-hover "#1ABC9C"
-      nephritis "#27ae60" emerald "#2ecc71" emerald-hover "#40d47e"
-      belize-hole "#2980b9" peter-river "#3498db" peter-river-hover "#4aa3df"
-      wisteria "#8e44ad" amethyst "#9b59b6" amethyst-hover "#a66bbe"
-      midnight "#2c3e5e" wet-asphalt "#34495e" wet-asphalt-hover "#3d566e"
-      orange "#f39c12" sun-flower "#f1c40f" sun-flower-hover "#f2ca27"
-      pumpkin "#d35400" carrot "#e67e22" carrot-hover "#e98b39"
-      pomegranate "#c0392b" alizarin "#e74c3c" alizarin-hover "#ea6153"
-      silver "#bdc3c7" clouds "#ecf0f1" cluds-hover "#fbfcfc"
-      asbestos "#7f8c8d" concrete "#95a5a6" concrete-hover "#a3b1b2")
-
 (set-face-background 'mode-line-inactive silver)
 (set-face-foreground 'mode-line-inactive asbestos)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 
 (let ((current-color (lambda ()
 		       (let ((color (cond ((minibufferp) `(,wisteria . ,amethyst-hover))
-					  ((evil-insert-state-p) `(,nephritis . ,emerald-hover))
-					  ((evil-normal-state-p) `(,belize-hole . ,peter-river-hover))
-					  ((evil-emacs-state-p) `(,green-sea . ,turquoise-hover))
-					  ((evil-visual-state-p) `(,pumpkin . ,carrot-hover))
-					  ((evil-replace-state-p) `(,pomegranate . ,alizarin-hover))
-					  ((evil-motion-state-p) `(,midnight . ,wet-asphalt-hover))
-					  (t `(,asbestos . ,concrete))
-					  )))
+								  ((evil-insert-state-p) `(,nephritis . ,emerald-hover))
+								  ((evil-normal-state-p) `(,belize-hole . ,peter-river-hover))
+								  ((evil-emacs-state-p) `(,green-sea . ,turquoise-hover))
+								  ((evil-visual-state-p) `(,pumpkin . ,carrot-hover))
+								  ((evil-replace-state-p) `(,pomegranate . ,alizarin-hover))
+								  ((evil-motion-state-p) `(,midnight . ,wet-asphalt-hover))
+								  (t `(,asbestos . ,concrete))
+								  )))
 			 (set-face-background 'mode-line (car color))
 			 (set-face-foreground 'mode-line (cdr color))
 			 ))))
   (add-hook 'post-command-hook current-color))
 
-; Trying to get ac-clang to look better
-(set-face-background 'ac-clang-candidate-face clouds-hover)
-(set-face-background 'popup-face clouds-hover)
-(set-face-background 'ac-candidate-face clouds-hover)
-(set-face-foreground 'ac-clang-candidate-face midnight)
-(set-face-foreground 'popup-face midnight)
-(set-face-foreground 'ac-candidate-face wet-asphalt-hover)
 
-(set-face-background 'ac-clang-selection-face belize-hole)
-(set-face-foreground 'ac-clang-selection-face clouds)
-
-(set-face-background 'popup-menu-mouse-face nephritis)
-(set-face-foreground 'popup-menu-mouse-face clouds)
-
-(set-face-foreground 'ac-completion-face asbestos)
-
-(set-face-background 'ac-selection-face wisteria)
-(set-face-foreground 'ac-selection-face clouds)
-
-(set-face-background 'popup-tip-face clouds-hover)
-(set-face-foreground 'popup-tip-face midnight)
-
-; Trying to get markdown to look better
-(set-face-foreground 'markdown-header-face belize-hole)
-(set-face-foreground 'markdown-header-face-1 belize-hole)
-(set-face-foreground 'markdown-header-face-2 nephritis)
-(set-face-foreground 'markdown-header-face-3 pumpkin)
-(set-face-foreground 'markdown-header-face-4 wisteria)
-(set-face-foreground 'markdown-header-face-5 belize-hole)
-(set-face-foreground 'markdown-header-face-6 nephritis)
 
 ; Previous font '(default ((t (:height 110 :width normal :foundry "nil" :family "Menlo"))))
 ;;;; CUSTOMIZE
@@ -686,12 +721,14 @@ Turns off backup creation and auto saving."
  '(mode-line ((t (:box nil))))
  '(mode-line-buffer-id ((t (:foreground "White"))))
  '(mode-line-emphasis ((t (:inverse-video t :weight bold))))
+ '(mode-line-inactive ((t (:box nil))))
  '(modelinepos-column-warning ((t (:foreground "white"))))
  '(modelinepos-region ((t (:foreground "white")))))
 
 
 (put 'narrow-to-region 'disabled nil)
 
+(defvar my-default-font-family)
 (if (string-equal system-type "darwin")
 	;(:foundry "nil" :family "ProfontIIx")
 	(setq my-default-font-family "ProfontIIx"))
