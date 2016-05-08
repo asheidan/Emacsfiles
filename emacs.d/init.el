@@ -580,9 +580,10 @@ See help of `format-time-string' for possible replacements.")
 
 ; Filepath with number
 (defun file-path-with-number ()
-  "Sets clipboard to the path of the file corresponding to the current buffer"
+  "Set clipboard to the path of the file corresponding to the current buffer."
   (interactive)
-  (kill-new (concat buffer-file-name ":" (number-to-string (line-number-at-pos)))))
+  (let ((shortened-buffer-path (substring (buffer-file-name) (length (projectile-project-root)))))
+	(kill-new (concat shortened-buffer-path ":" (number-to-string (line-number-at-pos))))))
 
 ; Dropbox
 (define-minor-mode dropbox-mode
