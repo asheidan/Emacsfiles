@@ -583,6 +583,25 @@
   :config
   (yas-global-mode 1))
 
+;;;;; nXML
+
+(use-package nxml-mode
+  :mode ("\\.xml\\'" . nxml-mode)
+  :config
+  (setq nxml-child-indent 4))
+
+;;;; NON-PACKAGES
+
+(use-package ws-trim
+  :load-path "vendor"
+  :diminish ws-trim-mode
+  :commands (global-ws-trim-mode ws-trim-mode)
+  :config
+  (global-ws-trim-mode 1)
+  (setq ws-trim-mode 1))
+
+;(use-package auto-complete-clang-objc :load-path "vendor/auto-complete-clang-objc")
+
 ;;;; BEHAVIOR
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
@@ -611,11 +630,6 @@
 		 (not (server-running-p)))
 	(server-start))
 
-(use-package nxml-mode
-  :mode ("\\.xml\\'" . nxml-mode)
-  :config
-  (setq nxml-child-indent 4))
-
 (defun switch-to-minibuffer ()
   "Switch to minibuffer window."
   (interactive)
@@ -627,17 +641,6 @@
 (setq split-height-threshold 50
 	  split-width-threshold 220)
 
-;;;; NON-PACKAGES
-
-(use-package ws-trim
-  :load-path "vendor"
-  :diminish ws-trim-mode
-  :commands (global-ws-trim-mode ws-trim-mode)
-  :config
-  (global-ws-trim-mode 1)
-  (setq ws-trim-mode 1))
-
-;(use-package auto-complete-clang-objc :load-path "vendor/auto-complete-clang-objc")
 
 ;;;;; Email
 
