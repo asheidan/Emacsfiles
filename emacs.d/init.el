@@ -624,6 +624,8 @@
 	(error "Minibuffer is not active")))
 (message "Bind switch-to-minibubber to something")
 
+(setq split-height-threshold 50
+	  split-width-threshold 220)
 
 ;;;; NON-PACKAGES
 
