@@ -28,16 +28,37 @@
 
 ;;;; Colors
 
-(setq green-sea "#16a085" turquoise "#1abc9c" turquoise-hover "#1ABC9C"
-      nephritis "#27ae60" emerald "#2ecc71" emerald-hover "#40d47e"
-      belize-hole "#2980b9" peter-river "#3498db" peter-river-hover "#4aa3df"
-      wisteria "#8e44ad" amethyst "#9b59b6" amethyst-hover "#a66bbe"
-      midnight "#2c3e5e" wet-asphalt "#34495e" wet-asphalt-hover "#3d566e"
-      orange "#f39c12" sun-flower "#f1c40f" sun-flower-hover "#f2ca27"
-      pumpkin "#d35400" carrot "#e67e22" carrot-hover "#e98b39"
-      pomegranate "#c0392b" alizarin "#e74c3c" alizarin-hover "#ea6153"
-      silver "#bdc3c7" clouds "#ecf0f1" clouds-hover "#fbfcfc"
-	  asbestos "#7f8c8d" concrete "#95a5a6" concrete-hover "#a3b1b2")
+(defvar flatui-color-green-sea "#16a085")
+(defvar flatui-color-turquoise "#1abc9c")
+(defvar flatui-color-turquoise-hover "#1ABC9C")
+(defvar flatui-color-nephritis "#27ae60")
+(defvar flatui-color-emerald "#2ecc71")
+(defvar flatui-color-emerald-hover "#40d47e")
+(defvar flatui-color-belize-hole "#2980b9")
+(defvar flatui-color-peter-river "#3498db")
+(defvar flatui-color-peter-river-hover "#4aa3df")
+(defvar flatui-color-wisteria "#8e44ad")
+(defvar flatui-color-amethyst "#9b59b6")
+(defvar flatui-color-amethyst-hover "#a66bbe")
+(defvar flatui-color-midnight "#2c3e5e")
+(defvar flatui-color-wet-asphalt "#34495e")
+(defvar flatui-color-wet-asphalt-hover "#3d566e")
+(defvar flatui-color-orange "#f39c12")
+(defvar flatui-color-sun-flower "#f1c40f")
+(defvar flatui-color-sun-flower-hover "#f2ca27")
+(defvar flatui-color-pumpkin "#d35400")
+(defvar flatui-color-carrot "#e67e22")
+(defvar flatui-color-carrot-hover "#e98b39")
+(defvar flatui-color-pomegranate "#c0392b")
+(defvar flatui-color-alizarin "#e74c3c")
+(defvar flatui-color-alizarin-hover "#ea6153")
+(defvar flatui-color-silver "#bdc3c7")
+(defvar flatui-color-silver-hover "#cad1d5")
+(defvar flatui-color-clouds "#ecf0f1")
+(defvar flatui-color-clouds-hover "#fbfcfc")
+(defvar flatui-color-asbestos "#7f8c8d")
+(defvar flatui-color-concrete "#95a5a6")
+(defvar flatui-color-concrete-hover "#a3b1b2")
 
 ;;;; ENVIRONMENT
 (add-to-list 'load-path "~/.emacs.d/vendor/")
@@ -118,8 +139,10 @@
 		'(("gstatus" . magit-status)
 		  ("whitespace" . whitespace-mode)
 		  ("test" . projectile-test-project)
+		  ("make" . projectile-compile-project)
 		  ("dash" . dash-at-point)
-		  ("ack" . ack-and-a-half))))
+		  ("ack" . ack-and-a-half)
+		  ("co" . flycheck-list-errors))))
 
   ;(use-package evil-rebellion
   ;  :load-path "vendor/evil-rebellion/")
@@ -147,6 +170,23 @@
 (use-package adaptive-wrap
   :ensure)
 
+;;;;; Aaaaaaaaall the icons
+(use-package all-the-icons
+  :ensure t)
+
+(use-package all-the-icons-dired
+  :ensure t
+  :commands all-the-icons-dired-mode
+  :init
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode))
+
+;;;;; Anzu
+(use-package anzu
+  :ensure t
+  :config
+  (setq-default anzu-cons-mode-line-p nil)
+  (global-anzu-mode))
+
 ;;;;; Auto complete
 (use-package auto-complete
   ;:defer t
@@ -158,22 +198,22 @@
   (define-key ac-mode-map [(control tab)] 'auto-complete)
 
   ; Trying to get ac-clang to look better
-  (set-face-background 'popup-face clouds-hover)
-  (set-face-foreground 'popup-face midnight)
+  (set-face-background 'popup-face flatui-color-clouds-hover)
+  (set-face-foreground 'popup-face flatui-color-midnight)
 
-  (set-face-background 'popup-menu-mouse-face nephritis)
-  (set-face-foreground 'popup-menu-mouse-face clouds)
+  (set-face-background 'popup-menu-mouse-face flatui-color-nephritis)
+  (set-face-foreground 'popup-menu-mouse-face flatui-color-clouds)
 
-  (set-face-background 'popup-tip-face clouds-hover)
-  (set-face-foreground 'popup-tip-face midnight)
+  (set-face-background 'popup-tip-face flatui-color-clouds-hover)
+  (set-face-foreground 'popup-tip-face flatui-color-midnight)
 
-  (set-face-foreground 'ac-candidate-face wet-asphalt-hover)
-  (set-face-background 'ac-candidate-face clouds-hover)
+  (set-face-foreground 'ac-candidate-face flatui-color-wet-asphalt-hover)
+  (set-face-background 'ac-candidate-face flatui-color-clouds-hover)
 
-  (set-face-foreground 'ac-completion-face asbestos)
+  (set-face-foreground 'ac-completion-face flatui-color-asbestos)
 
-  (set-face-background 'ac-selection-face wisteria)
-  (set-face-foreground 'ac-selection-face clouds))
+  (set-face-background 'ac-selection-face flatui-color-wisteria)
+  (set-face-foreground 'ac-selection-face flatui-color-clouds))
 
 (use-package auto-complete-clang
   ;:defer t
@@ -192,16 +232,16 @@
  /System/Library/Frameworks
  /Library/Frameworks")))
 
-  (set-face-background 'ac-clang-candidate-face clouds-hover)
-  (set-face-foreground 'ac-clang-candidate-face midnight)
+  (set-face-background 'ac-clang-candidate-face flatui-color-clouds-hover)
+  (set-face-foreground 'ac-clang-candidate-face flatui-color-midnight)
 
-  (set-face-background 'ac-clang-selection-face belize-hole)
-  (set-face-foreground 'ac-clang-selection-face clouds))
+  (set-face-background 'ac-clang-selection-face flatui-color-belize-hole)
+  (set-face-foreground 'ac-clang-selection-face flatui-color-clouds))
 
 (use-package jedi
   :commands jedi:setup
   ;:defer t
-  :config
+  :init
   (add-hook 'python-mode-hook 'jedi:setup))
 
 
@@ -307,9 +347,10 @@
 ;;;;; Helm
 
 (defun imenu-elisp-sections ()
-  ;(setq imenu-prev-index-position-function nil)
   (add-to-list 'imenu-generic-expression '("Section" "^;;;; \\(.+\\)$" 1) t)
-  (add-to-list 'imenu-generic-expression '("Subsection" "^;;;;; \\(.+\\)$" 1) t))
+  (add-to-list 'imenu-generic-expression '("Subsection" "^;;;;; \\(.+\\)$" 1) t)
+  ;(setq imenu-prev-index-position-function nil)
+  )
 (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 
 (use-package helm-config
@@ -359,8 +400,8 @@
 (use-package magit
   :ensure
   :bind (:map evil-normal-state-map
-				  (",gs" . magit-status)
-				  (",gb" . magit-blame))
+			  (",gs" . magit-status)
+			  (",gb" . magit-blame))
   :config
   (defvar magit-commit-show-notes)
   (setq magit-commit-show-notes t)
@@ -381,13 +422,13 @@
   :config
 
   ; Trying to get markdown to look better
-  (set-face-foreground 'markdown-header-face belize-hole)
-  (set-face-foreground 'markdown-header-face-1 belize-hole)
-  (set-face-foreground 'markdown-header-face-2 nephritis)
-  (set-face-foreground 'markdown-header-face-3 pumpkin)
-  (set-face-foreground 'markdown-header-face-4 wisteria)
-  (set-face-foreground 'markdown-header-face-5 belize-hole)
-  (set-face-foreground 'markdown-header-face-6 nephritis)
+  (set-face-foreground 'markdown-header-face flatui-color-belize-hole)
+  (set-face-foreground 'markdown-header-face-1 flatui-color-belize-hole)
+  (set-face-foreground 'markdown-header-face-2 flatui-color-nephritis)
+  (set-face-foreground 'markdown-header-face-3 flatui-color-pumpkin)
+  (set-face-foreground 'markdown-header-face-4 flatui-color-wisteria)
+  (set-face-foreground 'markdown-header-face-5 flatui-color-belize-hole)
+  (set-face-foreground 'markdown-header-face-6 flatui-color-nephritis)
 
   (add-hook 'markdown-mode-hook
 			(lambda ()
@@ -399,9 +440,122 @@
 (use-package cm-mode
 	:ensure)
 
+;;;;; Modeline stuff
+  
+(use-package powerline)
+(use-package spaceline :after powerline
+  :ensure t)
+(use-package spaceline-all-the-icons :after spaceline
+  :disabled t
+  :load-path "vendor/spaceline-all-the-icons")
+(use-package spaceline :after powerline
+  :config ;(setq-default mode-line-format '("%e" (:eval (spaceline-ml-ati))))
+  )
+
+; http://amitp.blogspot.se/2017/01/emacs-spaceline-mode-line.html
+(use-package spaceline-config :after spaceline
+  :config
+  ; NOTE: This only works if there is a graphic element in hte mode-line
+  ;(setq-default powerline-height 16)
+  (setq-default mode-line-format '("%e" (:eval (spaceline-ml-main))))
+
+  ; http://spacemacs.org/doc/DOCUMENTATION.html#mode-line
+  ; https://github.com/domtronn/all-the-icons.el/wiki/Mode-Line
+  (setq-default powerline-default-separator nil)
+  ;(setq-default spaceline-separator-dir-left '(right. right))
+  ;(setq-default spaceline-separator-dir-right '(left . left))
+  (spaceline-helm-mode 1)
+
+  ; Change colors when swiching mode
+  (setq-default spaceline-highlight-face-func 'spaceline-highlight-face-evil-state)
+  ;(spaceline-spacemacs-theme
+  ; '((projectile-root)))
+
+  (spaceline-define-segment my/evil-state
+	"The current verbose name of evil state. Requires `evil-mode' to be enabled."
+	(when (bound-and-true-p evil-local-mode)
+	  (s-trim (evil-state-property evil-state :tag t))))
+
+  (spaceline-define-segment my/projectile
+	"Tweaked project name"
+	(when (projectile-project-p)
+	  (let* ((project-name (projectile-project-name))
+			 (short-project-name (if (<= (length project-name) 10)
+									 project-name
+								   (concat (substring project-name 0 4)
+										   "…"
+										   (substring project-name -5 nil)))))
+		(propertize short-project-name
+					;'face '(:height 0.9 :inherit)
+					;'display '(raise 0.1)
+					'help-echo (concat "Projectile: " (projectile-project-root))))))
+
+  (spaceline-define-segment my/project-path
+	"The relative path of the current file. Requires `projectile'."
+		(let* ((root-length (if (projectile-project-p)
+							   (length (projectile-project-root))
+							 0))
+			   (relative-path (directory-file-name (substring default-directory root-length)))
+			   (short-path
+				(mapconcat (lambda (s) (if (<= (length s) 4)
+										   s
+										 (concat (substring s 0 3) "…")))
+						   (split-string relative-path "/")
+						   "/")))
+		  (propertize short-path
+					  'help-echo relative-path))
+		)
+
+
+  (spaceline-install
+   '((my/evil-state :face highlight-face :when active)
+	 ;auto-compile
+	 ;buffer-size
+	 
+	 (((my/projectile
+	    ((my/project-path
+		  buffer-id
+		  )
+		 :separator "/"
+		 )
+	    remote-host)
+	   :separator " | ")
+	  (buffer-modified :when active))
+	 anzu
+	 (major-mode :when active)
+	 (process :when active)
+	 ;(mu4e-alert-segment :when active)
+	 ;(erc-track :when active)
+	 (version-control :when active)
+	 (org-pomodoro :when active)
+	 (org-clock :when active)
+	 nyan-cat)
+
+   `(which-function
+	 (python-pyvenv :fallback python-pyenv)
+	 ((flycheck-error flycheck-warning flycheck-info)
+	  :when active)
+	 ;(minor-modes :when active)
+	 ;purpose
+	 (battery :when active)
+	 selection-info
+	 input-method
+	 ;(buffer-encoding-abbrev :when active)
+	 (global :when active)
+	 ((buffer-position
+	   point-position
+	   line-column)
+	  :separator " | "
+	  :face highlight-face)
+	 ;,@additional-segments
+	 ;hud
+	 ))
+  )
+
 ;;;;; Modeline-posn
 
 (use-package modeline-posn
+  :disabled t
   :ensure
   :init
   (defvar modelinepos-column-limit)
@@ -425,6 +579,17 @@
     :defer t))
 
 
+;;;;; Pass
+
+(use-package pass
+  :ensure t
+  :commands (pass-mode))
+
+(use-package helm-pass
+  :ensure t
+  :commands (helm-pass))
+
+
 ;;;;; Projectile
 
 (use-package projectile
@@ -437,8 +602,9 @@
 		(", SPC n" . helm-projectile)
 		(", SPC B" . helm-projectile-switch-to-buffer)
 		(", SPC p" . helm-projectile-switch-project))
-  :config
+  :init
   (projectile-mode t)
+  :config
   (setq projectile-completion-system 'helm)
   (helm-projectile-on)
 
@@ -521,6 +687,7 @@
   :ensure
   :config
   (setq todotxt-default-file (expand-file-name "~/Dropbox/todo/todo.txt"))
+  (add-hook 'todotxt-mode-hook 'toggle-truncate-lines)
   :bind
   (:map evil-normal-state-map
 		(",tt" . todotxt-open-file)
@@ -555,6 +722,7 @@
 
 ;;;;; Uniquify
 (use-package uniquify
+  :disabled t
   :config
   (setq-default mode-line-buffer-identification
 				`(:eval
@@ -626,8 +794,8 @@
 
 (setq-default tab-width 4)
 
-(if (and (fboundp 'server-running-p)
-		 (not (server-running-p)))
+(if (not (and (boundp 'server-process)
+			  (memq (process-status server-process) '(connect listen open run))))
 	(server-start))
 
 (defun switch-to-minibuffer ()
@@ -638,7 +806,7 @@
 	(error "Minibuffer is not active")))
 (message "Bind switch-to-minibubber to something")
 
-(setq split-height-threshold 50
+(setq split-height-threshold 80
 	  split-width-threshold 220)
 
 
@@ -825,24 +993,25 @@ Turns off backup creation and auto saving."
 (global-hl-line-mode)
 
 ; Switch mode-line color from flatuicolors.com
-(set-face-background 'mode-line-inactive silver)
-(set-face-foreground 'mode-line-inactive concrete)
-(set-face-attribute 'mode-line-inactive nil :box nil)
+;(set-face-background 'mode-line-inactive flatui-color-silver)
+;(set-face-foreground 'mode-line-inactive flatui-color-concrete)
+;(set-face-attribute 'mode-line-inactive nil :box nil)
+;(set-face-attribute 'mode-line nil :box nil)
 
-(let ((current-color (lambda ()
-		       (let ((color (cond ((minibufferp) `(,wisteria . ,amethyst-hover))
-								  ((evil-insert-state-p) `(,nephritis . ,emerald-hover))
-								  ((evil-normal-state-p) `(,belize-hole . ,peter-river-hover))
-								  ((evil-emacs-state-p) `(,green-sea . ,turquoise-hover))
-								  ((evil-visual-state-p) `(,pumpkin . ,carrot-hover))
-								  ((evil-replace-state-p) `(,pomegranate . ,alizarin-hover))
-								  ((evil-motion-state-p) `(,midnight . ,wet-asphalt-hover))
-								  (t `(,asbestos . ,concrete))
-								  )))
-			 (set-face-background 'mode-line (car color))
-			 (set-face-foreground 'mode-line (cdr color))
-			 ))))
-  (add-hook 'post-command-hook current-color))
+;(let ((current-color (lambda ()
+;		       (let ((color (cond ((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
+;								  ((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
+;								  ((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
+;								  ((evil-emacs-state-p) `(,flatui-color-green-sea . ,flatui-color-turquoise-hover))
+;								  ((evil-visual-state-p) `(,flatui-color-pumpkin . ,flatui-color-carrot-hover))
+;								  ((evil-replace-state-p) `(,flatui-color-pomegranate . ,flatui-color-alizarin-hover))
+;								  ((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
+;								  (t `(,flatui-color-asbestos . ,flatui-color-concrete))
+;								  )))
+;			 (set-face-background 'mode-line (car color))
+;			 (set-face-foreground 'mode-line (cdr color))
+;			 ))))
+;  (add-hook 'post-command-hook current-color))
 
 
 
@@ -888,7 +1057,7 @@ Turns off backup creation and auto saving."
  '(neo-vc-integration nil)
  '(package-selected-packages
    (quote
-	(vagrant yasnippet yaml-mode web-mode use-package todotxt-mode textmate textile-mode swift-mode sublime-themes sr-speedbar spacegray-theme smart-tabs-mode scss-mode pyvenv puppet-mode php-mode php+-mode peg notmuch-labeler nose neotree multiple-cursors monokai-theme modeline-posn markdown-mode+ magit-tramp magit-svn magit-push-remote lacarte jedi indent-guide ido-vertical-mode ido-ubiquitous helm-themes helm-projectile helm-git helm-flycheck helm-dash helm-css-scss haskell-mode gruvbox-theme gruber-darker-theme groovy-mode graphviz-dot-mode gradle-mode gnuplot-mode git-gutter flycheck-pyflakes flx-ido flatui-theme flatland-theme fiplr evil-visualstar evil-text-object-python evil-surround evil-org evil-matchit evil-magit emamux ecb dayone dash-at-point cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-theme coffee-mode cm-mode bbdb-vcard auto-indent-mode auto-complete-clang-async auto-complete-clang adaptive-wrap ack-and-a-half)))
+	(all-the-icons-dired all-the-icons-dired-mode all-the-icons molokai-theme anzu smart-mode-line spaceline pass helm-pass material-theme less-css-mode dockerfile-mode vagrant yasnippet yaml-mode web-mode use-package todotxt-mode textmate textile-mode swift-mode sublime-themes sr-speedbar spacegray-theme smart-tabs-mode scss-mode pyvenv puppet-mode php-mode php+-mode peg notmuch-labeler nose neotree multiple-cursors monokai-theme modeline-posn markdown-mode+ magit-tramp magit-svn magit-push-remote lacarte jedi indent-guide ido-vertical-mode ido-ubiquitous helm-themes helm-projectile helm-git helm-flycheck helm-dash helm-css-scss haskell-mode gruvbox-theme gruber-darker-theme groovy-mode graphviz-dot-mode gradle-mode gnuplot-mode git-gutter flycheck-pyflakes flx-ido flatui-theme flatland-theme fiplr evil-visualstar evil-text-object-python evil-surround evil-org evil-matchit evil-magit emamux ecb dayone dash-at-point cyberpunk-theme color-theme-sanityinc-tomorrow color-theme-sanityinc-solarized color-theme coffee-mode cm-mode bbdb-vcard auto-indent-mode auto-complete-clang-async auto-complete-clang adaptive-wrap ack-and-a-half)))
  '(pos-tip-background-color "#A6E22E")
  '(pos-tip-foreground-color "#272822")
  '(projectile-mode-line (quote (:eval (format " P[%s]" (projectile-project-name)))))
@@ -945,14 +1114,18 @@ Turns off backup creation and auto saving."
 (put 'narrow-to-region 'disabled nil)
 
 (defvar my-default-font-family)
+(defvar my-default-font-height)
 (if (string-equal system-type "darwin")
 	;(:foundry "nil" :family "ProfontIIx")
-	(setq my-default-font-family "ProfontIIx"))
+	; Source Code Pro:110
+	(setq my-default-font-family "ProfontIIx"
+		  my-default-font-height 90))
 (if (string-equal system-type "gnu/linux")
 	;(:foundry "unknown" :family "ProFontWindows")
-	(setq my-default-font-family "ProFontWindows"))
+	(setq my-default-font-family "ProFontWindows"
+		  my-default-font-height 90))
 
-(set-face-attribute 'default nil :height 90 :family my-default-font-family)
+(set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
 
 
 (provide 'init)
