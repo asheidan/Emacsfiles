@@ -438,6 +438,11 @@
 
    (", SPC c" . helm-flycheck)))
 
+(use-package helm-themes
+  :after helm-config
+  :ensure t
+  :commands helm-themes)
+
 ;;;;; Indent guide
 (use-package indent-guide
   :ensure
