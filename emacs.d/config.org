@@ -152,7 +152,7 @@ I try to use this to shorten the project name as well as the relative path withi
       "Shortens path-like strings by shorten each segment"
       (let ((use-separator (or separator "/"))
             (use-length (or chunk-length 4))
-            (use-max-length (or max-length 12)))
+            (use-max-length (or max-length 8)))
         (if (< use-max-length (length path))
             (mapconcat (lambda (s) (if (<= (length s) use-length)
                                        s
