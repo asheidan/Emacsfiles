@@ -735,6 +735,15 @@ Helm integration for flycheck.
     :commands helm-flycheck)
 #+END_SRC
 
+*** TODO Custom indicator for flycheck in modeline
+
+Try to create a custom indicator which shows errors/warnings in an easier to read way.
+
+These might be interesting:
+
+  ;(flycheck-has-current-errors-p)
+  ;(flycheck-count-errors flycheck-current-errors)
+
 * Git
 ** Magit
 
