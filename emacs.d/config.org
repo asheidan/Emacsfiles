@@ -1,6 +1,8 @@
 #+TITLE:  Emacs Configuration
 #+AUTHOR: Emil Eriksson
 
+Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
+
 * Theming / UI
 ** Font
 
@@ -143,7 +145,7 @@ Color the modeline according to the current vim-mode.
   (set-face-foreground 'mode-line-buffer-id flatui-color-clouds)
 #+END_SRC
 *** Modeline Format
-
+**** Helper functions
 Function used to "intelligently" shorten paths and names.
 I try to use this to shorten the project name as well as the relative path within a project for a buffer.
 
@@ -184,6 +186,7 @@ I try to use this to shorten the project name as well as the relative path withi
                   'help-echo relative-path)))
 #+END_SRC
 
+**** Actual format
 #+BEGIN_SRC emacs-lisp
   (setq-default mode-line-format
         (list
