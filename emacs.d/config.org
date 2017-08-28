@@ -187,6 +187,11 @@ I try to use this to shorten the project name as well as the relative path withi
 #+END_SRC
 
 **** Actual format
+
+Inspiration for continued work:
+https://gist.github.com/hlissner/f80647f7a390bfe78a805a40b9c28e9b
+https://www.emacswiki.org/emacs/ModeLineConfiguration
+
 #+BEGIN_SRC emacs-lisp
   (setq-default mode-line-format
         (list
