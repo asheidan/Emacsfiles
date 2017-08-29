@@ -244,6 +244,18 @@ This indents wrapped lines to the correct left margin.
     (global-anzu-mode))
 #+END_SRC
 
+*** Descbinds (describe key bindings)
+
+Helm interface for searching through keybindings.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-descbinds
+    :after helm-config
+    :ensure t
+    :defer t
+    :config (helm-descbinds-mode))
+#+END_SRC
+
 *** Hideshow
     
 #+BEGIN_SRC emacs-lisp
