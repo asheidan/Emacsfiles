@@ -3,6 +3,22 @@
 
 Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
 
+* Environment
+
+** PATH
+
+#+BEGIN_SRC emacs-lisp
+  (if (string-equal system-type "darwin")
+      (let
+          ((path '("/usr/local/bin" "/usr/bin" "/bin"
+                   "/usr/local/sbin" "/usr/sbin" "/sbin"
+                   "/opt/X11/bin" "/opt/ImageMagick/bin"
+                   "/usr/local/MacGPG2/bin" "/usr/texbin")))
+        (progn
+          (set 'exec-path (delete-dups (append path exec-path)))
+          (setenv "PATH" (mapconcat 'identity path ":")))))
+#+END_SRC
+
 * Theming / UI
 ** Font
 
