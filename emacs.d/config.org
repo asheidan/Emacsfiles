@@ -869,9 +869,12 @@ https://github.com/emacs-helm/helm/wiki
     :ensure t
     :mode ("\\.org\\'" . org-mode)
     :config
-    (add-hook 'org-mode-hook 'tabs-disable)
-    (add-hook 'org-mode-hook 'toggle-word-wrap)
-    (add-hook 'org-mode-hook 'adaptive-wrap-prefix-mode))
+    (add-hook 'org-mode-hook
+              '(lambda ()
+                 (tabs-disable)
+                 (ws-trim-mode)
+                 (visual-line-mode)
+                 (adaptive-wrap-prefix-mode))))
 #+END_SRC
 
 Evil keybindings for org-mode.
@@ -1033,6 +1036,54 @@ Custom minor mode to turn off some behaviour for files in Dropbox.
 #+END_SRC
 
 * My own custom functions
+
+** Org addons
+
+*** Tag summary
+
+Collect all entries tagged with a given tag and show in new RO-buffer.
+
+Minor mode to provide custom keybindings to refresh the summary.
+
+Inspiration on how to create/define a minor mode: http://nullprogram.com/blog/2013/02/06/
+
+#+BEGIN_SRC emacs-lisp
+  (define-minor-mode org-tag-summary-mode
+    "Some extra stuff to collect entries from org-files."
+    :keymnap (let ((map (make-sparse-keymap)))
+               (define-key map (kbd "g r") 'org-tag-summary-refresh)
+               map))
+#+END_SRC
+
+Shell out to external script to speed up directory iteration. Right now the performance is sufficient with python. Might be an idea to move to C/C++ if the number of files becomes really large.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar org-tag-parser-script "~/bin/org-tag.py"
+    "The script to use for extracting entries with a certain tag.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun create-buffer-with-org-tag (tag)
+    "Create a new buffer matching the org tag TAG."
+    (interactive)
+    (let* ((buffer-name (concat "*Org entries tagged: " tag "*"))
+           (buffer-handle (generate-new-buffer buffer-name)))
+      (switch-to-buffer buffer-handle)
+
+      (let ((p (point)))
+        (org-mode)
+        (insert (shell-command-to-string (concat org-tag-parser-script " " tag)))
+        (not-modified)
+        (setq buffer-read-only t)
+        (goto-char p))))
+#+END_SRC
+
+**** TODO Add support for FILETAGS
+**** TODO Skip the current file if a worklog-file is open
+**** TODO Provide refresh via interactive command
+**** TODO Bind key to the refresh command
+**** TODO Link headers to original definition
+
 ** Tabs handling
 
 #+BEGIN_SRC emacs-lisp
