@@ -147,8 +147,10 @@ Color the modeline according to the current vim-mode.
   ; Switch mode-line color from flatuicolors.com
   (set-face-background 'mode-line-inactive flatui-color-silver)
   (set-face-foreground 'mode-line-inactive flatui-color-concrete)
-  (set-face-attribute 'mode-line-inactive nil :box nil)
-  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil :weight 'normal)
+  (set-face-attribute 'mode-line nil :box nil :weight 'normal)
+  ;(set-face-attribute 'mode-line-buffer-id :weight 'normal)
+
   ;((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
   ;((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
   ;((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
