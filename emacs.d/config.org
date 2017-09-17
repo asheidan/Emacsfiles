@@ -530,6 +530,13 @@ Makes it possible to create *- and #-searches with a visual selection.
 
 * Modes
 
+** C whatever
+
+#+BEGIN_SRC emacs-lisp
+  (setq c-basic-offset 4)
+#+END_SRC
+
+** Docker compose
 ** Estimation
   
 This is my own ugly hack which abuses YAML-files as an outliner to create estimates.
