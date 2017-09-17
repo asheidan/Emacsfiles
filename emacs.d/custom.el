@@ -87,4 +87,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(mode-line-buffer-id ((t (:foreground "#ecf0f1" :weight normal))))
  '(org-agenda-date-today ((t (:foreground "#16a085" :slant italic :weight bold)))))
