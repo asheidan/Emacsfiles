@@ -7,13 +7,6 @@
 (setq my-old-gc-cons-threshold gc-cons-threshold)
 (setq gc-cons-threshold 100000000)
 
-(require 'package)
-;;; Add package repository
-(add-to-list 'package-archives
-			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
-(package-initialize)
-
-
 ; Profiling
 ; /Applications/Emacs.app/Contents/MacOS/Emacs -Q -l ./vendor/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name\"~/.emacs.d/init.el\"))" -f profile-dotemacs
 
@@ -33,6 +26,13 @@
 	  (display-graphic-p)
 	  (string-equal system-type "darwin")))
 	(menu-bar-mode -1))
+
+(require 'package)
+;;; Add package repository
+(add-to-list 'package-archives
+			 '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+
 
 (org-babel-load-file (concat user-emacs-directory "config.org"))
 
