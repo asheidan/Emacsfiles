@@ -36,11 +36,13 @@
  '(neo-smart-open t)
  '(neo-theme (quote nerd))
  '(neo-vc-integration nil)
- '(org-agenda-files (quote ("~/Dropbox/Worklog")))
+ '(org-agenda-files
+   (quote
+	("~/Dropbox/Worklog/2017/08 August" "~/Dropbox/Worklog/Pro7/UCP")))
  '(org-hide-leading-stars t)
  '(package-selected-packages
    (quote
-	(htmlize ansible evil-leader helm-projectile projectile helm-ack solarized-theme all-the-icons-dired-mode molokai-theme smart-mode-line spaceline pass helm-pass material-theme less-css-mode dockerfile-mode vagrant yasnippet yaml-mode web-mode use-package todotxt-mode textile-mode sublime-themes sr-speedbar spacegray-theme smart-tabs-mode scss-mode pyvenv puppet-mode multiple-cursors monokai-theme modeline-posn markdown-mode+ magit-tramp magit-svn magit-push-remote lacarte jedi indent-guide ido-vertical-mode ido-ubiquitous helm-themes helm-git helm-flycheck helm-dash helm-css-scss haskell-mode gruvbox-theme gruber-darker-theme groovy-mode graphviz-dot-mode gradle-mode gnuplot-mode git-gutter flycheck-pyflakes flx-ido flatui-theme flatland-theme evil-visualstar evil-text-object-python evil-surround evil-org evil-matchit evil-magit dayone dash-at-point cyberpunk-theme color-theme-sanityinc-tomorrow color-theme cm-mode auto-indent-mode adaptive-wrap ack-and-a-half)))
+	(docker docker-compose-mode docker-tramp helm-tramp vagrant-tramp helm-descbinds htmlize ansible evil-leader helm-projectile projectile helm-ack solarized-theme all-the-icons-dired-mode molokai-theme smart-mode-line spaceline pass helm-pass material-theme less-css-mode dockerfile-mode vagrant yasnippet yaml-mode web-mode use-package todotxt-mode textile-mode sublime-themes sr-speedbar spacegray-theme smart-tabs-mode scss-mode pyvenv puppet-mode multiple-cursors monokai-theme modeline-posn markdown-mode+ magit-tramp magit-svn magit-push-remote lacarte jedi indent-guide helm-themes helm-git helm-flycheck helm-dash helm-css-scss haskell-mode gruvbox-theme gruber-darker-theme groovy-mode graphviz-dot-mode gradle-mode gnuplot-mode git-gutter flycheck-pyflakes flatui-theme flatland-theme evil-visualstar evil-text-object-python evil-surround evil-org evil-matchit evil-magit dayone dash-at-point cyberpunk-theme color-theme-sanityinc-tomorrow color-theme cm-mode auto-indent-mode adaptive-wrap ack-and-a-half)))
  '(pos-tip-background-color "#A6E22E")
  '(pos-tip-foreground-color "#272822")
  '(projectile-mode-line (quote (:eval (format " P[%s]" (projectile-project-name)))))
