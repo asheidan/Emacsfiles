@@ -305,15 +305,15 @@ Helm interface for searching through keybindings.
 #+END_SRC
 
 *** Lacarte
-    
+
 Using helm to browse menus.
 
 #+BEGIN_SRC emacs-lisp
   (use-package lacarte
     :after (evil helm-config)
-    :ensure
+    :ensure t
     :bind (:map evil-normal-state-map
-		(", SPC m" . helm-browse-menubar)))
+                (", SPC m" . helm-browse-menubar)))
 #+END_SRC
 
 *** Modeline position
@@ -337,6 +337,8 @@ Using helm to browse menus.
 #+END_SRC
 
 *** Smart tabs
+
+https://www.emacswiki.org/emacs/SmartTabs
 
 #+BEGIN_SRC emacs-lisp
 (use-package smart-tabs-mode
@@ -839,19 +841,23 @@ https://github.com/emacs-helm/helm/wiki
   (use-package helm-config
     :ensure helm
     :diminish helm-mode
+    :commands helm-mode
     ;:defer t
     :config (helm-mode 1)
 
     :bind
     (("M-x". helm-M-x)
+     ("C-x C-f" . helm-find-files)
+     ("C-x C-b" . helm-buffers-list)
      :map evil-normal-state-map
+     (", SPC b" . helm-buffers-list)
      (", SPC f" . helm-find-files)
      (", SPC o" . helm-imenu)
-     (", SPC b" . helm-buffers-list)
 
      (", SPC x" . helm-M-x)
 
      (", SPC t" . helm-etags-select)
+     (", SPC '" . helm-all-mark-rings)
 
      (", SPC c" . helm-flycheck)))
 #+END_SRC
