@@ -1,0 +1,1160 @@
+#+TITLE:  Emacs Configuration
+#+AUTHOR: Emil Eriksson
+
+Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
+
+* Environment
+
+** PATH
+
+#+BEGIN_SRC emacs-lisp
+  (if (string-equal system-type "darwin")
+      (let
+          ((path '("/usr/local/bin" "/usr/bin" "/bin"
+                   "/usr/local/sbin" "/usr/sbin" "/sbin"
+                   "/opt/X11/bin" "/opt/ImageMagick/bin"
+                   "/usr/local/MacGPG2/bin" "/usr/texbin")))
+        (progn
+          (set 'exec-path (delete-dups (append path exec-path)))
+          (setenv "PATH" (mapconcat 'identity path ":")))))
+#+END_SRC
+
+* Theming / UI
+** Font
+
+#+BEGIN_SRC emacs-lisp
+(defvar my-default-font-family)
+(defvar my-default-font-height)
+(if (string-equal system-type "darwin")
+	;(:foundry "nil" :family "ProfontIIx")
+	; Source Code Pro:110
+	(setq my-default-font-family "ProfontIIx"
+		  my-default-font-height 90))
+(if (string-equal system-type "gnu/linux")
+	(setq my-default-font-family "ProFontWindows"
+		  my-default-font-height 90))
+(set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
+;(set-face-attribute 'mode-line nil :box nil)
+;(set-face-attribute 'mode-line-inactive nil :box nil)
+#+END_SRC
+
+** Themes
+
+*** FlatUI
+
+Theme with colors from http://flatui.com/flat-ui-color-palette/.
+
+This is currently my most often used theme.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flatui-theme
+  :ensure
+  :config
+  (load-theme 'flatui t))
+#+END_SRC
+
+*** Molokai
+
+#+BEGIN_SRC emacs-lisp
+(use-package molokai-theme
+  :disabled t
+  :ensure)
+#+END_SRC
+
+*** Helm themes
+
+Not sure if this belongs here or in the Helm-section.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-themes
+    :after helm-config
+    :ensure t
+    :commands helm-themes)
+#+END_SRC
+
+** Custom colors
+
+A bunch of custom colors taken from the FlatUI theme.
+
+#+BEGIN_SRC emacs-lisp
+;;;; Colors
+
+(defvar flatui-color-green-sea "#16a085")
+(defvar flatui-color-turquoise "#1abc9c")
+(defvar flatui-color-turquoise-hover "#1ABC9C")
+(defvar flatui-color-nephritis "#27ae60")
+(defvar flatui-color-emerald "#2ecc71")
+(defvar flatui-color-emerald-hover "#40d47e")
+(defvar flatui-color-belize-hole "#2980b9")
+(defvar flatui-color-peter-river "#3498db")
+(defvar flatui-color-peter-river-hover "#4aa3df")
+(defvar flatui-color-wisteria "#8e44ad")
+(defvar flatui-color-amethyst "#9b59b6")
+(defvar flatui-color-amethyst-hover "#a66bbe")
+(defvar flatui-color-midnight "#2c3e5e")
+(defvar flatui-color-wet-asphalt "#34495e")
+(defvar flatui-color-wet-asphalt-hover "#3d566e")
+(defvar flatui-color-orange "#f39c12")
+(defvar flatui-color-sun-flower "#f1c40f")
+(defvar flatui-color-sun-flower-hover "#f2ca27")
+(defvar flatui-color-pumpkin "#d35400")
+(defvar flatui-color-carrot "#e67e22")
+(defvar flatui-color-carrot-hover "#e98b39")
+(defvar flatui-color-pomegranate "#c0392b")
+(defvar flatui-color-alizarin "#e74c3c")
+(defvar flatui-color-alizarin-hover "#ea6153")
+(defvar flatui-color-silver "#bdc3c7")
+(defvar flatui-color-silver-hover "#cad1d5")
+(defvar flatui-color-clouds "#ecf0f1")
+(defvar flatui-color-clouds-hover "#fbfcfc")
+(defvar flatui-color-asbestos "#7f8c8d")
+(defvar flatui-color-concrete "#95a5a6")
+(defvar flatui-color-concrete-hover "#a3b1b2")
+#+END_SRC
+
+** Line highlighting
+
+Highlite the line the cursor is currently on.
+
+#+BEGIN_SRC emacs-lisp
+  (global-hl-line-mode)
+#+END_SRC
+
+** Modeline
+*** My own custom colors
+    
+Color the modeline according to the current vim-mode.
+
+#+BEGIN_SRC emacs-lisp
+  (let ((current-color
+         (lambda ()
+           (let ((color (cond ((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
+                              ((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
+                              ((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
+                              ((evil-emacs-state-p) `(,flatui-color-green-sea . ,flatui-color-turquoise-hover))
+                              ((evil-visual-state-p) `(,flatui-color-pumpkin . ,flatui-color-carrot-hover))
+                              ((evil-replace-state-p) `(,flatui-color-pomegranate . ,flatui-color-alizarin-hover))
+                              ((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
+                              (t `(,flatui-color-asbestos . ,flatui-color-concrete))
+                              )))
+                                          ;(set-face-background 'mode-line (car color))
+                                          ;(set-face-foreground 'mode-line flatui-color-clouds) ;(cdr color))
+             (set-face-attribute 'mode-line nil
+                                 :foreground (car color)
+                                 :background (cdr color))))))
+    (add-hook 'post-command-hook current-color))
+    
+  ; Switch mode-line color from flatuicolors.com
+  (set-face-background 'mode-line-inactive flatui-color-silver)
+  (set-face-foreground 'mode-line-inactive flatui-color-concrete)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (set-face-attribute 'mode-line nil :box nil)
+  ;((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
+  ;((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
+  ;((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
+  ;((evil-emacs-state-p) `(,flatui-color-green-sea . ,flatui-color-turquoise-hover))
+  ;((evil-visual-state-p) `(,flatui-color-pumpkin . ,flatui-color-carrot-hover))
+  ;((evil-replace-state-p) `(,flatui-color-pomegranate . ,flatui-color-alizarin-hover))
+  ;((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
+  ;(t `(,flatui-color-asbestos . ,flatui-color-concrete))
+
+  (set-face-foreground 'mode-line-buffer-id flatui-color-clouds)
+#+END_SRC
+*** Modeline Format
+**** Helper functions
+Function used to "intelligently" shorten paths and names.
+I try to use this to shorten the project name as well as the relative path within a project for a buffer.
+
+#+BEGIN_SRC emacs-lisp
+    (defun my/shorten-path (path &optional separator chunk-length max-length)
+      "Shortens path-like strings by shorten each segment"
+      (let ((use-separator (or separator "/"))
+            (use-length (or chunk-length 4))
+            (use-max-length (or max-length 8)))
+        (if (< use-max-length (length path))
+            (mapconcat (lambda (s) (if (<= (length s) use-length)
+                                       s
+                                     (concat (substring s 0 (- use-length 1)) "…")))
+                       (split-string path use-separator)
+                       use-separator)
+          path)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/projectile ()
+      "Tweaked project name"
+    (when (projectile-project-p)
+      (let ((short-project-name (my/shorten-path (projectile-project-name) "-")))
+        (propertize (concat short-project-name "|")
+                    'help-echo (concat "Projectile: " (projectile-project-root))))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/project-path ()
+    "The relative path of the current file. Requires `projectile'."
+    (let* ((max-length 16)
+           (root-length (if (projectile-project-p)
+                            (length (projectile-project-root))
+                          0))
+           (relative-path (directory-file-name (substring default-directory root-length)))
+           (short-path (my/shorten-path relative-path)))
+      (propertize (concat short-path "/")
+                  'help-echo relative-path)))
+#+END_SRC
+
+**** Actual format
+
+Inspiration for continued work:
+https://gist.github.com/hlissner/f80647f7a390bfe78a805a40b9c28e9b
+https://www.emacswiki.org/emacs/ModeLineConfiguration
+
+#+BEGIN_SRC emacs-lisp
+  (setq-default mode-line-format
+        (list
+         "%e"
+         'mode-line-front-space
+         'mode-line-mule-info
+         'mode-line-client
+         'mode-line-modified
+         'mode-line-remote
+
+         ;'evil-mode-line-tag
+
+         " "
+         '(:eval (my/projectile))
+         '(:eval (my/project-path))
+
+         'mode-line-buffer-identification
+         'mode-line-frame-identification
+
+         " "
+         '(vc-mode
+           vc-mode)
+         " "
+         'mode-line-end-spaces
+         'mode-line-position
+         'mode-line-modes
+         'mode-line-misc-info
+         ))
+#+END_SRC
+
+** UI addons
+
+*** Adaptive prefix for word wrapping
+
+This indents wrapped lines to the correct left margin.
+
+#+BEGIN_SRC emacs-lisp
+(use-package adaptive-wrap
+  :ensure)
+#+END_SRC
+
+*** Anzu
+
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :disabled t
+    :ensure t
+    :config
+    (setq-default anzu-cons-mode-line-p nil)
+    (global-anzu-mode))
+#+END_SRC
+
+*** Descbinds (describe key bindings)
+
+Helm interface for searching through keybindings.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-descbinds
+    :after helm-config
+    :ensure t
+    :defer t
+    :config (helm-descbinds-mode))
+#+END_SRC
+
+*** Hideshow
+    
+#+BEGIN_SRC emacs-lisp
+  (use-package hideshow
+    :commands (hs-minor-mode)
+    ;:diminish hs-minor-mode
+    :init
+    (add-hook 'estimation-mode 'hs-minor-mode)
+    :config
+    (add-to-list 'hs-special-modes-alist
+		 `(yaml-mode ":" nil "#"
+			     ,(lambda (_arg) (let ((block-indentation (current-indentation))
+						   (block-began-from-list (line-is-list-item)))
+					       (while (progn
+							(forward-line 1)
+							(and (not (eobp))
+							     (or (> (current-indentation) block-indentation)
+								 (and (not block-began-from-list)
+								      (= (current-indentation) block-indentation)
+								      (line-is-list-item)))))))) nil)))
+#+END_SRC
+
+*** Indent guide
+
+#+BEGIN_SRC emacs-lisp
+  (use-package indent-guide
+    :after evil
+    :ensure
+    :bind (:map evil-normal-state-map
+		(", i g" . indent-guide-mode)))
+#+END_SRC
+
+*** Lacarte
+
+Using helm to browse menus.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lacarte
+    :after (evil helm-config)
+    :ensure t
+    :bind (:map evil-normal-state-map
+                (", SPC m" . helm-browse-menubar)))
+#+END_SRC
+
+*** Modeline position
+
+#+BEGIN_SRC emacs-lisp
+  (use-package modeline-posn
+    :disabled t
+    :ensure
+    :init
+    (defvar modelinepos-column-limit)
+    (setq modelinepos-column-limit 70))
+#+END_SRC
+
+*** Neotree
+
+#+BEGIN_SRC emacs-lisp
+  (use-package neotree
+    :config
+    (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
+    :bind (([f2] . neotree-toggle)))
+#+END_SRC
+
+*** Smart tabs
+
+https://www.emacswiki.org/emacs/SmartTabs
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-tabs-mode
+  :disabled t
+  :ensure
+  :config
+  (smart-tabs-insinuate 'c
+			'c++))
+#+END_SRC
+
+*** Speedbar
+
+#+BEGIN_SRC emacs-lisp
+  (use-package speedbar
+    :disabled t
+    :bind (:map evil-normal-state-map
+		("<f2>" . speedbar))
+    :config
+    (speedbar-add-supported-extension ".css")
+    (speedbar-add-supported-extension ".less")
+    (speedbar-add-supported-extension ".jsx")
+    (speedbar-add-supported-extension ".md")
+    (speedbar-add-supported-extension ".sh")
+    (speedbar-add-supported-extension ".xml")
+    (speedbar-add-supported-extension ".wlog")
+    (defun nm-speedbar-expand-line-list (&optional arg)
+      (when arg
+					  ;(message (car arg))
+	(re-search-forward (concat " " (car arg) "$"))
+	(speedbar-expand-line (car arg))
+	(speedbar-next 1) ;; Move into the list.
+	(nm-speedbar-expand-line-list (cdr arg))))
+    (defun nm-speedbar-open-current-buffer-in-tree ()
+      (interactive)
+      (let* ((root-dir (projectile-project-root))
+	     (original-buffer-file-directory (file-name-directory (buffer-file-name)))
+	     (relative-buffer-path (cadr (split-string original-buffer-file-directory root-dir)))
+	     (parents (butlast (split-string relative-buffer-path "/"))))
+	(save-excursion
+	  ;;(speedbar 1) ;; Open speedbar
+	  (set-buffer speedbar-buffer)
+	  (if (not (string-equal default-directory root-dir))
+	      (progn
+		(setq default-directory root-dir)
+		(speedbar-update-contents)))
+	  (goto-char (point-min))
+	  (nm-speedbar-expand-line-list parents)))))
+#+END_SRC
+
+*** Whitespace trimming
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ws-trim
+    :load-path "vendor"
+    :diminish ws-trim-mode
+    :commands (global-ws-trim-mode ws-trim-mode)
+    :config
+    (global-ws-trim-mode 1)
+    (setq ws-trim-mode 1))
+#+END_SRC
+
+* Options
+  
+#+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t
+	initial-scratch-message nil)
+
+  ; Include column number int mode-line
+  (setq column-number-mode t
+	line-number-mode t)
+
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+
+  (setq-default tab-width 4)
+
+  (setq split-height-threshold 80
+	split-width-threshold 220)
+#+END_SRC
+
+** Mac specific stuff
+   
+#+BEGIN_SRC emacs-lisp
+;; Fix option-key
+;(setq default-input-method "MacOSX")
+(defvar mac-command-modifier)
+(defvar mac-allow-antialiasing)
+(defvar mac-command-key-is-meta)
+(if (string-equal system-type "darwin")
+    (setq mac-option-modifier nil
+	  mac-command-modifier 'meta
+	  mac-allow-antialiasing t
+	  mac-command-key-is-meta t))
+(defvar x-meta-keysym)
+(defvar x-super-keysym)
+(if (string-equal system-type "gnu/linux")
+    (setq x-meta-keysym 'super
+		  x-super-keysym 'meta))
+#+END_SRC
+
+* Customize
+
+Set up the customize file to its own separate file [[file:custom.el][custom.el]], instead of saving
+customize settings in [[file:init.el][init.el]].
+
+#+BEGIN_SRC emacs-lisp
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (load custom-file)
+#+END_SRC
+
+* Evil
+
+Miscellaneous packages and config related to the VI-emulator Evil.
+
+** Main package
+
+#+BEGIN_SRC emacs-lisp
+  (defun my-move-key (keymap-from keymap-to key)
+    "Move key binding for KEY from keymap KEYMAP-FROM to KEYMAP-TO, deleting from the old location."
+    (define-key keymap-to key (lookup-key keymap-from key))
+    (define-key keymap-from key nil))
+
+  (defun ex-mode-mapping (cmd)
+    "Bind CMD as a evil-ex command."
+    (let ((binding (car cmd))
+          (fn (cdr cmd)))
+      (evil-ex-define-cmd binding fn)))
+
+  (use-package evil
+    :ensure
+    :config
+    (evil-mode t)
+
+    (define-key evil-normal-state-map "," nil)
+    (define-key evil-normal-state-map "\C-j" 'evil-jump-to-tag)
+    (define-key evil-normal-state-map "\C-k" 'evil-jump-backward)
+
+    (define-key evil-normal-state-map "\C-f" nil)
+    (define-key evil-normal-state-map "\C-\M-wn" 'make-frame)
+    (define-key evil-normal-state-map "\C-\M-wc" 'delete-frame)
+    (define-key evil-normal-state-map "\C-\M-wl" 'ns-next-frame)
+    (define-key evil-normal-state-map "\C-\M-wh" 'ns-prev-frame)
+
+    (my-move-key evil-motion-state-map evil-normal-state-map (kbd "RET"))
+    (my-move-key evil-motion-state-map evil-normal-state-map " ")
+
+    (mapc 'ex-mode-mapping
+          '(("gstatus" . magit-status)
+            ("whitespace" . whitespace-mode)
+            ("test" . projectile-test-project)
+            ("make" . projectile-compile-project)
+            ("dash" . dash-at-point)
+            ("ack" . ack-and-a-half)
+            ("co" . flycheck-list-errors))))
+#+END_SRC
+
+** Evil surround
+
+Evil surrounds us!
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-surround
+    :after evil
+    :ensure
+    :config
+    (global-evil-surround-mode 1))
+#+END_SRC
+
+** Evil python text object
+
+Makes it possible to select a block in python.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-text-object-python
+    :after (evil python-mode)
+    :ensure
+    :config
+    (add-hook 'python-mode-hook 'evil-text-object-python-add-bindings))
+#+END_SRC
+
+** Evil visualstar
+
+Makes it possible to create *- and #-searches with a visual selection.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-visualstar
+    :after evil
+    :ensure)
+#+END_SRC
+
+* Modes
+
+** C whatever
+
+#+BEGIN_SRC emacs-lisp
+  (setq c-basic-offset 4)
+#+END_SRC
+
+** Docker compose
+** Estimation
+  
+This is my own ugly hack which abuses YAML-files as an outliner to create estimates.
+Should have learned org-mode instead.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package estimation
+    :after (adaptive-wrap)
+    :mode ("\\.est\\'" . estimation-mode)
+    :interpreter ("estimation" . estimation-mode)
+    :load-path "estimation"
+    :config
+    (add-hook 'estimation-mode-hook
+       (lambda () (progn
+		    ;(hs-minor-mode 1)
+		    (visual-line-mode 1)
+		    (adaptive-wrap-prefix-mode 1)))))
+#+END_SRC
+
+** Haskell
+
+#+BEGIN_SRC emacs-lisp
+  (use-package haskell-mode
+    :ensure
+    :mode ("\\.hs\\'")
+    :config
+    ;; Sane indentation for haskell
+    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
+#+END_SRC
+
+** Less-CSS
+
+#+BEGIN_SRC emacs-lisp
+  (use-package less-css-mode
+    :mode ("\\.css\\'" "\\.less\\'")
+    :config
+    (add-hook 'less-css-mode-hook
+              (function (lambda ()
+                          (add-to-list 'imenu-generic-expression
+                                       '("Rule" "[{}]\\([ \t\na-z0-9:_-]\\){" 1))))))
+#+END_SRC
+
+Add Helm integration for less/css.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-css-scss
+    :after (evil helm-config less-css-mode)
+    :ensure
+    :init
+    (add-hook 'less-css-mode-hook
+              (lambda ()
+                (define-key evil-normal-state-local-map ", SPC o" 'helm-css-scss))))
+#+END_SRC
+
+** Lisp
+
+Adding "outline" imenu structure to Lisp-files
+
+#+BEGIN_SRC emacs-lisp
+  (defun imenu-elisp-sections ()
+    "Imenu parser for Lisp comments."
+    (add-to-list 'imenu-generic-expression '("Section" "^;;;; \\(.+\\)$" 1) t)
+    (add-to-list 'imenu-generic-expression '("Subsection" "^;;;;; \\(.+\\)$" 1) t)
+    ;(setq imenu-prev-index-position-function nil)
+    )
+  (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
+#+END_SRC
+
+** Markdown
+
+#+BEGIN_SRC emacs-lisp
+  (use-package markdown-mode
+    :ensure
+    :mode "\\.\\(md\\|mdown\\|markdown\\|wlog\\)\\'"
+    :commands markdown-mode
+    :config
+
+    ; Trying to get markdown to look better
+    (set-face-foreground 'markdown-header-face flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-1 flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-2 flatui-color-nephritis)
+    (set-face-foreground 'markdown-header-face-3 flatui-color-pumpkin)
+    (set-face-foreground 'markdown-header-face-4 flatui-color-wisteria)
+    (set-face-foreground 'markdown-header-face-5 flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-6 flatui-color-nephritis)
+
+    (add-hook 'markdown-mode-hook
+              (lambda ()
+                (visual-line-mode t)
+                (adaptive-wrap-prefix-mode t)
+                (ws-trim-mode nil))))
+#+END_SRC
+
+Preview markdown with Marked
+
+#+BEGIN_SRC emacs-lisp
+  (defvar marked-name)
+  (setq marked-name "Marked 2")
+  (defun markdown-preview-file ()
+    "Run Marked on the current file and revert the buffer."
+    (interactive)
+    (shell-command (format "open -a '%s' '%s'"
+			   marked-name
+			   (buffer-file-name))))
+#+END_SRC
+
+** Markdown critic
+
+Nice addon to markdown which allows for suggesting changes, commenting and so on.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package cm-mode
+    :after markdown-mode
+    :ensure t
+    :commands cm-mode)
+#+END_SRC
+
+** Python
+   
+This was a try to add flycheck for python 3 files.
+
+; (with-eval-after-load "flycheck"
+;   (flycheck-define-checker python3-pyflakes
+;     "A Python syntax and style checker using the pyflakes utility.
+; 
+; See URL `http://pypi.python.org/pypi/pyflakes'."
+;     :command ("python3 -m pyflakes" source-inplace)
+;     :error-patterns
+;     ((error line-start (file-name) ":" line ":" (message) line-end))
+;     :modes python-mode)
+; 
+;   (add-to-list 'flycheck-checkers 'python3-pyflakes))
+
+
+Auto complete support for Python via Jedi
+
+#+BEGIN_SRC emacs-lisp
+(use-package jedi
+  :commands jedi:setup
+  ;:defer t
+  :init
+  (add-hook 'python-mode-hook 'jedi:setup))
+#+END_SRC
+
+** Textile
+
+#+BEGIN_SRC emacs-lisp
+  (use-package textile-mode
+    :mode "\\.textile\\'"
+    :config
+    (add-hook 'textile-mode-hook
+              (lambda ()
+                (visual-line-mode t)
+                (adaptive-wrap-prefix-mode t)
+                (ws-trim-mode nil))))
+#+END_SRC
+
+** Todo.txt
+   
+#+BEGIN_SRC emacs-lisp
+  (use-package todotxt-mode
+    :after evil
+    :ensure
+    :init
+    (setq todotxt-default-file (expand-file-name "~/Dropbox/todo/todo.txt")
+          todotxt-default-archive-file (expand-file-name "~/Dropbox/todo/done.txt"))
+    :config
+    (add-hook 'todotxt-mode-hook 'toggle-truncate-lines)
+    (add-hook 'todotxt-mode-hook (lambda () (auto-revert-mode 1)))
+    :bind
+    (:map evil-normal-state-map
+          (",tt" . todotxt-open-file)
+          (",ta" . todotxt-add-todo)
+          (",td" . todotxt-toggle-done)
+          (",tf-" . todotxt-clear-filter)
+          (",tfs" . todotxt-filter-by-status)
+          (",tfp" . todotxt-filter-by-project)
+          (",tft" . todotxt-filter-by-tag)))
+#+END_SRC
+
+** Web
+
+This package claims to handle assorted web-related modes.
+
+Thruth to be told, it does. Handle them that is. Handles all of them. Equally bad...
+It tries way too hard to be way to much.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :ensure
+    :mode ("\\.html\\'" "\\.erb\\'"
+           "\\.js\\'" "\\.jsx\\'"))
+#+END_SRC
+
+*** TODO Replace web-mode with something more sane
+
+** YAML
+
+I actually really like YAML. I would like to use that almost everywhere.
+Writing it instead of json. Perhaps use it as an outliner.
+Would it even be possible to create some sort of spreadsheet-functionality on top of it?
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yaml-mode
+    :ensure
+    :commands yaml-mode
+    :mode ("\\.yml\\'" "\\.yaml\\'"))
+#+END_SRC
+
+** XML
+
+I think I installed this in order to get something better for editing xml-files.
+Not sure it actually is better though.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package nxml-mode
+    :mode ("\\.xml\\'" . nxml-mode)
+    :config
+    (setq nxml-child-indent 4))
+#+END_SRC
+
+* Linting
+  
+** Flycheck
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure
+    :commands #'global-flycheck-mode
+    ;:defer t
+    :init
+    (add-hook 'after-init-hook #'global-flycheck-mode))
+#+END_SRC
+
+Helm integration for flycheck.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-flycheck
+    :after (flycheck helm-config)
+    :ensure t
+    :commands helm-flycheck)
+#+END_SRC
+
+*** TODO Custom indicator for flycheck in modeline
+
+Try to create a custom indicator which shows errors/warnings in an easier to read way.
+
+These might be interesting:
+
+  ;(flycheck-has-current-errors-p)
+  ;(flycheck-count-errors flycheck-current-errors)
+
+* Git
+** Magit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :after evil
+    :ensure
+    :commands (magit-blame magit-status)
+    :bind (:map evil-normal-state-map
+                (",gs" . magit-status)
+                (",gb" . magit-blame))
+    :defines (magit-commit-show-notes
+              magit-push-always-verify
+              magit-last-seen-setup-instructions)
+    :config
+    (setq magit-commit-show-notes t)
+    (setq magit-push-always-verify nil)
+    (setq magit-last-seen-setup-instructions "1.4.0"))
+#+END_SRC
+
+*** Evil Magit
+
+More Evil key bindings for Magit.
+
+https://github.com/emacs-evil/evil-magit
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-magit
+    :ensure t
+    :after (magit evil))
+#+END_SRC
+
+** Git-gutter
+
+Indicate changes in buffer with markers in the margin.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package git-gutter
+    :ensure
+    ;:defer t
+    ;:diminish git-gutter-mode
+    :bind (:map evil-normal-state-map
+                (",gg" . git-gutter-mode)
+                (",gn" . git-gutter:next-hunk)
+                (",gp" . git-gutter:previous-hunk)))
+#+END_SRC
+* Helm
+
+Helm makes almost everything better. Actually, Helm and Magit is a large part of why I use emacs.
+Helm has nice alternatives in VIM. Sadly, fugitive can't really compete with Magit.
+
+** Helm core
+
+https://github.com/emacs-helm/helm/wiki
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-config
+    :ensure helm
+    :diminish helm-mode
+    :commands helm-mode
+    ;:defer t
+    :config (helm-mode 1)
+
+    :bind
+    (("M-x". helm-M-x)
+     ("C-x C-f" . helm-find-files)
+     ("C-x C-b" . helm-buffers-list)
+     :map evil-normal-state-map
+     (", SPC b" . helm-buffers-list)
+     (", SPC f" . helm-find-files)
+     (", SPC o" . helm-imenu)
+
+     (", SPC x" . helm-M-x)
+
+     (", SPC t" . helm-etags-select)
+     (", SPC '" . helm-all-mark-rings)
+
+     (", SPC c" . helm-flycheck)))
+#+END_SRC
+
+* Org
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure t
+    :mode ("\\.org\\'" . org-mode)
+    :config
+    (add-hook 'org-mode-hook
+              '(lambda ()
+                 (tabs-disable)
+                 (ws-trim-mode)
+                 (visual-line-mode)
+                 (adaptive-wrap-prefix-mode))))
+#+END_SRC
+
+Evil keybindings for org-mode.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-org
+    :ensure
+    :after (evil org)
+    :diminish evil-org-mode
+    :config
+    (add-hook 'org-mode-hook 'evil-org-mode)
+    (add-hook 'evil-org-mode-hook
+			  (lambda ()
+			    (evil-org-set-key-theme))))
+#+END_SRC
+
+* Pass
+** Pass core
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pass
+    :ensure t
+    :defer t
+    :commands (pass-mode))
+#+END_SRC
+
+** Helm pass
+
+Helm interface for pass. Quite awesome actually.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-pass
+    :ensure t
+    :after pass
+    :defer t
+    :commands (helm-pass))
+#+END_SRC
+* Projectile
+
+** Projectile core
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :diminish projectile-mode
+    :config
+    (projectile-mode t)
+    (setq projectile-completion-system 'helm)
+
+    (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
+    (add-to-list 'projectile-globally-ignored-directories ".virtualenvs")
+    (add-to-list 'projectile-globally-ignored-directories ".virtualenv")
+    (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
+    (add-to-list 'projectile-globally-ignored-directories "virtualenv")
+
+    ; Fix for updated projectile
+    (defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode))
+#+END_SRC
+
+** Helm Projectile
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-projectile
+    :after (projectile helm-config)
+    :ensure t
+    :commands helm-projectile-on
+    :init  (helm-projectile-on)
+    :bind
+    (:map evil-normal-state-map
+          (", SPC n" . helm-projectile)
+          (", SPC B" . helm-projectile-switch-to-buffer)
+          (", SPC p" . helm-projectile-switch-project)))
+#+END_SRC
+
+* Snippets (Yasnippet)
+
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :commands (yas-mode yas-global-mode)
+    :diminish yas-minor-mode
+    ;:defer t
+    :config
+    (yas-global-mode 1))
+#+END_SRC
+
+* Spelling
+  
+Using flyspell to check spelling
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell
+    :bind
+    (:map evil-normal-state-map
+	  (", s s" . flyspell-mode)
+	  (", s l" . ispell-change-dictionary)
+	  ("z n" . flyspell-goto-next-error))
+    :config
+    (setq flyspell-issue-welcome-flag nil
+	  ispell-program-name "aspell"
+	  ispell-list-command "list"))
+#+END_SRC
+
+* Worklog
+
+My own additions to get support for easy work journal.
+
+#+BEGIN_SRC emacs-lisp
+  (defun worklog-open-today ()
+    "Open worklog-file for today."
+    (interactive)
+    (let ((file-name (format-time-string "~/Dropbox/Worklog/%Y/%m %B/%Y-%m-%d.org" (current-time))))
+      (find-file file-name)
+      (goto-char (point-max))))
+  (define-key evil-normal-state-map ",wt" 'worklog-open-today)
+
+  (defun worklog-new-entry ()
+    "Add a new line with a timestamp."
+    (interactive)
+    (goto-char (point-max))
+    (insert (format-time-string (concat "\n## " current-date-time-format) (current-time))))
+  (define-key evil-normal-state-map ",wn" 'worklog-new-entry)
+#+END_SRC
+
+* Dropbox
+
+Custom minor mode to turn off some behaviour for files in Dropbox.
+
+#+BEGIN_SRC emacs-lisp
+  (define-minor-mode dropbox-mode
+    "For files located in dropbox.
+  Turns off backup creation and auto saving."
+
+    ;; Initial value
+    nil
+
+    ;; Mode line indicator
+    " Db"
+
+    ;; Minor mode bindings
+    nil
+    (if (symbol-value dropbox-mode)
+        (progn
+          ;; Disable backups
+          (set (make-local-variable 'backup-inhibited) t)
+          ;; Disable auto-save
+          (if auto-save-default
+              (auto-save-mode -1)))
+      ; Resort to default value of backup-inhibited
+      (kill-local-variable 'backup-inhibited)
+      ; Resort to default auto save setting
+      (if auto-save-default
+          (auto-save-mode 1))))
+  (defun enable-dropbox-minor-mode-based-on-path ()
+    "Enable the dropbox minor mode for files opened from the dropbox directory."
+    (when buffer-file-name
+      (if (string-match-p "/Dropbox" buffer-file-name)
+          (dropbox-mode))))
+  (add-hook 'find-file-hook 'enable-dropbox-minor-mode-based-on-path)
+#+END_SRC
+
+* My own custom functions
+
+** Org addons
+
+*** Tag summary
+
+Collect all entries tagged with a given tag and show in new RO-buffer.
+
+Minor mode to provide custom keybindings to refresh the summary.
+
+Inspiration on how to create/define a minor mode: http://nullprogram.com/blog/2013/02/06/
+
+#+BEGIN_SRC emacs-lisp
+  (define-minor-mode org-tag-summary-mode
+    "Some extra stuff to collect entries from org-files."
+    :keymnap (let ((map (make-sparse-keymap)))
+               (define-key map (kbd "g r") 'org-tag-summary-refresh)
+               map))
+#+END_SRC
+
+Shell out to external script to speed up directory iteration. Right now the performance is sufficient with python. Might be an idea to move to C/C++ if the number of files becomes really large.
+
+#+BEGIN_SRC emacs-lisp
+  (defvar org-tag-parser-script "~/bin/org-tag.py"
+    "The script to use for extracting entries with a certain tag.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun create-buffer-with-org-tag (tag)
+    "Create a new buffer matching the org tag TAG."
+    (interactive)
+    (let* ((buffer-name (concat "*Org entries tagged: " tag "*"))
+           (buffer-handle (generate-new-buffer buffer-name)))
+      (switch-to-buffer buffer-handle)
+
+      (let ((p (point)))
+        (org-mode)
+        (insert (shell-command-to-string (concat org-tag-parser-script " " tag)))
+        (not-modified)
+        (setq buffer-read-only t)
+        (goto-char p))))
+#+END_SRC
+
+**** TODO Add support for FILETAGS
+**** TODO Skip the current file if a worklog-file is open
+**** TODO Provide refresh via interactive command
+**** TODO Bind key to the refresh command
+**** TODO Link headers to original definition
+
+** Tabs handling
+
+#+BEGIN_SRC emacs-lisp
+  (defun tabs-enable ()
+    "Enable indentation with tabs."
+    (interactive)
+    (setq indent-tabs-mode t))
+
+  (defun tabs-disable ()
+    "Disable indentation with tabs."
+    (interactive)
+    (setq indent-tabs-mode nil))
+#+END_SRC
+
+** Convinience functions for filelocation
+
+I mainly use this when I write written code reviews.
+
+#+BEGIN_SRC emacs-lisp
+; Filepath with number
+(defun copy-file-name-to-clipboard ()
+  "Copy the current buffer file name to the clipboard."
+  (interactive)
+  (let ((filename (if (equal major-mode 'dired-mode)
+                      default-directory
+                    (buffer-file-name))))
+    (when filename
+      (kill-new filename)
+	  (message "Copied buffer file name '%s' to the clipboard." filename))))
+
+(fset 'review-file-name 'copy-file-name-to-clipboard)
+
+(with-eval-after-load "projectile"
+  (defun copy-project-file-name-to-clipboard ()
+	"Copy the current buffer path to the clipboard"
+	(interactive)
+	(let ((filename (buffer-file-name))
+		  (root-length (if (projectile-project-p)
+						   (length (projectile-project-root))
+						 0)))
+	  (let ((project-filename (substring filename root-length)))
+		(kill-new project-filename)
+		(message "Copied buffer file name '%s' to the clipboard." project-filename))))
+  (fset 'review-file-name 'copy-project-file-name-to-clipboard))
+
+(defun file-path-with-number ()
+  "Set clipboard to the path of the file corresponding to the current buffer."
+  (interactive)
+  (let ((path-with-number (concat (review-file-name) ":" (number-to-string (line-number-at-pos)))))
+	(kill-new path-with-number)
+	(message "Copied buffer file name '%s' to the clipboard." path-with-number)))
+#+END_SRC
+
+** Tmux
+   
+#+BEGIN_SRC emacs-lisp
+(defun tmux-make ()
+  "Send command to specific tmux-session."
+  (interactive)
+  (call-process-shell-command "tmux send-keys -t brbes:1 make space test_backend enter"))
+#+END_SRC
+* Interesting packages
+** TODO Restclient
+   
+   Provides functionality to use a buffer for interacting with a rest interface.
+   
+   https://github.com/pashky/restclient.el
