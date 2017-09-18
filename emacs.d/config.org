@@ -331,11 +331,36 @@ Using helm to browse menus.
 
 *** Neotree
 
+Helper function to open neotree relative to the current project root.
+
+#+BEGIN_SRC emacs-lisp
+  (defun neotree-project-dir ()
+    "Open NeoTree using the projectile root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find project root."))))
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
     :config
     (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
-    :bind (([f2] . neotree-toggle)))
+    ;(setq neo-smart-open t)
+    (setq projectile-switch-project-action 'neotree-projectile-action)
+    (add-hook 'neotree-mode-hook
+              (lambda ()
+                (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+                (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+                (evil-define-key 'normal neotree-mode-map (kbd "g r") 'neotree-refresh)
+                (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)))
+    :bind (([f2] . neotree-project-dir)))
 #+END_SRC
 
 *** Smart tabs
