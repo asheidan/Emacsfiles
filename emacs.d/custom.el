@@ -33,9 +33,8 @@
  '(hl-paren-colors (quote ("#ecf0f1" "#ecf0f1" "#c0392b")))
  '(magit-diff-use-overlays nil)
  '(neo-mode-line-type (quote neotree))
- '(neo-smart-open t)
  '(neo-theme (quote nerd))
- '(neo-vc-integration nil)
+ '(neo-vc-integration (quote (face char)))
  '(org-agenda-files
    (quote
 	("~/Dropbox/Worklog/2017/08 August" "~/Dropbox/Worklog/Pro7/UCP")))
