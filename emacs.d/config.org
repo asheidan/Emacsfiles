@@ -838,6 +838,7 @@ These might be interesting:
 
 *** TODO Look at moving some strange or esoteric keybindings magit-popup
     Using `magit-define-popup` it should be possible to make some of my stranger and not as often used keybindings easier to remember as well as clearer.
+    https://magit.vc/manual/magit-popup/Defining-Prefix-Commands.html#Defining-Prefix-Commands
 
 *** Evil Magit
 
@@ -902,16 +903,16 @@ https://github.com/emacs-helm/helm/wiki
 * Org
 
 #+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure t
-    :mode ("\\.org\\'" . org-mode)
-    :config
-    (add-hook 'org-mode-hook
-              '(lambda ()
-                 (tabs-disable)
-                 (ws-trim-mode)
-                 (visual-line-mode)
-                 (adaptive-wrap-prefix-mode))))
+    (use-package org
+      :ensure t
+      :mode ("\\.org\\'" . org-mode)
+      :config
+      (add-hook 'org-mode-hook
+                '(lambda ()
+                   (tabs-disable)
+                   (ws-trim-mode)
+                   (visual-line-mode)
+                   (adaptive-wrap-prefix-mode))))
 #+END_SRC
 
 Evil keybindings for org-mode.
@@ -925,7 +926,9 @@ Evil keybindings for org-mode.
     (add-hook 'org-mode-hook 'evil-org-mode)
     (add-hook 'evil-org-mode-hook
 			  (lambda ()
-			    (evil-org-set-key-theme))))
+                (evil-org-set-key-theme)
+                (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
+                (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive))))
 #+END_SRC
 
 * Pass
