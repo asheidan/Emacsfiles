@@ -836,6 +836,9 @@ These might be interesting:
     (setq magit-last-seen-setup-instructions "1.4.0"))
 #+END_SRC
 
+*** TODO Look at moving some strange or esoteric keybindings magit-popup
+    Using `magit-define-popup` it should be possible to make some of my stranger and not as often used keybindings easier to remember as well as clearer.
+
 *** Evil Magit
 
 More Evil key bindings for Magit.
