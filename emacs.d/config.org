@@ -353,7 +353,7 @@ Helper function to open neotree relative to the current project root.
     :config
     (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
     ;(setq neo-smart-open t)
-    (setq projectile-switch-project-action 'neotree-projectile-action)
+    ;(setq projectile-switch-project-action 'neotree-projectile-action)
     (add-hook 'neotree-mode-hook
               (lambda ()
                 (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
