@@ -13,7 +13,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
           ((path '("/usr/local/bin" "/usr/bin" "/bin"
                    "/usr/local/sbin" "/usr/sbin" "/sbin"
                    "/opt/X11/bin" "/opt/ImageMagick/bin"
-                   "/usr/local/MacGPG2/bin" "/usr/texbin")))
+                   "/usr/local/MacGPG2/bin" "/usr/texbin"
+                   "~/.cargo/bin")))
         (progn
           (set 'exec-path (delete-dups (append path exec-path)))
           (setenv "PATH" (mapconcat 'identity path ":")))))
@@ -708,6 +709,40 @@ Auto complete support for Python via Jedi
   (add-hook 'python-mode-hook 'jedi:setup))
 #+END_SRC
 
+** Rust
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rust-mode
+	:ensure t
+	:mode "\\.rs\\'")
+
+  (use-package flycheck-rust
+	:ensure t
+	:after rust-mode
+	:init
+	(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+#+END_SRC
+
+*** Rust completion via Racer
+
+To be able to use the completion we need to install both the rust src as well as racer.
+
+#+BEGIN_SRC sh
+  rustup component add rust-src
+  cargo install racer
+#+END_SRC
+
+And then the actual emacs integration.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package racer
+	:ensure t
+	:after company-mode rust-mode
+	:init
+	(add-hook 'racer-mode-hook #'company-mode)
+	(add-hook 'rust-mode-hook #'racer-mode))
+#+END_SRC
+
 ** Textile
 
 #+BEGIN_SRC emacs-lisp
@@ -742,6 +777,16 @@ Auto complete support for Python via Jedi
           (",tfs" . todotxt-filter-by-status)
           (",tfp" . todotxt-filter-by-project)
           (",tft" . todotxt-filter-by-tag)))
+#+END_SRC
+
+** TOML
+
+The configuration format used by cargo (rust).
+
+#+BEGIN_SRC emacs-lisp
+  (use-package toml-mode
+    :ensure t
+    :mode "\\\.toml\\\'")
 #+END_SRC
 
 ** Web
@@ -998,6 +1043,42 @@ Helm interface for pass. Quite awesome actually.
     ;:defer t
     :config
     (yas-global-mode 1))
+#+END_SRC
+
+* Completion
+** Company
+
+#+BEGIN_SRC emacs-lisp
+	(use-package company
+	  :after evil-mode
+	  :ensure t
+	  :defer t
+	  :config
+	  (evil-define-key 'insert company-mode-map (kbd "C-TAB") 'company-complete)
+
+	  ; The default colors are terrible
+	  (set-face-attribute 'company-tooltip nil
+						  :background "#fbfcfc"
+						  :foreground "#34495e")
+	  (set-face-attribute 'company-scrollbar-bg nil
+						  :background "#cad1d5")
+	  (set-face-attribute 'company-scrollbar-fg nil
+						  :background "#95a5a6")
+	  (set-face-attribute 'company-tooltip-selection nil
+						  :background "#f2ca27")
+	  (set-face-attribute 'company-tooltip-common nil
+						  :foreground "#7f8c8d")
+	  (set-face-attribute 'company-tooltip-annotation nil
+						  :foreground "#3498db")
+	  (set-face-attribute 'company-tooltip-search-selection nil
+						  :background "#f39c12"))
+#+END_SRC
+
+*** Theming company-mode popups
+
+The defaults are pretty terrible. This is probably better.
+
+#+BEGIN_SRC emacs-lisp
 #+END_SRC
 
 * Spelling
