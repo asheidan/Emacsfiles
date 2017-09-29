@@ -351,6 +351,7 @@ Helper function to open neotree relative to the current project root.
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
+    :ensure t
     :config
     (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
     ;(setq neo-smart-open t)
