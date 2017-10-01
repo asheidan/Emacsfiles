@@ -48,10 +48,11 @@ Theme with colors from http://flatui.com/flat-ui-color-palette/.
 This is currently my most often used theme.
 
 #+BEGIN_SRC emacs-lisp
-(use-package flatui-theme
-  :ensure
-  :config
-  (load-theme 'flatui t))
+  (use-package flatui-theme
+    :if window-system
+    :ensure
+    :config
+    (load-theme 'flatui t))
 #+END_SRC
 
 *** Molokai
@@ -814,7 +815,7 @@ Would it even be possible to create some sort of spreadsheet-functionality on to
 
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
-    :ensure
+    :ensure t
     :commands yaml-mode
     :mode ("\\.yml\\'" "\\.yaml\\'"))
 #+END_SRC
