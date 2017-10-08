@@ -315,7 +315,12 @@ Using helm to browse menus.
 #+BEGIN_SRC emacs-lisp
   (use-package lacarte
     :after (evil helm-config)
-    :ensure t
+    :ensure t)
+
+  (use-package helm-lacarte
+    ; https://github.com/emacs-helm/helm-lacarte.git
+    :after (lacarte helm-config evil)
+    :load-path "vendor/helm-lacarte"
     :bind (:map evil-normal-state-map
                 (", SPC m" . helm-browse-menubar)))
 #+END_SRC
