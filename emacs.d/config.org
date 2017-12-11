@@ -69,7 +69,7 @@ Not sure if this belongs here or in the Helm-section.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-themes
-    :after helm-config
+    :after helm-mode
     :ensure t
     :commands helm-themes)
 #+END_SRC
@@ -270,7 +270,7 @@ Helm interface for searching through keybindings.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-descbinds
-    :after helm-config
+    :after helm-mode
     :ensure t
     :defer t
     :config (helm-descbinds-mode))
@@ -314,12 +314,12 @@ Using helm to browse menus.
 
 #+BEGIN_SRC emacs-lisp
   (use-package lacarte
-    :after (evil helm-config)
+    :after (evil helm-mode)
     :ensure t)
 
   (use-package helm-lacarte
     ; https://github.com/emacs-helm/helm-lacarte.git
-    :after (lacarte helm-config evil)
+    :after (lacarte helm-mode evil)
     :load-path "vendor/helm-lacarte"
     :bind (:map evil-normal-state-map
                 (", SPC m" . helm-browse-menubar)))
@@ -618,7 +618,7 @@ Add Helm integration for less/css.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-css-scss
-    :after (evil helm-config less-css-mode)
+    :after (evil helm-mode less-css-mode)
     :ensure
     :init
     (add-hook 'less-css-mode-hook
@@ -716,6 +716,8 @@ Auto complete support for Python via Jedi
   (add-hook 'python-mode-hook 'jedi:setup))
 #+END_SRC
 
+*** TODO Replace jedi with company-jedi
+
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
@@ -749,6 +751,8 @@ And then the actual emacs integration.
 	(add-hook 'racer-mode-hook #'company-mode)
 	(add-hook 'rust-mode-hook #'racer-mode))
 #+END_SRC
+
+**** TODO Look at difference between racer and company-racer for completion
 
 ** Textile
 
@@ -819,10 +823,11 @@ Writing it instead of json. Perhaps use it as an outliner.
 Would it even be possible to create some sort of spreadsheet-functionality on top of it?
 
 #+BEGIN_SRC emacs-lisp
-  (use-package yaml-mode
-    :ensure t
-    :commands yaml-mode
-    :mode ("\\.yml\\'" "\\.yaml\\'"))
+    (use-package yaml-mode
+      :ensure t
+      :commands yaml-mode
+      :mode ("\\.yml\\'" "\\.yaml\\'")
+      :init (add-hook 'yaml-mode-hook (lambda () (setq evil-shift-width yaml-indent-offset))))
 #+END_SRC
 
 ** XML
@@ -854,7 +859,7 @@ Helm integration for flycheck.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-flycheck
-    :after (flycheck helm-config)
+    :after (flycheck helm-mode)
     :ensure t
     :commands helm-flycheck)
 #+END_SRC
@@ -930,10 +935,11 @@ https://github.com/emacs-helm/helm/wiki
 #+BEGIN_SRC emacs-lisp
   (use-package helm-config
     :ensure helm
+    :after evil
     :diminish helm-mode
     :commands helm-mode
     ;:defer t
-    :config (helm-mode 1)
+    :init (helm-mode 1)
 
     :bind
     (("M-x". helm-M-x)
@@ -1030,7 +1036,7 @@ Helm interface for pass. Quite awesome actually.
 
 #+BEGIN_SRC emacs-lisp
   (use-package helm-projectile
-    :after (projectile helm-config)
+    :after (projectile evil helm-mode)
     :ensure t
     :commands helm-projectile-on
     :init  (helm-projectile-on)
