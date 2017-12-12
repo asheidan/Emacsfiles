@@ -708,15 +708,28 @@ This was a try to add flycheck for python 3 files.
 
 Auto complete support for Python via Jedi
 
+; #+BEGIN_SRC emacs-lisp
+; (use-package jedi
+;   :commands jedi:setup
+;   ;:defer t
+;   :init
+;   (add-hook 'python-mode-hook 'jedi:setup))
+; #+END_SRC
+
 #+BEGIN_SRC emacs-lisp
-(use-package jedi
-  :commands jedi:setup
-  ;:defer t
-  :init
-  (add-hook 'python-mode-hook 'jedi:setup))
+  (use-package anaconda-mode
+    :ensure t
+    :commands anaconda-mode
+    :config (add-hook 'python-mode-hook 'anaconda-mode)
+    )
 #+END_SRC
 
-*** TODO Replace jedi with company-jedi
+#+BEGIN_SRC emacs-lisp
+  (use-package company-anaconda
+    :ensure t
+    :after (anaconda-mode company)
+    :config (add-to-list 'company-backends 'company-anaconda))
+#+END_SRC
 
 ** Rust
 
