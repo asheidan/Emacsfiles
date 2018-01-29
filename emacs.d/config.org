@@ -83,7 +83,7 @@ A bunch of custom colors taken from the FlatUI theme.
 
 (defvar flatui-color-green-sea "#16a085")
 (defvar flatui-color-turquoise "#1abc9c")
-(defvar flatui-color-turquoise-hover "#1ABC9C")
+(defvar flatui-color-turquoise-hover "#1abc9c")
 (defvar flatui-color-nephritis "#27ae60")
 (defvar flatui-color-emerald "#2ecc71")
 (defvar flatui-color-emerald-hover "#40d47e")
@@ -123,6 +123,74 @@ Highlite the line the cursor is currently on.
 #+END_SRC
 
 ** Modeline
+
+*** Custom modeline faces
+
+#+BEGIN_SRC emacs-lisp
+  (defface modeline-insert-state
+    `((((class color) (min-colors 256))
+       :foreground ,flatui-color-emerald-hover :background ,flatui-color-nephritis))
+    "")
+  (defface modeline-insert-state-path `((((class color) (min-colors 256)) :foreground "#BDEFD2")) "")
+  (defface modeline-insert-state-project `((((class color) (min-colors 256)) :foreground "#7EE1A8")) "")
+
+  (defface modeline-normal-state
+    `((((class color) (min-colors 256))
+	    :foreground ,flatui-color-peter-river-hover :background ,flatui-color-belize-hole))
+	 "")
+  (defface modeline-normal-state-path `((((class color) (min-colors 256)) :foreground "#C0DEF2")) "")
+  (defface modeline-normal-state-project `((((class color) (min-colors 256)) :foreground "#85C1E9")) "")
+
+  (defface modeline-visual-state
+    `((((class color) (min-colors 256))
+	    :foreground ,flatui-color-carrot-hover :background ,flatui-color-pumpkin))
+	 "")
+  (defface modeline-visual-state-path `((((class color) (min-colors 256)) :foreground "#F5D6BB")) "")
+  (defface modeline-visual-state-project `((((class color) (min-colors 256)) :foreground "#EFB17A")) "")
+
+  (defface modeline-replace-state
+    `((((class color) (min-colors 256))
+	    :foreground ,flatui-color-alizarin-hover :background ,flatui-color-pomegranate))
+	 "")
+  (defface modeline-replace-state-path `((((class color) (min-colors 256)) :foreground "#F5C8C4")) "")
+  (defface modeline-replace-state-project `((((class color) (min-colors 256)) :foreground "#F0958B")) "")
+
+  (defface modeline-emacs-state
+    `((((class color) (min-colors 256))
+	    :foreground ,flatui-color-turquoise-hover :background ,flatui-color-green-sea))
+	 "")
+  (defface modeline-emacs-state-path `((((class color) (min-colors 256)) :foreground "#B0E7DC")) "")
+  (defface modeline-emacs-state-project `((((class color) (min-colors 256)) :foreground "#65D1BC")) "")
+
+  (defface modeline-motion-state
+    `((((class color) (min-colors 256))
+	    :foreground ,flatui-color-wet-asphalt-hover :background ,flatui-color-midnight))
+	 "")
+  (defface modeline-motion-state-path `((((class color) (min-colors 256)) :foreground "#BCC5CD")) "")
+  (defface modeline-motion-state-project `((((class color) (min-colors 256)) :foreground "#7C8D9D")) "")
+
+  (defface modeline-minibuffer-state
+    `((((class color) (min-colors 256))
+        :foreground ,flatui-color-amethyst-hover :background ,flatui-color-wisteria))
+	 "")
+  (defface modeline-minibuffer-state-path `((((class color) (min-colors 256)) :foreground "#DFCCE7")) "")
+  (defface modeline-minibuffer-state-project `((((class color) (min-colors 256)) :foreground "#C29BD3")) "")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defface my-modeline-path
+    '((((class color) (min-colors 256))
+       :foreground "#ecf0f1")) ; flatui-color-clouds
+    "")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defface my-modeline-project
+    '((((class color) (min-colors 256))
+       :foreground "#ecf0f1")) ; flatui-color-clouds
+    "")
+#+END_SRC
+
 *** My own custom colors
     
 Color the modeline according to the current vim-mode.
@@ -131,85 +199,64 @@ Might be possible to speed up with face-remapping instead of changing the faces.
 
 [[https://stackoverflow.com/questions/25109011/how-to-speed-up-a-custom-mode-line-face-change-function-in-emacs][Thread on SO]], [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Remapping.html][Face remapping]]
 
-#+BEGIN_SRC emacs-lisp
-  (let ((current-color
-         (lambda ()
-           (let ((color (cond ((minibufferp) (list :background flatui-color-wisteria
-                                                   :path "#DFCCE7"
-                                                   :project "#C29BD3"
-                                                   :foreground flatui-color-amethyst-hover))
-                              ((evil-insert-state-p) (list :background flatui-color-nephritis
-                                                           :path "#BDEFD2"
-                                                           :project "#7EE1A8"
-                                                           :foreground flatui-color-emerald-hover))
-                              ((evil-normal-state-p) (list :background flatui-color-belize-hole
-                                                           :path "#C0DEF2"
-                                                           :project "#85C1E9"
-                                                           :foreground flatui-color-peter-river-hover))
-                              ((evil-emacs-state-p) (list :background flatui-color-green-sea
-                                                          :path "#B0E7DC"
-                                                          :project "#65D1BC"
-                                                          :foreground flatui-color-turquoise-hover))
-                              ((evil-visual-state-p) (list :background flatui-color-pumpkin
-                                                           :path "#F5D6BB"
-                                                           :project "#EFB17A"
-                                                           :foreground flatui-color-carrot-hover))
-                              ((evil-replace-state-p) (list :background flatui-color-pomegranate
-                                                            :path "#F5C8C4"
-                                                            :project "#F0958B"
-                                                            :foreground flatui-color-alizarin-hover))
-                              ((evil-motion-state-p) `(list :background flatui-color-midnight
-                                                            :path "#BCC5CD"
-                                                            :project "#7C8D9D"
-                                                            :foreground flatui-color-wet-asphalt-hover))
                               (t (list :background flatui-color-asbestos
                                        :path "#D9DFDF"
                                        :project "#B7C2C3"
                                        :foreground flatui-color-concrete)))))
-             (set-face-attribute 'mode-line nil
-                                 :foreground (plist-get color :foreground)
-                                 :background (plist-get color :background))
-             (set-face-attribute 'my-modeline-path nil
-                                 :foreground (plist-get color :path))
-             (set-face-attribute 'my-modeline-project nil
-                                 :foreground (plist-get color :project))))))
-    (add-hook 'post-command-hook current-color))
+#+BEGIN_SRC emacs-lisp
+    (let ((current-color
+           (lambda ()
+             (cond ((minibufferp) (set 'face-remapping-alist '((mode-line modeline-minibuffer-state)
+                                                               (my-modeline-path modeline-minibuffer-state-path)
+                                                               (my-modeline-project modeline-minibuffer-state-project))))
+                   ((evil-insert-state-p) (set 'face-remapping-alist '((mode-line modeline-insert-state)
+                                                                       (my-modeline-path modeline-insert-state-path)
+                                                                       (my-modeline-project modeline-insert-state-project))))
+                   ((evil-normal-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
+                                                                       (my-modeline-path modeline-normal-state-path)
+                                                                       (my-modeline-project modeline-normal-state-project))))
+                   ((evil-emacs-state-p)  (set 'face-remapping-alist '((mode-line modeline-emacs-state)
+                                                                       (my-modeline-path modeline-emacs-state-path)
+                                                                       (my-modeline-project modeline-emacs-state-project))))
+                   ((evil-visual-state-p) (set 'face-remapping-alist '((mode-line modeline-visual-state)
+                                                                       (my-modeline-path modeline-visual-state-path)
+                                                                       (my-modeline-project modeline-visual-state-project))))
+                   ((evil-replace-state-p) (set 'face-remapping-alist '((mode-line modeline-replace-state)
+                                                                        (my-modeline-path modeline-replace-state-path)
+                                                                        (my-modeline-project modeline-replace-state-project))))
+                   ((evil-motion-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
+                                                                       (my-modeline-path modeline-motion-state-path)
+                                                                       (my-modeline-project modeline-motion-state-project))))
+                   (t (set 'face-remapping-alist '((mode-line modeline-normal-state))))))))
+      (add-hook 'post-command-hook current-color))
 
-  ; Switch mode-line color from flatuicolors.com
-  (set-face-background 'mode-line-inactive flatui-color-silver)
-  (set-face-foreground 'mode-line-inactive flatui-color-concrete)
-  (set-face-attribute 'mode-line-inactive nil :box nil :weight 'normal)
-  (set-face-attribute 'mode-line nil :box nil :weight 'normal)
-  ;(set-face-attribute 'mode-line-buffer-id :weight 'normal)
+    ; Switch mode-line color from flatuicolors.com
+    (set-face-background 'mode-line-inactive flatui-color-silver)
+    (set-face-foreground 'mode-line-inactive flatui-color-concrete)
+    (set-face-attribute 'mode-line-highlight nil :box nil)
+    (set-face-attribute 'mode-line-inactive nil :box nil :weight 'normal)
+    (set-face-attribute 'mode-line nil :box nil :weight 'normal)
+    ;(set-face-attribute 'mode-line-buffer-id :weight 'normal)
 
-  ;((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
-  ;((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
-  ;((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
-  ;((evil-emacs-state-p) `(,flatui-color-green-sea . ,flatui-color-turquoise-hover))
-  ;((evil-visual-state-p) `(,flatui-color-pumpkin . ,flatui-color-carrot-hover))
-  ;((evil-replace-state-p) `(,flatui-color-pomegranate . ,flatui-color-alizarin-hover))
-  ;((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
-  ;(t `(,flatui-color-asbestos . ,flatui-color-concrete))
+    (set-face-foreground 'mode-line-buffer-id flatui-color-clouds-hover)
 
-  (set-face-foreground 'mode-line-buffer-id flatui-color-clouds-hover)
+    ; taken from [[https://github.com/hlissner/doom-emacs/blob/master/modules/ui/doom-modeline/config.el][Doom modeline]]
+  (defun dim-inactive-modeline (&rest _)
+    ""
+    (let ((win (frame-selected-window)))
+      (unless (minibuffer-window-active-p win)
+        (if (not (eq (frame-selected-window) (selected-window)))
+            (progn
+              (message "stuff")
+              (set 'face-remapping-alist '((my-modeline-path modeline-buffer-id)
+                                           (my-modeline-project modeline-buffer-id))))))))
+  ;(add-hook 'window-configuration-change-hook #'dim-inactive-modeline)
+  ;(add-hook 'focus-in-hook #'dim-inactive-modeline)
+  ;(advice-add #'handle-switch-frame :after #'dim-inactive-modeline)
+  ;(advice-add #'select-window :after #'dim-inactive-modeline)
 #+END_SRC
 
 *** Modeline Format
-**** Custom faces
-
-#+BEGIN_SRC emacs-lisp
-  (defface my-modeline-path
-    '((((class color) (min-colors 256))
-       :foreground "#ecf0f1")) ; flatui-color-clouds
-    "Face for the shortened path in modeline")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (defface my-modeline-project
-    '((((class color) (min-colors 256))
-       :foreground "#ecf0f1")) ; flatui-color-clouds
-    "Face for the shortened project name in modeline")
-#+END_SRC
 
 **** Helper functions
 
@@ -235,24 +282,30 @@ I try to use this to shorten the project name as well as the relative path withi
   (defun my/projectile ()
       "Tweaked project name"
     (when (projectile-project-p)
-      (let ((short-project-name (my/shorten-path (projectile-project-name) "-")))
+      (let ((short-project-name (my/shorten-path (projectile-project-name) "-"))
+        (current-face (if (eq (selected-window) (frame-selected-window))
+                          'my-modeline-project
+                        'modeline-buffer-id)))
         (propertize (concat short-project-name "|")
                     'help-echo (concat "Projectile: " (projectile-project-root))
-                    'face 'my-modeline-project))))
+                    'face current-face))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (defun my/project-path ()
-    "The relative path of the current file. Requires `projectile'."
-    (let* ((max-length 16)
-           (root-length (if (projectile-project-p)
-                            (length (projectile-project-root))
-                          0))
-           (relative-path (directory-file-name (substring default-directory root-length)))
-           (short-path (my/shorten-path relative-path)))
-      (propertize (concat short-path "/")
-                  'help-echo relative-path
-                  'face 'my-modeline-path)))
+    (defun my/project-path ()
+      "The relative path of the current file. Requires `projectile'."
+      (let* ((max-length 16)
+             (root-length (if (projectile-project-p)
+                              (length (projectile-project-root))
+                            0))
+             (relative-path (directory-file-name (substring default-directory root-length)))
+             (short-path (my/shorten-path relative-path))
+             (current-face (if (eq (selected-window) (frame-selected-window))
+                               'my-modeline-path
+                             'modeline-buffer-id)))
+        (propertize (concat short-path "/")
+                    'help-echo relative-path
+                    'face current-face)))
 #+END_SRC
 
 **** Actual format
