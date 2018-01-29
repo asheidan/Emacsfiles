@@ -127,6 +127,10 @@ Highlite the line the cursor is currently on.
     
 Color the modeline according to the current vim-mode.
 
+Might be possible to speed up with face-remapping instead of changing the faces.
+
+[[https://stackoverflow.com/questions/25109011/how-to-speed-up-a-custom-mode-line-face-change-function-in-emacs][Thread on SO]]
+
 #+BEGIN_SRC emacs-lisp
   (let ((current-color
          (lambda ()
