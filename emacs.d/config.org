@@ -130,22 +130,47 @@ Color the modeline according to the current vim-mode.
 #+BEGIN_SRC emacs-lisp
   (let ((current-color
          (lambda ()
-           (let ((color (cond ((minibufferp) `(,flatui-color-wisteria . ,flatui-color-amethyst-hover))
-                              ((evil-insert-state-p) `(,flatui-color-nephritis . ,flatui-color-emerald-hover))
-                              ((evil-normal-state-p) `(,flatui-color-belize-hole . ,flatui-color-peter-river-hover))
-                              ((evil-emacs-state-p) `(,flatui-color-green-sea . ,flatui-color-turquoise-hover))
-                              ((evil-visual-state-p) `(,flatui-color-pumpkin . ,flatui-color-carrot-hover))
-                              ((evil-replace-state-p) `(,flatui-color-pomegranate . ,flatui-color-alizarin-hover))
-                              ((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
-                              (t `(,flatui-color-asbestos . ,flatui-color-concrete))
-                              )))
-                                          ;(set-face-background 'mode-line (car color))
-                                          ;(set-face-foreground 'mode-line flatui-color-clouds) ;(cdr color))
+           (let ((color (cond ((minibufferp) (list :background flatui-color-wisteria
+                                                   :path "#DFCCE7"
+                                                   :project "#C29BD3"
+                                                   :foreground flatui-color-amethyst-hover))
+                              ((evil-insert-state-p) (list :background flatui-color-nephritis
+                                                           :path "#BDEFD2"
+                                                           :project "#7EE1A8"
+                                                           :foreground flatui-color-emerald-hover))
+                              ((evil-normal-state-p) (list :background flatui-color-belize-hole
+                                                           :path "#C0DEF2"
+                                                           :project "#85C1E9"
+                                                           :foreground flatui-color-peter-river-hover))
+                              ((evil-emacs-state-p) (list :background flatui-color-green-sea
+                                                          :path "#B0E7DC"
+                                                          :project "#65D1BC"
+                                                          :foreground flatui-color-turquoise-hover))
+                              ((evil-visual-state-p) (list :background flatui-color-pumpkin
+                                                           :path "#F5D6BB"
+                                                           :project "#EFB17A"
+                                                           :foreground flatui-color-carrot-hover))
+                              ((evil-replace-state-p) (list :background flatui-color-pomegranate
+                                                            :path "#F5C8C4"
+                                                            :project "#F0958B"
+                                                            :foreground flatui-color-alizarin-hover))
+                              ((evil-motion-state-p) `(list :background flatui-color-midnight
+                                                            :path "#BCC5CD"
+                                                            :project "#7C8D9D"
+                                                            :foreground flatui-color-wet-asphalt-hover))
+                              (t (list :background flatui-color-asbestos
+                                       :path "#D9DFDF"
+                                       :project "#B7C2C3"
+                                       :foreground flatui-color-concrete)))))
              (set-face-attribute 'mode-line nil
-                                 :foreground (car color)
-                                 :background (cdr color))))))
+                                 :foreground (plist-get color :foreground)
+                                 :background (plist-get color :background))
+             (set-face-attribute 'my-modeline-path nil
+                                 :foreground (plist-get color :path))
+             (set-face-attribute 'my-modeline-project nil
+                                 :foreground (plist-get color :project))))))
     (add-hook 'post-command-hook current-color))
-    
+
   ; Switch mode-line color from flatuicolors.com
   (set-face-background 'mode-line-inactive flatui-color-silver)
   (set-face-foreground 'mode-line-inactive flatui-color-concrete)
@@ -162,10 +187,28 @@ Color the modeline according to the current vim-mode.
   ;((evil-motion-state-p) `(,flatui-color-midnight . ,flatui-color-wet-asphalt-hover))
   ;(t `(,flatui-color-asbestos . ,flatui-color-concrete))
 
-  (set-face-foreground 'mode-line-buffer-id flatui-color-clouds)
+  (set-face-foreground 'mode-line-buffer-id flatui-color-clouds-hover)
 #+END_SRC
+
 *** Modeline Format
+**** Custom faces
+
+#+BEGIN_SRC emacs-lisp
+  (defface my-modeline-path
+    '((((class color) (min-colors 256))
+       :foreground "#ecf0f1")) ; flatui-color-clouds
+    "Face for the shortened path in modeline")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defface my-modeline-project
+    '((((class color) (min-colors 256))
+       :foreground "#ecf0f1")) ; flatui-color-clouds
+    "Face for the shortened project name in modeline")
+#+END_SRC
+
 **** Helper functions
+
 Function used to "intelligently" shorten paths and names.
 I try to use this to shorten the project name as well as the relative path within a project for a buffer.
 
@@ -190,7 +233,8 @@ I try to use this to shorten the project name as well as the relative path withi
     (when (projectile-project-p)
       (let ((short-project-name (my/shorten-path (projectile-project-name) "-")))
         (propertize (concat short-project-name "|")
-                    'help-echo (concat "Projectile: " (projectile-project-root))))))
+                    'help-echo (concat "Projectile: " (projectile-project-root))
+                    'face 'my-modeline-project))))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -203,7 +247,8 @@ I try to use this to shorten the project name as well as the relative path withi
            (relative-path (directory-file-name (substring default-directory root-length)))
            (short-path (my/shorten-path relative-path)))
       (propertize (concat short-path "/")
-                  'help-echo relative-path)))
+                  'help-echo relative-path
+                  'face 'my-modeline-path)))
 #+END_SRC
 
 **** Actual format
