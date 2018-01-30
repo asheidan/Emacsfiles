@@ -1256,11 +1256,29 @@ List all the files that's part of the worklog
     "Create a new buffer which contains all hte files."
     (interactive)
     (with-current-buffer (get-buffer-create "*Journal Entries*")
-      (let ((file-list (mapcar (lambda (s) (substring s (length "/Users/emieri/Dropbox/Worklog/")))
-                               (directory-files-recursively "~/Dropbox/Worklog" ".*\.org$"))))
+      (let* ((worklog-directory "~/Dropbox/Worklog/")
+             (file-list (directory-files-recursively worklog-directory ".*\.org$"))
+             (current-year nil)
+             (current-month nil)
+             (outputter (lambda (path)
+                          (let* ((names (split-string (substring path (length (expand-file-name worklog-directory))) "/"))
+                                 (year (nth 0 names))
+                                 (month (nth 1 names))
+                                 (day (nth 2 names)))
+                            (if (not (string-equal year current-year))
+                                (progn
+                                  (setq current-year year)
+                                  (insert (format "* %s\n" year))))
+                            (if (not (string-equal month current-month))
+                                (progn
+                                  (setq current-month month)
+                                  (insert (format "** %s\n" month))))
+                            (insert (format "   [[file:%s][%s]]\n" path day))
+                            ))))
         (org-mode)
         (erase-buffer)
-        (insert (string-join file-list "\n")))))
+        (mapc outputter file-list)
+        (hide-sublevels 1))))
   (define-key evil-normal-state-map ",wl" 'worklog-list-files)
 #+END_SRC
 
