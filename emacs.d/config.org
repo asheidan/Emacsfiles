@@ -1247,6 +1247,28 @@ My own additions to get support for easy work journal.
   (define-key evil-normal-state-map ",wn" 'worklog-new-entry)
 #+END_SRC
 
+** Custom agenda or whatever
+
+List all the files that's part of the worklog
+
+#+BEGIN_SRC emacs-lisp
+  (defun worklog-list-files ()
+    "Create a new buffer which contains all hte files."
+    (interactive)
+    (with-current-buffer (get-buffer-create "*Journal Entries*")
+      (let ((file-list (mapcar (lambda (s) (substring s (length "/Users/emieri/Dropbox/Worklog/")))
+                               (directory-files-recursively "~/Dropbox/Worklog" ".*\.org$"))))
+        (org-mode)
+        (erase-buffer)
+        (insert (string-join file-list "\n")))))
+  (define-key evil-normal-state-map ",wl" 'worklog-list-files)
+#+END_SRC
+
+*** TODO Enhance worklog-list-files to actually be usable
+    Just a collapsed list in org-mode with links to the files?
+    Something nicer like the org-agenda?
+    Who knows?
+
 * Dropbox
 
 Custom minor mode to turn off some behaviour for files in Dropbox.
