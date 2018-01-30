@@ -1244,7 +1244,6 @@ My own additions to get support for easy work journal.
     (interactive)
     (goto-char (point-max))
     (insert (format-time-string (concat "\n## " current-date-time-format) (current-time))))
-  (define-key evil-normal-state-map ",wn" 'worklog-new-entry)
 #+END_SRC
 
 ** Custom agenda or whatever
@@ -1252,12 +1251,31 @@ My own additions to get support for easy work journal.
 List all the files that's part of the worklog
 
 #+BEGIN_SRC emacs-lisp
+  (defvar worklog-directory "~/Dropbox/Worklog/")
+
+  (defun worklog-get-file-list ()
+    "Return list of files in worklog."
+    (directory-files-recursively worklog-directory ".*\.org$"))
+
+  (defun worklog-next-file ()
+    "Find next file in worklog."
+    (interactive)
+    (let* ((file-list (worklog-get-file-list))
+           (current-index (seq-position file-list buffer-file-name)))
+      (find-file (nth (+ current-index 1) file-list))))
+
+  (defun worklog-previous-file ()
+    "Find previous file in worklog."
+    (interactive)
+    (let* ((file-list (worklog-get-file-list))
+           (current-index (seq-position file-list buffer-file-name)))
+      (find-file (nth (- current-index 1) file-list))))
+
   (defun worklog-list-files ()
     "Create a new buffer which contains all hte files."
     (interactive)
     (with-current-buffer (get-buffer-create "*Journal Entries*")
-      (let* ((worklog-directory "~/Dropbox/Worklog/")
-             (file-list (directory-files-recursively worklog-directory ".*\.org$"))
+      (let* ((file-list (worklog-get-file-list))
              (current-year nil)
              (current-month nil)
              (outputter (lambda (path)
@@ -1275,9 +1293,12 @@ List all the files that's part of the worklog
                                   (insert (format "** %s\n" month))))
                             (insert (format "   [[file:%s][%s]]\n" path day))
                             ))))
+        (setq buffer-read-only nil)
         (org-mode)
         (erase-buffer)
         (mapc outputter file-list)
+        (set-buffer-modified-p nil)
+        (setq buffer-read-only t)
         (hide-sublevels 1))))
   (define-key evil-normal-state-map ",wl" 'worklog-list-files)
 #+END_SRC
