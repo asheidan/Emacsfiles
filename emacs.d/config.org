@@ -7,6 +7,9 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 
 ** PATH
 
+   For some reasone MacOSX doesn't set the path variable the way I want it to.
+   This will set it according to my wishes. Or at least closer.
+
 #+BEGIN_SRC emacs-lisp
   (if (string-equal system-type "darwin")
       (let
@@ -23,6 +26,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 * Theming / UI
 ** Font
 
+   Enable me to have different fonts on different platforms.
+
 #+BEGIN_SRC emacs-lisp
 (defvar my-default-font-family)
 (defvar my-default-font-height)
@@ -38,6 +43,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 ;(set-face-attribute 'mode-line nil :box nil)
 ;(set-face-attribute 'mode-line-inactive nil :box nil)
 #+END_SRC
+
+*** TODO Change the font-setting into a custom variable
 
 ** Themes
 
@@ -365,6 +372,8 @@ This indents wrapped lines to the correct left margin.
     (setq-default anzu-cons-mode-line-p nil)
     (global-anzu-mode))
 #+END_SRC
+
+**** TODO Evaluate if I want to keep anzu or get rid of it.
 
 *** Descbinds (describe key bindings)
 
@@ -1172,6 +1181,8 @@ Helm interface for pass. Quite awesome actually.
     :config
     (yas-global-mode 1))
 #+END_SRC
+
+** TODO Use snippets more
 
 * Completion
 ** Company
