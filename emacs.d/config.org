@@ -8,16 +8,17 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 ** PATH
 
 #+BEGIN_SRC emacs-lisp
-  (if (string-equal system-type "darwin")
-      (let
-          ((path '("/usr/local/bin" "/usr/bin" "/bin"
-                   "/usr/local/sbin" "/usr/sbin" "/sbin"
-                   "/opt/X11/bin" "/opt/ImageMagick/bin"
-                   "/usr/local/MacGPG2/bin" "/usr/texbin"
-                   "~/.cargo/bin")))
-        (progn
-          (set 'exec-path (delete-dups (append path exec-path)))
-          (setenv "PATH" (mapconcat 'identity path ":")))))
+    (if (string-equal system-type "darwin")
+        (let
+            ((path '("/usr/local/bin" "/usr/bin" "/bin"
+                     "/usr/local/sbin" "/usr/sbin" "/sbin"
+                     "/opt/X11/bin" "/opt/ImageMagick/bin"
+                     "/usr/local/MacGPG2/bin" "/usr/texbin"
+                     "~/.cargo/bin")))
+          (progn
+            (set 'exec-path (delete-dups (append path exec-path)))
+            (setenv "PATH" (mapconcat 'identity path ":"))
+            (setenv "LC_ALL" "en_US.UTF-8" ))))
 #+END_SRC
 
 * Theming / UI
@@ -1008,7 +1009,7 @@ These might be interesting:
     (setq magit-last-seen-setup-instructions "1.4.0"))
 #+END_SRC
 
-*** TODO Look at moving some strange or esoteric keybindings magit-popup
+*** TODO Look at moving some strange or esoteric keybindings to magit-popup
     Using `magit-define-popup` it should be possible to make some of my stranger and not as often used keybindings easier to remember as well as clearer.
     https://magit.vc/manual/magit-popup/Defining-Prefix-Commands.html#Defining-Prefix-Commands
 
