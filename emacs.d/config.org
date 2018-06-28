@@ -648,6 +648,7 @@ Miscellaneous packages and config related to the VI-emulator Evil.
             ("make" . projectile-compile-project)
             ("dash" . dash-at-point)
             ("ack" . ack-and-a-half)
+            ("rg" . projectile-ripgrep)
             ("co" . flycheck-list-errors))))
 #+END_SRC
 
@@ -1092,6 +1093,16 @@ https://github.com/emacs-helm/helm/wiki
      (", SPC c" . helm-flycheck)))
 #+END_SRC
 
+** Helm ripgrep
+
+   A nicer interface for showing results from ripgrep.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-rg
+    :ensure t
+    :after helm-config)
+#+END_SRC
+
 * Org
 
 #+BEGIN_SRC emacs-lisp
@@ -1164,6 +1175,13 @@ Helm interface for pass. Quite awesome actually.
 
     ; Fix for updated projectile
     (defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode))
+
+** Projectile ripgrep
+
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile-ripgrep
+    :ensure t
+    :after projectile)
 #+END_SRC
 
 ** Helm Projectile
