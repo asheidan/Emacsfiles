@@ -471,6 +471,7 @@ Helper function to open neotree relative to the current project root.
     :ensure t
     :config
     (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
+    (setq neo-force-change-root t)  ; Stop file not found, change root-dialogue
     ;(setq neo-smart-open t)
     ;(setq projectile-switch-project-action 'neotree-projectile-action)
     (add-hook 'neotree-mode-hook
@@ -511,8 +512,7 @@ https://www.emacswiki.org/emacs/SmartTabs
 #+BEGIN_SRC emacs-lisp
   (use-package speedbar
     :disabled t
-    :bind (:map evil-normal-state-map
-		("<f2>" . speedbar))
+    ;:bind (:map evil-normal-state-map ("<f2>" . speedbar))
     :config
     (speedbar-add-supported-extension ".css")
     (speedbar-add-supported-extension ".less")
@@ -1093,6 +1093,8 @@ https://github.com/emacs-helm/helm/wiki
      (", SPC c" . helm-flycheck)))
 #+END_SRC
 
+*** TODO How does marking multiple alternatives even work?
+
 ** Helm ripgrep
 
    A nicer interface for showing results from ripgrep.
@@ -1106,16 +1108,19 @@ https://github.com/emacs-helm/helm/wiki
 * Org
 
 #+BEGIN_SRC emacs-lisp
-    (use-package org
-      :ensure t
-      :mode ("\\.org\\'" . org-mode)
-      :config
-      (add-hook 'org-mode-hook
-                '(lambda ()
-                   (tabs-disable)
-                   (ws-trim-mode)
-                   (visual-line-mode)
-                   (adaptive-wrap-prefix-mode))))
+  (use-package org
+    :ensure t
+    :mode ("\\.org\\'" . org-mode)
+    :config
+    (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
+                          (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+                          (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+    (add-hook 'org-mode-hook
+              '(lambda ()
+                 (tabs-disable)
+                 (ws-trim-mode)
+                 (visual-line-mode)
+                 (adaptive-wrap-prefix-mode))))
 #+END_SRC
 
 Evil keybindings for org-mode.
@@ -1132,6 +1137,18 @@ Evil keybindings for org-mode.
                 (evil-org-set-key-theme)
                 (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
                 (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive))))
+#+END_SRC
+
+** TODO Try to create reveal.js presentations from org-mode
+
+   There is a package for emacs called ox-reveal which should do the trick.
+
+   [[https://github.com/yjwen/org-reveal/][Github page]]
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-reveal
+    :ensure t
+    :after org)
 #+END_SRC
 
 * Pass
@@ -1160,21 +1177,26 @@ Helm interface for pass. Quite awesome actually.
 ** Projectile core
 
 #+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :ensure t
-    :diminish projectile-mode
-    :config
-    (projectile-mode t)
-    (setq projectile-completion-system 'helm)
+    (use-package projectile
+      :ensure t
+      :diminish projectile-mode
+      :config
+      (projectile-mode t)
+      (setq projectile-completion-system 'helm)
 
-    (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
-    (add-to-list 'projectile-globally-ignored-directories ".virtualenvs")
-    (add-to-list 'projectile-globally-ignored-directories ".virtualenv")
-    (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
-    (add-to-list 'projectile-globally-ignored-directories "virtualenv")
+      (add-to-list 'projectile-globally-ignored-directories ".ropeproject")
+      (add-to-list 'projectile-globally-ignored-directories ".virtualenvs")
+      (add-to-list 'projectile-globally-ignored-directories ".virtualenv")
+      (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
+      (add-to-list 'projectile-globally-ignored-directories "virtualenv")
+      (add-to-list 'projectile-globally-ignored-directories "venv")
 
-    ; Fix for updated projectile
-    (defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode))
+      (add-to-list 'projectile-globally-ignored-file-suffixes "~")
+      (add-to-list 'projectile-globally-ignored-file-suffixes ".pyc")
+
+      ; Fix for updated projectile
+      (defalias 'helm-buffers-list--match-fn 'helm-buffer-match-major-mode))
+#+END_SRC
 
 ** Projectile ripgrep
 
@@ -1300,6 +1322,7 @@ List all the files that's part of the worklog
     (let* ((file-list (worklog-get-file-list))
            (current-index (seq-position file-list buffer-file-name)))
       (find-file (nth (+ current-index 1) file-list))))
+  (define-key evil-normal-state-map ",wn" 'worklog-next-file)
 
   (defun worklog-previous-file ()
     "Find previous file in worklog."
@@ -1307,6 +1330,7 @@ List all the files that's part of the worklog
     (let* ((file-list (worklog-get-file-list))
            (current-index (seq-position file-list buffer-file-name)))
       (find-file (nth (- current-index 1) file-list))))
+  (define-key evil-normal-state-map ",wp" 'worklog-previous-file)
 
   (defun worklog-list-files ()
     "Create a new buffer which contains all hte files."
