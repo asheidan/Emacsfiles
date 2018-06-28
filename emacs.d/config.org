@@ -1427,7 +1427,7 @@ Shell out to external script to speed up directory iteration. Right now the perf
     (setq indent-tabs-mode nil))
 #+END_SRC
 
-** Convinience functions for filelocation
+** Convenience functions for filelocation
 
 I mainly use this when I write written code reviews.
 
@@ -1480,9 +1480,42 @@ I mainly use this when I write written code reviews.
   (server-start )
 #+END_SRC
 
-* Interesting packages
+* Interesting stuff
+
+
+** TODO Add function to reload dir-locals
+
+   Do something similar to this:
+   https://emacs.stackexchange.com/questions/13080/reloading-directory-local-variables#13096
+
 ** TODO Restclient
    
    Provides functionality to use a buffer for interacting with a rest interface.
    
    https://github.com/pashky/restclient.el
+
+** TODO Hydra - menu library
+
+   Package which makes it easy to create popup/menues.
+
+   https://github.com/abo-abo/hydra
+
+** TODO Enhance discoverability of functions
+
+   https://www.masteringemacs.org/article/discoverel-discover-emacs-context-menus
+
+** TODO List for symbols in file (ilist)
+
+   https://github.com/bmag/imenu-list
+
+** TODO Better search/navigation for org-mode
+
+   Riffle through org-files with helm-like interface
+
+   https://github.com/alphapapa/helm-org-rifle
+
+** TODO Proper powerline and not my own ugly hack
+
+   I hope...
+
+   https://github.com/raugturi/powerline-evil
