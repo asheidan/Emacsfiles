@@ -439,6 +439,14 @@ Using helm to browse menus.
     (setq modelinepos-column-limit 70))
 #+END_SRC
 
+*** Linenumbers
+
+    Add key binding for adding line-numbers in buffer.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f3>") 'display-line-numbers-mode)
+#+END_SRC
+
 *** Neotree
 
 Helper function to open neotree relative to the current project root.
@@ -473,6 +481,17 @@ Helper function to open neotree relative to the current project root.
                 (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)))
     :bind (([f2] . neotree-project-dir)))
 #+END_SRC
+
+**** TODO Add custom dialog to neo-tree
+
+     Change the behaviour to only change root if the new buffer is actually backed by a file.
+
+     There is a custom option called "Neo Confirm Change Root which does this.
+
+
+     Related setting:
+     (setq neo-force-change-root t)
+
 
 *** Smart tabs
 
@@ -959,7 +978,6 @@ Not sure it actually is better though.
 #+END_SRC
 
 * Linting
-  
 ** Flycheck
 
 #+BEGIN_SRC emacs-lisp
