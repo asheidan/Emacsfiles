@@ -394,8 +394,7 @@ Helm interface for searching through keybindings.
   (use-package hideshow
     :commands (hs-minor-mode)
     ;:diminish hs-minor-mode
-    :init
-    (add-hook 'estimation-mode 'hs-minor-mode)
+    :hook estimation-mode
     :config
     (add-to-list 'hs-special-modes-alist
 		 `(yaml-mode ":" nil "#"
@@ -483,7 +482,7 @@ Helper function to open neotree relative to the current project root.
     (setq neo-force-change-root t)  ; Stop file not found, change root-dialogue
     ;(setq neo-smart-open t)
     ;(setq projectile-switch-project-action 'neotree-projectile-action)
-    (add-hook 'neotree-mode-hook
+    :hook (neotree-mode .
               (lambda ()
                 (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
                 (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
@@ -681,8 +680,7 @@ Makes it possible to select a block in python.
   (use-package evil-text-object-python
     :after (evil python-mode)
     :ensure
-    :config
-    (add-hook 'python-mode-hook 'evil-text-object-python-add-bindings))
+    :hook (python-mode evil-text-object-python-add-bindings))
 #+END_SRC
 
 ** Evil visualstar
@@ -715,12 +713,10 @@ Should have learned org-mode instead.
     :mode ("\\.est\\'" . estimation-mode)
     :interpreter ("estimation" . estimation-mode)
     :load-path "estimation"
-    :config
-    (add-hook 'estimation-mode-hook
-       (lambda () (progn
-		    ;(hs-minor-mode 1)
-		    (visual-line-mode 1)
-		    (adaptive-wrap-prefix-mode 1)))))
+    :hook (estimation-mode . (lambda () (progn
+                                          ;(hs-minor-mode 1)
+                                          (visual-line-mode 1)
+                                          (adaptive-wrap-prefix-mode 1)))))
 #+END_SRC
 
 ** Haskell
@@ -729,9 +725,8 @@ Should have learned org-mode instead.
   (use-package haskell-mode
     :ensure
     :mode ("\\.hs\\'")
-    :config
     ;; Sane indentation for haskell
-    (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation))
+    :hook (haskell-mode . turn-on-haskell-indentation))
 #+END_SRC
 
 ** Less-CSS
@@ -739,11 +734,10 @@ Should have learned org-mode instead.
 #+BEGIN_SRC emacs-lisp
   (use-package less-css-mode
     :mode ("\\.css\\'" "\\.less\\'")
-    :config
-    (add-hook 'less-css-mode-hook
-              (function (lambda ()
-                          (add-to-list 'imenu-generic-expression
-                                       '("Rule" "[{}]\\([ \t\na-z0-9:_-]\\){" 1))))))
+    :hook
+    (less-css-mode . (lambda ()
+                       (add-to-list 'imenu-generic-expression
+                                    '("Rule" "[{}]\\([ \t\na-z0-9:_-]\\){" 1)))))
 #+END_SRC
 
 Add Helm integration for less/css.
@@ -752,10 +746,9 @@ Add Helm integration for less/css.
   (use-package helm-css-scss
     :after (evil helm-mode less-css-mode)
     :ensure
-    :init
-    (add-hook 'less-css-mode-hook
-              (lambda ()
-                (define-key evil-normal-state-local-map ", SPC o" 'helm-css-scss))))
+    :hook
+    (less-css-mode . (lambda ()
+                       (define-key evil-normal-state-local-map ", SPC o" 'helm-css-scss))))
 #+END_SRC
 
 ** Lisp
@@ -790,11 +783,10 @@ Adding "outline" imenu structure to Lisp-files
     (set-face-foreground 'markdown-header-face-5 flatui-color-belize-hole)
     (set-face-foreground 'markdown-header-face-6 flatui-color-nephritis)
 
-    (add-hook 'markdown-mode-hook
-              (lambda ()
-                (visual-line-mode t)
-                (adaptive-wrap-prefix-mode t)
-                (ws-trim-mode nil))))
+    :hook (markdown-mode . (lambda ()
+                             (visual-line-mode t)
+                             (adaptive-wrap-prefix-mode t)
+                             (ws-trim-mode nil))))
 #+END_SRC
 
 Preview markdown with Marked
@@ -844,15 +836,18 @@ Auto complete support for Python via Jedi
 ; (use-package jedi
 ;   :commands jedi:setup
 ;   ;:defer t
-;   :init
-;   (add-hook 'python-mode-hook 'jedi:setup))
+;   :hook (python-mode . jedi:setup))
 ; #+END_SRC
+
+*** Anaconda
+
+Code completion, navigation, almost like a real Python IDE?!
 
 #+BEGIN_SRC emacs-lisp
   (use-package anaconda-mode
     :ensure t
     :commands anaconda-mode
-    :config (add-hook 'python-mode-hook 'anaconda-mode)
+    :hook python-mode
     )
 #+END_SRC
 
@@ -863,18 +858,21 @@ Auto complete support for Python via Jedi
     :config (add-to-list 'company-backends 'company-anaconda))
 #+END_SRC
 
+**** TODO Look at the actual features of Anaconda
+
+https://github.com/proofit404/anaconda-mode
+
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
   (use-package rust-mode
-	:ensure t
-	:mode "\\.rs\\'")
+    :ensure t
+    :mode "\\.rs\\'")
 
   (use-package flycheck-rust
-	:ensure t
-	:after rust-mode
-	:init
-	(add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+    :ensure t
+    :after rust-mode
+    :hook (flycheck-mode . flycheck-rust-setup))
 #+END_SRC
 
 *** Rust completion via Racer
@@ -890,11 +888,10 @@ And then the actual emacs integration.
 
 #+BEGIN_SRC emacs-lisp
   (use-package racer
-	:ensure t
-	:after company-mode rust-mode
-	:init
-	(add-hook 'racer-mode-hook #'company-mode)
-	(add-hook 'rust-mode-hook #'racer-mode))
+    :ensure t
+    :after company-mode rust-mode
+    :hook ((racer-mode . company-mode)
+           (rust-mode . racer-mode)))
 #+END_SRC
 
 **** TODO Look at difference between racer and company-racer for completion
@@ -904,12 +901,10 @@ And then the actual emacs integration.
 #+BEGIN_SRC emacs-lisp
   (use-package textile-mode
     :mode "\\.textile\\'"
-    :config
-    (add-hook 'textile-mode-hook
-              (lambda ()
-                (visual-line-mode t)
-                (adaptive-wrap-prefix-mode t)
-                (ws-trim-mode nil))))
+    :hook (textile-mode . (lambda ()
+                            (visual-line-mode t)
+                            (adaptive-wrap-prefix-mode t)
+                            (ws-trim-mode nil))))
 #+END_SRC
 
 ** Todo.txt
@@ -921,9 +916,8 @@ And then the actual emacs integration.
     :init
     (setq todotxt-default-file (expand-file-name "~/Dropbox/todo/todo.txt")
           todotxt-default-archive-file (expand-file-name "~/Dropbox/todo/done.txt"))
-    :config
-    (add-hook 'todotxt-mode-hook 'toggle-truncate-lines)
-    (add-hook 'todotxt-mode-hook (lambda () (auto-revert-mode 1)))
+    :hook ((todotxt-mode . toggle-truncate-lines)
+           (todotxt-mode . (lambda () (auto-revert-mode 1))))
     :bind
     (:map evil-normal-state-map
           (",tt" . todotxt-open-file)
@@ -968,11 +962,12 @@ Writing it instead of json. Perhaps use it as an outliner.
 Would it even be possible to create some sort of spreadsheet-functionality on top of it?
 
 #+BEGIN_SRC emacs-lisp
-    (use-package yaml-mode
-      :ensure t
-      :commands yaml-mode
-      :mode ("\\.yml\\'" "\\.yaml\\'")
-      :init (add-hook 'yaml-mode-hook (lambda () (setq evil-shift-width yaml-indent-offset))))
+  (use-package yaml-mode
+    :ensure t
+    :commands yaml-mode
+    :mode ("\\.yml\\'" "\\.yaml\\'")
+    :hook (yaml-mode . (lambda ()
+                         (setq evil-shift-width yaml-indent-offset))))
 #+END_SRC
 
 ** XML
@@ -995,8 +990,9 @@ Not sure it actually is better though.
     :ensure
     :commands #'global-flycheck-mode
     ;:defer t
-    :init
-    (add-hook 'after-init-hook #'global-flycheck-mode))
+    :hook (after-init . global-flycheck-mode)
+    ;:config (flycheck-add-next-checker 'python-flake8 'python-pylint)
+    )
 #+END_SRC
 
 Helm integration for flycheck.
@@ -1124,12 +1120,11 @@ https://github.com/emacs-helm/helm/wiki
     (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
                           (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
                           (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
-    (add-hook 'org-mode-hook
-              '(lambda ()
-                 (tabs-disable)
-                 (ws-trim-mode)
-                 (visual-line-mode)
-                 (adaptive-wrap-prefix-mode))))
+    :hook (org-mode . (lambda ()
+                        (tabs-disable)
+                        (ws-trim-mode)
+                        (visual-line-mode)
+                        (adaptive-wrap-prefix-mode))))
 #+END_SRC
 
 Evil keybindings for org-mode.
@@ -1139,13 +1134,11 @@ Evil keybindings for org-mode.
     :ensure
     :after (evil org)
     :diminish evil-org-mode
-    :config
-    (add-hook 'org-mode-hook 'evil-org-mode)
-    (add-hook 'evil-org-mode-hook
-			  (lambda ()
-                (evil-org-set-key-theme)
-                (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
-                (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive))))
+    :hook ((org-mode . evil-org-mode)
+           (evil-org-mode . (lambda ()
+                              (evil-org-set-key-theme)
+                              (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
+                              (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)))))
 #+END_SRC
 
 ** TODO Try to create reveal.js presentations from org-mode
