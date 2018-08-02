@@ -889,7 +889,7 @@ And then the actual emacs integration.
 #+BEGIN_SRC emacs-lisp
   (use-package racer
     :ensure t
-    :after company-mode rust-mode
+    :after (company-mode rust-mode)
     :hook ((racer-mode . company-mode)
            (rust-mode . racer-mode)))
 #+END_SRC
@@ -1085,6 +1085,8 @@ https://github.com/emacs-helm/helm/wiki
     (("M-x". helm-M-x)
      ("C-x C-f" . helm-find-files)
      ("C-x C-b" . helm-buffers-list)
+     :map helm-map
+     ;("C-m" . helm-toggle-visible-mark)
      :map evil-normal-state-map
      (", SPC b" . helm-buffers-list)
      (", SPC f" . helm-find-files)
@@ -1152,6 +1154,26 @@ Evil keybindings for org-mode.
     :ensure t
     :after org)
 #+END_SRC
+
+
+** JIRA integration for org-mode
+
+   For some reason this is really slow.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package org-jira
+    :disabled
+    ;:after org
+    :config
+    (setq jiralib-url "https://jira.atlas.p7s1.net"
+          jiralib-token `("Cookie" . "seraph.rememberme.cookie=11476%3Aacf6eae90736e7061accb8ef38f9da63ae715d61; jira.editor.user.mode=source; atlassian.xsrf.token=BKOB-Y9EM-IFM2-FG43|3aff4aabda479036f7cf94cd00ef7f28a20d5f37|lin; JSESSIONID=67DF63E4F5A888B79D714EA5900C240C; crowd.token_key=UlP4bwQ0lMTy4LWDpPFzug00")
+          ;jiralib-token (with-temp-buffer (insert-file-contents "/Users/emieri/.password-store/work/pro7/gitlab/api-token.gpg") (epg-decrypt-string (buffer-string)))
+          ))
+#+END_SRC
+
+*** TODO Fix proper storage of token
+
+Use pass or similar to store token and decrypt on usage.
 
 * Pass
 ** Pass core
