@@ -830,29 +830,24 @@ Nice addon to markdown which allows for suggesting changes, commenting and so on
 
 ** Python
    
-This was a try to add flycheck for python 3 files.
+*** TODO add underscore as part of a word
 
-; (with-eval-after-load "flycheck"
-;   (flycheck-define-checker python3-pyflakes
-;     "A Python syntax and style checker using the pyflakes utility.
-; 
-; See URL `http://pypi.python.org/pypi/pyflakes'."
-;     :command ("python3 -m pyflakes" source-inplace)
-;     :error-patterns
-;     ((error line-start (file-name) ":" line ":" (message) line-end))
-;     :modes python-mode)
-; 
-;   (add-to-list 'flycheck-checkers 'python3-pyflakes))
+    I probably want to have this as part of a use-package block instead of this "naked" lisp.
 
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'python-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+#+END_SRC
 
-Auto complete support for Python via Jedi
+*** Jedi (obsolete)
 
-; #+BEGIN_SRC emacs-lisp
+Auto complete support for Python via Jedi. I have tried to replace this with anaconda-mode/company-anaconda instead.
+
+#+BEGIN_SRC emacs-lisp
 ; (use-package jedi
 ;   :commands jedi:setup
 ;   ;:defer t
 ;   :hook (python-mode . jedi:setup))
-; #+END_SRC
+#+END_SRC
 
 *** Anaconda
 
@@ -873,9 +868,49 @@ Code completion, navigation, almost like a real Python IDE?!
     :config (add-to-list 'company-backends 'company-anaconda))
 #+END_SRC
 
+**** TODO Fix the broken completion
+
+For some reason the completion is broken. `anaconda-mode-bootstrap` fails with a strange message.
+Here's to hoping that an update will appear soon that will fix the issue.
+
 **** TODO Look at the actual features of Anaconda
 
 https://github.com/proofit404/anaconda-mode
+
+*** Pipenv
+
+Pipenv is now the officially recommended Python packaging tool. It manages virtual environments, adds and removes packages, and enables deterministic build dependencies, has Pipfile to finally replace all other requirements.txt hacks. Yay for Pipenv.
+
+https://docs.pipenv.org/
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pipenv
+    :after projectile
+    :ensure t
+    :config
+    ; Redefine this function to force rechecking of flycheck-checkers
+    (defun pipenv-activate-flycheck ()
+      "Activate integration of Pipenv with Flycheck."
+      (setq flycheck-executable-find #'pipenv-executable-find)
+      (setq flycheck-disabled-checkers nil))
+    :hook (python-mode . pipenv-mode))
+#+END_SRC
+
+*** TODO Pycheckers
+
+Use multiple checkers for python
+
+#+BEGIN_SRC emacs-lisp
+  (with-eval-after-load 'flycheck
+    (flycheck-add-next-checker 'python-flake8 'python-pylint))
+
+  (use-package flycheck-pycheckers
+    :disabled t
+    :ensure t
+    :after flycheck
+    :hook (flycheck-mode . flycheck-pycheckers-setup)
+    )
+#+END_SRC
 
 ** Rust
 
