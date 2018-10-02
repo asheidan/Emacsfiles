@@ -416,7 +416,7 @@ Helm interface for searching through keybindings.
     :after evil
     :ensure
     :bind (:map evil-normal-state-map
-		(", i g" . indent-guide-mode)))
+                (", i g" . indent-guide-mode)))
 #+END_SRC
 
 *** Lacarte
@@ -699,6 +699,14 @@ Makes it possible to create *- and #-searches with a visual selection.
 
 #+BEGIN_SRC emacs-lisp
   (setq c-basic-offset 4)
+#+END_SRC
+
+** Dockerfile
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dockerfile-mode
+    :ensure t
+    :mode ("Dockerfile"))
 #+END_SRC
 
 ** Docker compose
