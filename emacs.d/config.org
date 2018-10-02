@@ -726,6 +726,13 @@ Should have learned org-mode instead.
                                           (visual-line-mode 1)
                                           (adaptive-wrap-prefix-mode 1)))))
 #+END_SRC
+** Groovy
+
+Groovy baby! I use this mainly in Jenkins pipelines.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package groovy-mode)
+#+END_SRC
 
 ** Haskell
 
