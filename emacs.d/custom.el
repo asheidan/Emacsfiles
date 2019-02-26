@@ -16,6 +16,7 @@
  '(ediff-split-window-function (quote split-window-horizontally))
  '(ediff-window-setup-function (quote ediff-setup-windows-plain))
  '(fci-rule-color "#f1c40f")
+ '(flycheck-check-syntax-automatically (quote (save mode-enabled)))
  '(frame-brackground-mode (quote dark))
  '(helm-buffer-max-length 40)
  '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
@@ -31,14 +32,41 @@
 	 ("#49483E" . 100))))
  '(hl-paren-background-colors (quote ("#2492db" "#95a5a6" nil)))
  '(hl-paren-colors (quote ("#ecf0f1" "#ecf0f1" "#c0392b")))
+ '(imenu-list-size 35 t)
+ '(lsp-prefer-flymake nil)
  '(magit-diff-use-overlays nil)
+ '(neo-click-changes-root nil t)
+ '(neo-force-change-root t t)
+ '(neo-hidden-regexp-list
+   (quote
+	("^__pycache__$" "^\\." "\\.pyc$" "\\.o$" "~$" "^#.*#$" "\\.elc$")) t)
  '(neo-mode-line-type (quote neotree))
- '(neo-theme (quote nerd))
+ '(neo-theme (quote ascii))
  '(neo-vc-integration (quote (face char)))
- '(neo-window-fixed-size nil)
+ '(neo-window-fixed-size nil t)
+ '(neo-window-width 35 t)
+ '(nrepl-message-colors
+   (quote
+	("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
+ '(ns-antialias-text t)
+ '(org-agenda-clock-consistency-checks
+   (quote
+	(:max-duration "10:00" :min-duration 1 :max-gap "0:05" :gap-ok-around
+				   ("4:00")
+				   :default-face
+				   ((:background "DarkRed")
+					(:foreground "white"))
+				   :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil)))
+ '(org-agenda-clockreport-parameter-plist
+   (quote
+	(:link t :maxlevel 3 :fileskip0 t :step day :stepskip0 t)))
  '(org-agenda-files
    (quote
-	("~/Dropbox/Worklog/2017/08 August" "~/Dropbox/Worklog/2017/09 September" "~/Dropbox/Worklog/2017/10 October" "~/Dropbox/Worklog/Pro7/UCP")))
+	("~/Dropbox/Worklog/2019/02 February" "~/Dropbox/Worklog/2019/03 March" "~/Dropbox/Worklog/Codemill" "~/Dropbox/Worklog/Pro7/UCP")))
+ '(org-clock-clocked-in-display nil)
+ '(org-clock-in-resume t)
+ '(org-clock-out-remove-zero-time-clocks t)
+ '(org-clock-out-when-done nil)
  '(org-hide-leading-stars t)
  '(package-selected-packages
    (quote
@@ -48,26 +76,50 @@
  '(projectile-mode-line (quote (:eval (format " P[%s]" (projectile-project-name)))))
  '(safe-local-variable-values
    (quote
-	((company-clang-arguments "-std=c++11")
+	((eval progn
+		   (make-local-variable
+			(quote process-environment))
+		   (setq process-environment
+				 (copy-sequence process-environment))
+		   (if
+			   (projectile-project-p)
+			   (setenv "PYTHONPATH"
+					   (concat
+						(projectile-project-root)
+						"src"))))
+	 (python-shell-extra-pythonpaths . "/Users/emieri/Documents/Codemill/Pro7/stargate-migrator/src")
+	 (company-clang-arguments "-std=c++11")
 	 (company-clang-arguments "-std=c++17")
 	 (css-indent-offset . 2)
 	 (indent-tabs-mode . false)
 	 (projectile-project-name . "brb-dml")
-	 (projectile-project-name . "brb-es"))))
+	 (projectile-project-name . "brb-es")
+	 (tmux-test-command . "./runtests.sh"))))
  '(send-mail-function (quote mailclient-send-it))
  '(show-paren-mode t)
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#073642" 0.2))
  '(sml/active-background-color "#34495e")
  '(sml/active-foreground-color "#ecf0f1")
  '(sml/inactive-background-color "#dfe4ea")
  '(sml/inactive-foreground-color "#34495e")
+ '(sml/modified-char "x")
+ '(sml/use-projectile-p (quote before-prefixes))
+ '(sml/vc-mode-show-backend nil)
  '(speedbar-directory-unshown-regexp "^\\(\\..*\\|__pycache__\\)\\'")
  '(speedbar-indentation-width 2)
  '(speedbar-use-images nil)
  '(speedbar-verbosity-level 0)
+ '(term-default-bg-color "#002b36")
+ '(term-default-fg-color "#839496")
+ '(treemacs-collapse-dirs 10)
+ '(treemacs-no-png-images nil)
+ '(treemacs-python-executable "/usr/local/bin/python3")
+ '(treemacs-show-hidden-files nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(uniquify-separator "/")
  '(uniquify-strip-common-suffix nil)
  '(vc-annotate-background "#ecf0f1")
+ '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
    (quote
 	((30 . "#e74c3c")

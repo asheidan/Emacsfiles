@@ -3,6 +3,7 @@
 
 Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
 
+
 * Environment
 
 ** PATH
@@ -30,57 +31,23 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
    Enable me to have different fonts on different platforms.
 
 #+BEGIN_SRC emacs-lisp
-(defvar my-default-font-family)
-(defvar my-default-font-height)
-(if (string-equal system-type "darwin")
-	;(:foundry "nil" :family "ProfontIIx")
-	; Source Code Pro:110
-	(setq my-default-font-family "ProfontIIx"
-		  my-default-font-height 90))
-(if (string-equal system-type "gnu/linux")
-	(setq my-default-font-family "ProFontWindows"
-		  my-default-font-height 90))
-(set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
-;(set-face-attribute 'mode-line nil :box nil)
-;(set-face-attribute 'mode-line-inactive nil :box nil)
+  (defvar my-default-font-family)
+  (defvar my-default-font-height)
+  (if (string-equal system-type "darwin")
+      ;(:foundry "nil" :family "ProfontIIx")
+      ; Source Code Pro:110
+      ; ProfontIIx Nerd Font:90
+      (setq my-default-font-family "Source Code Pro"
+            my-default-font-height 120))
+  (if (string-equal system-type "gnu/linux")
+      (setq my-default-font-family "ProFontWindows"
+            my-default-font-height 90))
+  (set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
+  ;(set-face-attribute 'mode-line nil :box nil)
+  ;(set-face-attribute 'mode-line-inactive nil :box nil)
 #+END_SRC
 
 *** TODO Change the font-setting into a custom variable
-
-** Themes
-
-*** FlatUI
-
-Theme with colors from http://flatui.com/flat-ui-color-palette/.
-
-This is currently my most often used theme.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package flatui-theme
-    :if window-system
-    :ensure
-    :config
-    (load-theme 'flatui t))
-#+END_SRC
-
-*** Molokai
-
-#+BEGIN_SRC emacs-lisp
-(use-package molokai-theme
-  :disabled t
-  :ensure)
-#+END_SRC
-
-*** Helm themes
-
-Not sure if this belongs here or in the Helm-section.
-
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-themes
-    :after helm-mode
-    :ensure t
-    :commands helm-themes)
-#+END_SRC
 
 ** Custom colors
 
@@ -122,6 +89,116 @@ A bunch of custom colors taken from the FlatUI theme.
 (defvar flatui-color-concrete-hover "#a3b1b2")
 #+END_SRC
 
+** Themes
+
+
+*** Doom-themes
+
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-themes
+    :ensure
+    :config
+    (doom-themes-treemacs-config)
+    (doom-themes-org-config)
+    (load-theme 'doom-one t))
+#+END_SRC
+*** FlatUI
+
+Theme with colors from http://flatui.com/flat-ui-color-palette/.
+
+This was previously my most often used theme.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package flatui-theme
+    :disabled
+    :ensure
+    :custom-face
+    ; Better imenu
+    (imenu-list-entry-face-0 ((t (:inherit imenu-list-entry-face :foreground "#27ae60"))))  ; flatui-color-nephritis
+    (imenu-list-entry-face-1 ((t (:inherit imenu-list-entry-face :foreground "#2980b9"))))  ; flatui-color-belize-hole
+    (imenu-list-entry-face-2 ((t (:inherit imenu-list-entry-face :foreground "#8e44ad"))))  ; flatui-color-wisteria
+
+    :config
+    ; (load-theme 'flatui t)
+
+    ; Trying to get markdown to look better
+    (set-face-foreground 'markdown-header-face flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-1 flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-2 flatui-color-nephritis)
+    (set-face-foreground 'markdown-header-face-3 flatui-color-pumpkin)
+    (set-face-foreground 'markdown-header-face-4 flatui-color-wisteria)
+    (set-face-foreground 'markdown-header-face-5 flatui-color-belize-hole)
+    (set-face-foreground 'markdown-header-face-6 flatui-color-nephritis)
+
+    ; company: The default colors are terrible. This is probably better. For flatui
+    ;(set-face-attribute 'company-tooltip nil
+    ;                    :background "#fbfcfc"
+    ;                    :foreground "#34495e")
+    ;(set-face-attribute 'company-scrollbar-bg nil
+    ;                    :background "#cad1d5")
+    ;(set-face-attribute 'company-scrollbar-fg nil
+    ;                    :background "#95a5a6")
+    ;(set-face-attribute 'company-tooltip-selection nil
+    ;                    :background "#f2ca27")
+    ;(set-face-attribute 'company-tooltip-common nil
+    ;                    :foreground "#7f8c8d")
+    ;(set-face-attribute 'company-tooltip-annotation nil
+    ;                    :foreground "#3498db")
+    ;(set-face-attribute 'company-tooltip-search-selection nil
+    ;                    :background "#f39c12")
+
+    )
+#+END_SRC
+
+*** Molokai
+
+#+BEGIN_SRC emacs-lisp
+(use-package molokai-theme
+  :disabled t
+  :ensure)
+#+END_SRC
+
+*** Solarized
+
+#+BEGIN_SRC emacs-lisp
+  (use-package solarized-theme
+    :ensure t
+    :config
+    ;; make the fringe stand out from the background
+    (setq solarized-distinct-fringe-background t)
+
+    ;; Don't change the font for some headings and titles
+    (setq solarized-use-variable-pitch nil)
+
+    ;; Use less bolding
+    (setq solarized-use-less-bold t)
+
+    ;; Don't change size of org-mode headlines (but keep other size-changes)
+    (setq solarized-scale-org-headlines nil)
+
+    ;; Avoid all font-size changes
+    (setq solarized-height-minus-1 1.0)
+    (setq solarized-height-plus-1 1.0)
+    (setq solarized-height-plus-2 1.0)
+    (setq solarized-height-plus-3 1.0)
+    (setq solarized-height-plus-4 1.0))
+#+END_SRC
+
+*** Helm themes
+
+Not sure if this belongs here or in the Helm-section.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-themes
+    :after helm-mode
+    :ensure t
+    :commands helm-themes)
+#+END_SRC
+
+** No blinking!!!
+#+BEGIN_SRC emacs-lisp
+  (blink-cursor-mode 0)
+#+END_SRC
 ** Line highlighting
 
 Highlite the line the cursor is currently on.
@@ -132,9 +209,54 @@ Highlite the line the cursor is currently on.
 
 ** Modeline
 
-*** Custom modeline faces
+#+BEGIN_SRC emacs-lisp
+  (use-package doom-modeline
+    :ensure t
+    :config
+    ;(setq doom-modeline-height 25)
+    ;(setq doom-modeline-bar-width 3)
+    (setq doom-modeline-buffer-file-name-style 'relative-from-project)
+    (setq doom-modeline-major-mode-icon nil)
+    (setq doom-modeline-minor-modes t)
+    :hook (after-init . doom-modeline-mode))
+#+END_SRC
+
+*** TODO Write own buffer-file-name-style
+    Should probably leverage the functions for this already created
+
+*** Diminish
 
 #+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :disabled
+    :ensure
+    :config
+    (with-eval-after-load "eldoc" (diminish 'eldoc-mode)))
+#+END_SRC
+
+*** Minions
+
+    Replace the list of minor modes with `;-`.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package minions
+    :ensure
+    :config (minions-mode 1))
+#+END_SRC
+
+*** Rich-minority
+
+#+BEGIN_SRC emacs-lisp
+  (use-package rich-minority
+    :disabled
+    :custom (rm-whitelist "FlyC")
+    :init
+    (rich-minority-mode 1))
+#+END_SRC
+
+*** Custom modeline faces
+
++BEGIN_SRC emacs-lisp
   (defface modeline-insert-state
     `((((class color) (min-colors 256))
        :foreground ,flatui-color-emerald-hover :background ,flatui-color-nephritis))
@@ -144,66 +266,64 @@ Highlite the line the cursor is currently on.
 
   (defface modeline-normal-state
     `((((class color) (min-colors 256))
-	    :foreground ,flatui-color-peter-river-hover :background ,flatui-color-belize-hole))
-	 "")
+        :foreground ,flatui-color-peter-river-hover :background ,flatui-color-belize-hole))
+     "")
   (defface modeline-normal-state-path `((((class color) (min-colors 256)) :foreground "#C0DEF2")) "")
   (defface modeline-normal-state-project `((((class color) (min-colors 256)) :foreground "#85C1E9")) "")
 
   (defface modeline-visual-state
     `((((class color) (min-colors 256))
-	    :foreground ,flatui-color-carrot-hover :background ,flatui-color-pumpkin))
-	 "")
+        :foreground ,flatui-color-carrot-hover :background ,flatui-color-pumpkin))
+     "")
   (defface modeline-visual-state-path `((((class color) (min-colors 256)) :foreground "#F5D6BB")) "")
   (defface modeline-visual-state-project `((((class color) (min-colors 256)) :foreground "#EFB17A")) "")
 
   (defface modeline-replace-state
     `((((class color) (min-colors 256))
-	    :foreground ,flatui-color-alizarin-hover :background ,flatui-color-pomegranate))
-	 "")
+        :foreground ,flatui-color-alizarin-hover :background ,flatui-color-pomegranate))
+     "")
   (defface modeline-replace-state-path `((((class color) (min-colors 256)) :foreground "#F5C8C4")) "")
   (defface modeline-replace-state-project `((((class color) (min-colors 256)) :foreground "#F0958B")) "")
 
   (defface modeline-emacs-state
     `((((class color) (min-colors 256))
-	    :foreground ,flatui-color-turquoise-hover :background ,flatui-color-green-sea))
-	 "")
+        :foreground ,flatui-color-turquoise-hover :background ,flatui-color-green-sea))
+     "")
   (defface modeline-emacs-state-path `((((class color) (min-colors 256)) :foreground "#B0E7DC")) "")
   (defface modeline-emacs-state-project `((((class color) (min-colors 256)) :foreground "#65D1BC")) "")
 
   (defface modeline-motion-state
     `((((class color) (min-colors 256))
-	    :foreground ,flatui-color-wet-asphalt-hover :background ,flatui-color-midnight))
-	 "")
+        :foreground ,flatui-color-wet-asphalt-hover :background ,flatui-color-midnight))
+     "")
   (defface modeline-motion-state-path `((((class color) (min-colors 256)) :foreground "#BCC5CD")) "")
   (defface modeline-motion-state-project `((((class color) (min-colors 256)) :foreground "#7C8D9D")) "")
 
   (defface modeline-minibuffer-state
     `((((class color) (min-colors 256))
         :foreground ,flatui-color-amethyst-hover :background ,flatui-color-wisteria))
-	 "")
+     "")
   (defface modeline-minibuffer-state-path `((((class color) (min-colors 256)) :foreground "#DFCCE7")) "")
   (defface modeline-minibuffer-state-project `((((class color) (min-colors 256)) :foreground "#C29BD3")) "")
-#+END_SRC
++END_SRC
 
-#+BEGIN_SRC emacs-lisp
++BEGIN_SRC emacs-lisp
   (defface my-modeline-path
     '((((class color) (min-colors 256))
        :foreground "#ecf0f1")) ; flatui-color-clouds
     "")
-#+END_SRC
++END_SRC
 
-#+BEGIN_SRC emacs-lisp
++BEGIN_SRC emacs-lisp
   (defface my-modeline-project
     '((((class color) (min-colors 256))
        :foreground "#ecf0f1")) ; flatui-color-clouds
     "")
-#+END_SRC
++END_SRC
 
 *** My own custom colors
-    
-Color the modeline according to the current vim-mode.
 
-Might be possible to speed up with face-remapping instead of changing the faces.
+Color the modeline according to the current vim-mode.
 
 [[https://stackoverflow.com/questions/25109011/how-to-speed-up-a-custom-mode-line-face-change-function-in-emacs][Thread on SO]], [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Face-Remapping.html][Face remapping]]
 
@@ -211,62 +331,80 @@ Might be possible to speed up with face-remapping instead of changing the faces.
                                        :path "#D9DFDF"
                                        :project "#B7C2C3"
                                        :foreground flatui-color-concrete)))))
-#+BEGIN_SRC emacs-lisp
-    (let ((current-color
-           (lambda ()
-             (cond ((minibufferp) (set 'face-remapping-alist '((mode-line modeline-minibuffer-state)
-                                                               (my-modeline-path modeline-minibuffer-state-path)
-                                                               (my-modeline-project modeline-minibuffer-state-project))))
-                   ((evil-insert-state-p) (set 'face-remapping-alist '((mode-line modeline-insert-state)
-                                                                       (my-modeline-path modeline-insert-state-path)
-                                                                       (my-modeline-project modeline-insert-state-project))))
-                   ((evil-normal-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
-                                                                       (my-modeline-path modeline-normal-state-path)
-                                                                       (my-modeline-project modeline-normal-state-project))))
-                   ((evil-emacs-state-p)  (set 'face-remapping-alist '((mode-line modeline-emacs-state)
-                                                                       (my-modeline-path modeline-emacs-state-path)
-                                                                       (my-modeline-project modeline-emacs-state-project))))
-                   ((evil-visual-state-p) (set 'face-remapping-alist '((mode-line modeline-visual-state)
-                                                                       (my-modeline-path modeline-visual-state-path)
-                                                                       (my-modeline-project modeline-visual-state-project))))
-                   ((evil-replace-state-p) (set 'face-remapping-alist '((mode-line modeline-replace-state)
-                                                                        (my-modeline-path modeline-replace-state-path)
-                                                                        (my-modeline-project modeline-replace-state-project))))
-                   ((evil-motion-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
-                                                                       (my-modeline-path modeline-motion-state-path)
-                                                                       (my-modeline-project modeline-motion-state-project))))
-                   (t (set 'face-remapping-alist '((mode-line modeline-normal-state))))))))
-      (add-hook 'post-command-hook current-color))
 
-    ; Switch mode-line color from flatuicolors.com
-    (set-face-background 'mode-line-inactive flatui-color-silver)
-    (set-face-foreground 'mode-line-inactive flatui-color-concrete)
-    (set-face-attribute 'mode-line-highlight nil :box nil)
-    (set-face-attribute 'mode-line-inactive nil :box nil :weight 'normal)
-    (set-face-attribute 'mode-line nil :box nil :weight 'normal)
-    ;(set-face-attribute 'mode-line-buffer-id :weight 'normal)
++BEGIN_SRC emacs-lisp
+  (let ((current-color
+         (lambda ()
+           (cond ((minibufferp) (set 'face-remapping-alist '((mode-line modeline-minibuffer-state)
+                                                             (my-modeline-path modeline-minibuffer-state-path)
+                                                             (my-modeline-project modeline-minibuffer-state-project))))
+                 ((evil-insert-state-p) (set 'face-remapping-alist '((mode-line modeline-insert-state)
+                                                                     (my-modeline-path modeline-insert-state-path)
+                                                                     (my-modeline-project modeline-insert-state-project))))
+                 ((evil-normal-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
+                                                                     (my-modeline-path modeline-normal-state-path)
+                                                                     (my-modeline-project modeline-normal-state-project))))
+                 ((evil-emacs-state-p)  (set 'face-remapping-alist '((mode-line modeline-emacs-state)
+                                                                     (my-modeline-path modeline-emacs-state-path)
+                                                                     (my-modeline-project modeline-emacs-state-project))))
+                 ((evil-visual-state-p) (set 'face-remapping-alist '((mode-line modeline-visual-state)
+                                                                     (my-modeline-path modeline-visual-state-path)
+                                                                     (my-modeline-project modeline-visual-state-project))))
+                 ((evil-replace-state-p) (set 'face-remapping-alist '((mode-line modeline-replace-state)
+                                                                      (my-modeline-path modeline-replace-state-path)
+                                                                      (my-modeline-project modeline-replace-state-project))))
+                 ((evil-motion-state-p) (set 'face-remapping-alist '((mode-line modeline-normal-state)
+                                                                     (my-modeline-path modeline-motion-state-path)
+                                                                     (my-modeline-project modeline-motion-state-project))))
+                 (t (set 'face-remapping-alist '((mode-line modeline-normal-state))))))))
+    (add-hook 'post-command-hook current-color)
+    )
 
-    (set-face-foreground 'mode-line-buffer-id flatui-color-clouds-hover)
+  ; Switch mode-line color from flatuicolors.com
+  (set-face-attribute 'mode-line nil
+                      :box nil :weight 'normal
+                      :background flatui-color-midnight
+                      :foreground flatui-color-wet-asphalt
+                      )
+  (set-face-attribute 'mode-line-inactive nil
+                      :box nil :weight 'normal
+                      :background flatui-color-silver
+                      :foreground flatui-color-concrete)
+  (set-face-attribute 'mode-line-highlight nil
+                      :box nil :weight 'normal
+                      :background flatui-color-midnight
+                      :foreground flatui-color-clouds)
+  ;;(set-face-attribute 'mode-line-buffer-id :weight 'normal)
 
-    ; taken from [[https://github.com/hlissner/doom-emacs/blob/master/modules/ui/doom-modeline/config.el][Doom modeline]]
-  (defun dim-inactive-modeline (&rest _)
-    ""
-    (let ((win (frame-selected-window)))
-      (unless (minibuffer-window-active-p win)
-        (if (not (eq (frame-selected-window) (selected-window)))
-            (progn
-              (message "stuff")
-              (set 'face-remapping-alist '((my-modeline-path modeline-buffer-id)
-                                           (my-modeline-project modeline-buffer-id))))))))
-  ;(add-hook 'window-configuration-change-hook #'dim-inactive-modeline)
-  ;(add-hook 'focus-in-hook #'dim-inactive-modeline)
-  ;(advice-add #'handle-switch-frame :after #'dim-inactive-modeline)
-  ;(advice-add #'select-window :after #'dim-inactive-modeline)
-#+END_SRC
+  ;(set-face-foreground 'mode-line-buffer-id flatui-color-clouds-hover)
+
++END_SRC
 
 *** Modeline Format
 
 **** Helper functions
+
++BEGIN_SRC emacs-lisp
+  ; taken from [[https://github.com/hlissner/doom-emacs/blob/master/modules/ui/doom-modeline/config.el][Doom modeline]]
+  (defvar irksome-modeline-current-window (frame-selected-window)
+    "Variable to store the currently focused window.")
+
+  (defun irksome-modeline-set-selected-window (&rest _)
+    "Store currently selected window.
+  More or less taken from +doom-modeline."
+    (let ((win (frame-selected-window)))
+      (when win
+        (unless (minibuffer-window-active-p win)
+          (setq irksome-modeline-current-window win)))))
+
+  (add-hook 'window-configuration-change-hook #'irksome-modeline-set-selected-window)
+  (add-hook 'focus-in-hook #'irksome-modeline-set-selected-window)
+  (advice-add #'handle-switch-frame :after #'irksome-modeline-set-selected-window)
+  (advice-add #'select-window :after #'irksome-modeline-set-selected-window)
+
+  (defsubst irksome-active ()
+    (eq (selected-window) irksome-modeline-current-window))
++END_SRC
 
 Function used to "intelligently" shorten paths and names.
 I try to use this to shorten the project name as well as the relative path within a project for a buffer.
@@ -291,7 +429,7 @@ I try to use this to shorten the project name as well as the relative path withi
       "Tweaked project name"
     (when (projectile-project-p)
       (let ((short-project-name (my/shorten-path (projectile-project-name) "-"))
-        (current-face (if (eq (selected-window) (frame-selected-window))
+        (current-face (if (irksome-active)
                           'my-modeline-project
                         'modeline-buffer-id)))
         (propertize (concat short-project-name "|")
@@ -300,20 +438,31 @@ I try to use this to shorten the project name as well as the relative path withi
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-    (defun my/project-path ()
-      "The relative path of the current file. Requires `projectile'."
-      (let* ((max-length 16)
-             (root-length (if (projectile-project-p)
-                              (length (projectile-project-root))
-                            0))
-             (relative-path (directory-file-name (substring default-directory root-length)))
-             (short-path (my/shorten-path relative-path))
-             (current-face (if (eq (selected-window) (frame-selected-window))
-                               'my-modeline-path
-                             'modeline-buffer-id)))
-        (propertize (concat short-path "/")
-                    'help-echo relative-path
-                    'face current-face)))
+  (defun my/project-path ()
+    "The relative path of the current file. Requires `projectile'."
+    ;(message (format "current-buffer: %s" (buffer-name)))
+    (let* ((max-length 16)
+           (root-length (if (projectile-project-p)
+                            (length (projectile-project-root))
+                          0))
+           (relative-path (directory-file-name (substring default-directory root-length)))
+           (short-path (my/shorten-path relative-path))
+           (current-face (if (irksome-active)
+                             'my-modeline-path
+                           'modeline-buffer-id)))
+      (propertize (concat short-path "/")
+                  'help-echo relative-path
+                  'face current-face)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (defun my/buffer-identifier ()
+    "The identifier used for the buffer."
+    (let ((current-face (if (irksome-active)
+                            'modeline-buffer-id
+                          'mode-line-inactive)))
+      (propertize (format-mode-line "%b")
+                  'face current-face)))
 #+END_SRC
 
 **** Actual format
@@ -322,35 +471,36 @@ Inspiration for continued work:
 https://gist.github.com/hlissner/f80647f7a390bfe78a805a40b9c28e9b
 https://www.emacswiki.org/emacs/ModeLineConfiguration
 
-#+BEGIN_SRC emacs-lisp
-  (setq-default mode-line-format
-        (list
-         "%e"
-         'mode-line-front-space
-         'mode-line-mule-info
-         'mode-line-client
-         'mode-line-modified
-         'mode-line-remote
++BEGIN_SRC emacs-lisp
 
-         ;'evil-mode-line-tag
+  (with-eval-after-load "projectile"
+    (setq-default mode-line-format
+          '(""
+            "%e"
+            evil-mode-line-tag
 
-         " "
-         '(:eval (my/projectile))
-         '(:eval (my/project-path))
+            mode-line-front-space
+            mode-line-mule-info
+            mode-line-client
+            mode-line-modified
+            mode-line-remote
 
-         'mode-line-buffer-identification
-         'mode-line-frame-identification
+            " "
+            (:eval (my/projectile))
+            (:eval (my/project-path))
+            (:eval (my/buffer-identifier))  ; mode-line-buffer-identification
+            mode-line-frame-identification
 
-         " "
-         '(vc-mode
-           vc-mode)
-         " "
-         'mode-line-end-spaces
-         'mode-line-position
-         'mode-line-modes
-         'mode-line-misc-info
-         ))
-#+END_SRC
+           ;" "
+           ;(vc-mode
+           ; vc-mode)
+            " "
+            mode-line-end-spaces
+            mode-line-position
+            mode-line-modes
+            mode-line-misc-info
+            )))
++END_SRC
 
 ** UI addons
 
@@ -360,18 +510,22 @@ This indents wrapped lines to the correct left margin.
 
 #+BEGIN_SRC emacs-lisp
 (use-package adaptive-wrap
-  :ensure)
+  :ensure
+  :diminish (adaptive-wrap-prefix-mode))
 #+END_SRC
 
 *** Anzu
 
 #+BEGIN_SRC emacs-lisp
   (use-package anzu
-    :disabled t
-    :ensure t
+    :ensure
     :config
     (setq-default anzu-cons-mode-line-p nil)
     (global-anzu-mode))
+
+  (use-package evil-anzu
+    :ensure
+    :after (evil anzu))
 #+END_SRC
 
 **** TODO Evaluate if I want to keep anzu or get rid of it.
@@ -388,8 +542,32 @@ Helm interface for searching through keybindings.
     :config (helm-descbinds-mode))
 #+END_SRC
 
+*** Which key
+
+    Package that displays available keybindings
+
+#+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :diminish
+    ;:custom (which-key-enable-extended-define-key t)
+    :config
+    (which-key-add-key-based-replacements "," "userstuff")
+    (which-key-add-key-based-replacements ", SPC" "helm")
+    (which-key-add-key-based-replacements ",c" '("clock" . "Clocking-keys"))
+    (which-key-add-key-based-replacements ",d" '("dash" . "Dash-keys"))
+    (which-key-add-key-based-replacements ",e" '("emacs" . "Emacs-keys"))
+    (which-key-add-key-based-replacements ",g" '("magit" . "Magit-keys"))
+    (which-key-add-key-based-replacements ",o" '("org" . "Org-keys"))
+    (which-key-add-key-based-replacements ",s" '("spell" . "Spelling-keys"))
+    (which-key-add-key-based-replacements ",t" '("treemacs" . "Treemacs-keys"))
+    (which-key-add-key-based-replacements ",w" '("worklog" . "Worklog-keys"))
+    :init
+    (which-key-mode))
+#+END_SRC
+
 *** Hideshow
-    
+
 #+BEGIN_SRC emacs-lisp
   (use-package hideshow
     :commands (hs-minor-mode)
@@ -397,26 +575,26 @@ Helm interface for searching through keybindings.
     :hook estimation-mode
     :config
     (add-to-list 'hs-special-modes-alist
-		 `(yaml-mode ":" nil "#"
-			     ,(lambda (_arg) (let ((block-indentation (current-indentation))
-						   (block-began-from-list (line-is-list-item)))
-					       (while (progn
-							(forward-line 1)
-							(and (not (eobp))
-							     (or (> (current-indentation) block-indentation)
-								 (and (not block-began-from-list)
-								      (= (current-indentation) block-indentation)
-								      (line-is-list-item)))))))) nil)))
+         `(yaml-mode ":" nil "#"
+                 ,(lambda (_arg) (let ((block-indentation (current-indentation))
+                           (block-began-from-list (line-is-list-item)))
+                           (while (progn
+                            (forward-line 1)
+                            (and (not (eobp))
+                                 (or (> (current-indentation) block-indentation)
+                                 (and (not block-began-from-list)
+                                      (= (current-indentation) block-indentation)
+                                      (line-is-list-item)))))))) nil)))
 #+END_SRC
 
 *** Indent guide
 
 #+BEGIN_SRC emacs-lisp
   (use-package indent-guide
-    :after evil
-    :ensure
+    :after (evil)
+    :ensure t
     :bind (:map evil-normal-state-map
-                (", i g" . indent-guide-mode)))
+                (",ig" . indent-guide-mode)))
 #+END_SRC
 
 *** Lacarte
@@ -476,10 +654,10 @@ Helper function to open neotree relative to the current project root.
 
 #+BEGIN_SRC emacs-lisp
   (use-package neotree
+    :disabled
     :ensure t
-    :config
-    (add-to-list 'neo-hidden-regexp-list "^__pycache__$")
-    (setq neo-force-change-root t)  ; Stop file not found, change root-dialogue
+    ;:config
+    ;(add-to-list 'neo-hidden-regexp-list "^__pycache__$")
     ;(setq neo-smart-open t)
     ;(setq projectile-switch-project-action 'neotree-projectile-action)
     :hook (neotree-mode .
@@ -488,7 +666,14 @@ Helper function to open neotree relative to the current project root.
                 (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
                 (evil-define-key 'normal neotree-mode-map (kbd "g r") 'neotree-refresh)
                 (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)))
-    :bind (([f2] . neotree-project-dir)))
+    :bind (([f2] . neotree-project-dir))
+    :custom
+    (neo-force-change-root t)  ; Stop file not found, change root-dialogue
+    (neo-window-width 35)
+    (neo-window-fixed-size t)
+    (neo-click-changes-root nil)
+    (neo-hidden-regexp-list '("^__pycache__$" "^\\." "\\.pyc$" "\\.o$" "~$" "^#.*#$" "\\.elc$"))
+    )
 #+END_SRC
 
 **** TODO Add custom dialog to neo-tree
@@ -502,6 +687,48 @@ Helper function to open neotree relative to the current project root.
      (setq neo-force-change-root t)
 
 
+*** Treemacs (replacing Neotree)
+
+#+BEGIN_SRC emacs-lisp
+  (use-package treemacs
+    :ensure t
+    :defer t
+    :config
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (treemacs-fringe-indicator-mode t))
+
+  (use-package treemacs-evil
+    :after (treemacs evil)
+    :ensure t
+    :bind
+    (:map evil-normal-state-map
+          (",tt" . treemacs)
+          (",te" . treemacs-edit-workspaces)
+          (",ts" . treemacs-switch-workspace)))
+
+  (use-package treemacs-projectile
+    :after (treemacs projectile)
+    :ensure t)
+
+  (use-package treemacs-magit
+    :after (treemacs magit)
+    :ensure t)
+#+END_SRC
+
+*** IMenu list
+
+#+BEGIN_SRC emacs-lisp
+  (use-package imenu-list
+    :ensure t
+    :bind (;:map evil-normal-state-map
+                ([f4] . imenu-list-smart-toggle))
+    :custom
+    (imenu-list-size 35
+                     "Total number of rows/columns if int, else proportion of window")
+    )
+#+END_SRC
+
 *** Smart tabs
 
 https://www.emacswiki.org/emacs/SmartTabs
@@ -512,7 +739,7 @@ https://www.emacswiki.org/emacs/SmartTabs
   :ensure
   :config
   (smart-tabs-insinuate 'c
-			'c++))
+            'c++))
 #+END_SRC
 
 *** Speedbar
@@ -531,26 +758,26 @@ https://www.emacswiki.org/emacs/SmartTabs
     (speedbar-add-supported-extension ".wlog")
     (defun nm-speedbar-expand-line-list (&optional arg)
       (when arg
-					  ;(message (car arg))
-	(re-search-forward (concat " " (car arg) "$"))
-	(speedbar-expand-line (car arg))
-	(speedbar-next 1) ;; Move into the list.
-	(nm-speedbar-expand-line-list (cdr arg))))
+                      ;(message (car arg))
+    (re-search-forward (concat " " (car arg) "$"))
+    (speedbar-expand-line (car arg))
+    (speedbar-next 1) ;; Move into the list.
+    (nm-speedbar-expand-line-list (cdr arg))))
     (defun nm-speedbar-open-current-buffer-in-tree ()
       (interactive)
       (let* ((root-dir (projectile-project-root))
-	     (original-buffer-file-directory (file-name-directory (buffer-file-name)))
-	     (relative-buffer-path (cadr (split-string original-buffer-file-directory root-dir)))
-	     (parents (butlast (split-string relative-buffer-path "/"))))
-	(save-excursion
-	  ;;(speedbar 1) ;; Open speedbar
-	  (set-buffer speedbar-buffer)
-	  (if (not (string-equal default-directory root-dir))
-	      (progn
-		(setq default-directory root-dir)
-		(speedbar-update-contents)))
-	  (goto-char (point-min))
-	  (nm-speedbar-expand-line-list parents)))))
+         (original-buffer-file-directory (file-name-directory (buffer-file-name)))
+         (relative-buffer-path (cadr (split-string original-buffer-file-directory root-dir)))
+         (parents (butlast (split-string relative-buffer-path "/"))))
+    (save-excursion
+      ;;(speedbar 1) ;; Open speedbar
+      (set-buffer speedbar-buffer)
+      (if (not (string-equal default-directory root-dir))
+          (progn
+        (setq default-directory root-dir)
+        (speedbar-update-contents)))
+      (goto-char (point-min))
+      (nm-speedbar-expand-line-list parents)))))
 #+END_SRC
 
 *** Whitespace trimming
@@ -565,26 +792,48 @@ https://www.emacswiki.org/emacs/SmartTabs
     (setq ws-trim-mode 1))
 #+END_SRC
 
+*** Sticky function
+
+Show the name of the current function/class at the top of the screen if it scrolls off.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package stickyfunc-enhance
+    :disabled
+    :ensure t
+    :config
+    (add-to-list 'semantic-default-submodes 'global-semantic-stickyfunc-mode)
+    (semantic-mode 1))
+#+END_SRC
+
+*** Undo-tree
+
+    This is a dependency for evil but I don't want it in the list of minor modes.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :diminish)
+#+END_SRC
+
 * Options
-  
+
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t
-	initial-scratch-message nil)
+    initial-scratch-message nil)
 
   ; Include column number int mode-line
   (setq column-number-mode t
-	line-number-mode t)
+    line-number-mode t)
 
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
   (setq-default tab-width 4)
 
   (setq split-height-threshold 80
-	split-width-threshold 220)
+    split-width-threshold 220)
 #+END_SRC
 
 ** Mac specific stuff
-   
+
 #+BEGIN_SRC emacs-lisp
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
@@ -593,14 +842,14 @@ https://www.emacswiki.org/emacs/SmartTabs
 (defvar mac-command-key-is-meta)
 (if (string-equal system-type "darwin")
     (setq mac-option-modifier nil
-	  mac-command-modifier 'meta
-	  mac-allow-antialiasing t
-	  mac-command-key-is-meta t))
+      mac-command-modifier 'meta
+      mac-allow-antialiasing t
+      mac-command-key-is-meta t))
 (defvar x-meta-keysym)
 (defvar x-super-keysym)
 (if (string-equal system-type "gnu/linux")
     (setq x-meta-keysym 'super
-		  x-super-keysym 'meta))
+          x-super-keysym 'meta))
 #+END_SRC
 
 * Customize
@@ -631,6 +880,17 @@ Miscellaneous packages and config related to the VI-emulator Evil.
           (fn (cdr cmd)))
       (evil-ex-define-cmd binding fn)))
 
+  (defun open-config-org ()
+    "Opens the users config.org."
+    (interactive)
+    (find-file (concat user-emacs-directory "config.org")))
+
+      ;(defun reload-config-org ()
+      ;  "Reloads the users config.org."
+      ;  (interactive)
+      ;  (load-file (concat user-emacs-directory "init.el")))
+      ;(define-key evil-normal-state-map ",e\S-r" 'reload-config-org)
+
   (use-package evil
     :ensure
     :config
@@ -639,6 +899,8 @@ Miscellaneous packages and config related to the VI-emulator Evil.
     (define-key evil-normal-state-map "," nil)
     (define-key evil-normal-state-map "\C-j" 'evil-jump-to-tag)
     (define-key evil-normal-state-map "\C-k" 'evil-jump-backward)
+
+    (define-key evil-normal-state-map ",ec" 'open-config-org)
 
     (define-key evil-normal-state-map "\C-f" nil)
     (define-key evil-normal-state-map "\C-\M-wn" 'make-frame)
@@ -657,7 +919,8 @@ Miscellaneous packages and config related to the VI-emulator Evil.
             ("dash" . dash-at-point)
             ("ack" . ack-and-a-half)
             ("rg" . projectile-ripgrep)
-            ("co" . flycheck-list-errors))))
+            ("co" . flycheck-list-errors)
+            ("config" . open-config-org))))
 #+END_SRC
 
 ** Evil surround
@@ -695,6 +958,60 @@ Makes it possible to create *- and #-searches with a visual selection.
 
 * Modes
 
+** LSP - Language Server Protocol
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-mode
+    :commands lsp
+    :ensure t)
+
+  (use-package lsp-ui
+    :ensure t
+    ;:after (:any lsp lsp-mode)
+    :commands lsp-ui-mode
+    :hook (java-mode . flycheck-mode)
+    )
+
+  (use-package lsp-ui-flycheck
+    ; Provided by lsp-ui
+    :after lsp-mode
+    :hook (lsp-after-open-hook . (lambda () (lsp-ui-flycheck-enable 1))))
+
+  (use-package company-lsp
+    ;:ensure t
+    :after company
+    ;:commands company-lsp
+    ;:init (push 'company-lsp company-backends)
+    )
+#+END_SRC
+
+Related debug-support
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dap-mode
+    :after lsp-mode
+    :ensure t
+    :config
+    (dap-mode t)
+    (dap-ui-mode t))
+#+END_SRC
+
+*** LSP Java
+
+#+BEGIN_SRC emacs-lisp
+  (use-package lsp-java
+    :ensure t
+    :after (:any lsp lsp-mode)
+    ;:hook (java-mode . #'lsp)
+    )
+
+  (use-package dap-java
+    :after lsp-java)
+
+  (use-package lsp-java-treemacs
+    :after (treemacs lsp-java))
+#+END_SRC
+
 ** C whatever
 
 #+BEGIN_SRC emacs-lisp
@@ -710,8 +1027,27 @@ Makes it possible to create *- and #-searches with a visual selection.
 #+END_SRC
 
 ** Docker compose
+
+#+BEGIN_SRC emacs-lisp
+  (use-package docker-compose-mode
+    :ensure t
+    :mode "docker-compose\\.yml\\'")
+#+END_SRC
+
+** Editorconfig
+
+   Support for .editorconfig
+
+#+BEGIN_SRC emacs-lisp
+(use-package editorconfig
+  :ensure t
+  :diminish editorconfig-mode
+  :config
+  (editorconfig-mode 1))
+#+END_SRC
+
 ** Estimation
-  
+
 This is my own ugly hack which abuses YAML-files as an outliner to create estimates.
 Should have learned org-mode instead.
 
@@ -726,12 +1062,29 @@ Should have learned org-mode instead.
                                           (visual-line-mode 1)
                                           (adaptive-wrap-prefix-mode 1)))))
 #+END_SRC
+
+** Go lang
+
+#+BEGIN_SRC emacs-lisp
+  (use-package go-mode
+    :ensure t)
+#+END_SRC
+
+*** Completion for Go via gocode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-go
+    :ensure t
+    :after go-mode)
+#+END_SRC
+
 ** Groovy
 
 Groovy baby! I use this mainly in Jenkins pipelines.
 
 #+BEGIN_SRC emacs-lisp
-  (use-package groovy-mode)
+  (use-package groovy-mode
+    :mode ("Jenkinsfile"))
 #+END_SRC
 
 ** Haskell
@@ -780,6 +1133,11 @@ Adding "outline" imenu structure to Lisp-files
   (add-hook 'emacs-lisp-mode-hook 'imenu-elisp-sections)
 #+END_SRC
 
+** Kubernetes
+#+BEGIN_SRC emacs-lisp
+  (use-package k8s-mode
+    :ensure)
+#+END_SRC
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp
@@ -788,15 +1146,6 @@ Adding "outline" imenu structure to Lisp-files
     :mode "\\.\\(md\\|mdown\\|markdown\\|wlog\\)\\'"
     :commands markdown-mode
     :config
-
-    ; Trying to get markdown to look better
-    (set-face-foreground 'markdown-header-face flatui-color-belize-hole)
-    (set-face-foreground 'markdown-header-face-1 flatui-color-belize-hole)
-    (set-face-foreground 'markdown-header-face-2 flatui-color-nephritis)
-    (set-face-foreground 'markdown-header-face-3 flatui-color-pumpkin)
-    (set-face-foreground 'markdown-header-face-4 flatui-color-wisteria)
-    (set-face-foreground 'markdown-header-face-5 flatui-color-belize-hole)
-    (set-face-foreground 'markdown-header-face-6 flatui-color-nephritis)
 
     :hook (markdown-mode . (lambda ()
                              (visual-line-mode t)
@@ -813,8 +1162,8 @@ Preview markdown with Marked
     "Run Marked on the current file and revert the buffer."
     (interactive)
     (shell-command (format "open -a '%s' '%s'"
-			   marked-name
-			   (buffer-file-name))))
+               marked-name
+               (buffer-file-name))))
 #+END_SRC
 
 ** Markdown critic
@@ -828,8 +1177,16 @@ Nice addon to markdown which allows for suggesting changes, commenting and so on
     :commands cm-mode)
 #+END_SRC
 
+** Protobuf
+
+#+BEGIN_SRC emacs-lisp
+  (use-package protobuf-mode
+    :mode ("\\.proto'")
+    :ensure t)
+#+END_SRC
+
 ** Python
-   
+
 *** TODO add underscore as part of a word
 
     I probably want to have this as part of a use-package block instead of this "naked" lisp.
@@ -856,7 +1213,7 @@ Code completion, navigation, almost like a real Python IDE?!
 #+BEGIN_SRC emacs-lisp
   (use-package anaconda-mode
     :ensure t
-    :commands anaconda-mode
+    :diminish
     :hook python-mode
     )
 #+END_SRC
@@ -885,27 +1242,48 @@ https://docs.pipenv.org/
 
 #+BEGIN_SRC emacs-lisp
   (use-package pipenv
-    :after projectile
+    :after (projectile flycheck)
     :ensure t
+    ;:diminish
     :config
-    ; Redefine this function to force rechecking of flycheck-checkers
+    ;; Redefine this function to force rechecking of flycheck-checkers
     (defun pipenv-activate-flycheck ()
       "Activate integration of Pipenv with Flycheck."
       (setq flycheck-executable-find #'pipenv-executable-find)
-      (setq flycheck-disabled-checkers nil))
+      (setq flycheck-disabled-checkers nil)
+      )
+    ;; Workaround for ansi-reset in pipenv output
+    (defun my-pipenv-remove-ansi-reset (orig-fun &rest args)
+      (apply orig-fun (cons (s-chop-suffix "\033[0m" (car args)) (cdr args))))
+    (advice-add 'pipenv--clean-response :around #'my-pipenv-remove-ansi-reset)
+    ;(defun pipenv--clean-response (response)
+    ;  "Clean up RESPONSE from shell command."
+    ;  (message response)
+    ;  (s-chomp (s-chop-suffix "\033[0m" response)))
+
+    ;:init
+    ;(setq pipenv-projectile-after-switch-function
+    ;      #'pipenv-projectile-after-switch-extended)
     :hook (python-mode . pipenv-mode))
 #+END_SRC
 
-*** TODO Pycheckers
+**** TODO Fix workaround for activating in subdirectory
+
+
+*** TODO Pychecker
 
 Use multiple checkers for python
 
 #+BEGIN_SRC emacs-lisp
   (with-eval-after-load 'flycheck
-    (flycheck-add-next-checker 'python-flake8 'python-pylint))
+    (flycheck-add-next-checker 'python-flake8 'python-pylint)
+    ;(flycheck-add-next-checker 'python-pylint 'python-mypy)
+    ;(flycheck-add-next-checker 'python-flake8 'python-mypy)
+    )
+
 
   (use-package flycheck-pycheckers
-    :disabled t
+    :disabled
     :ensure t
     :after flycheck
     :hook (flycheck-mode . flycheck-pycheckers-setup)
@@ -958,9 +1336,10 @@ And then the actual emacs integration.
 #+END_SRC
 
 ** Todo.txt
-   
+
 #+BEGIN_SRC emacs-lisp
   (use-package todotxt-mode
+    :disabled
     :after evil
     :ensure
     :init
@@ -986,7 +1365,14 @@ The configuration format used by cargo (rust).
 #+BEGIN_SRC emacs-lisp
   (use-package toml-mode
     :ensure t
-    :mode "\\\.toml\\\'")
+    :mode ("\\\.toml\\\'" "Pipfile\\\'"))
+#+END_SRC
+
+** Typescript
+
+#+BEGIN_SRC emacs-lisp
+  (use-package typescript-mode
+    :ensure t)
 #+END_SRC
 
 ** Web
@@ -1037,8 +1423,8 @@ Not sure it actually is better though.
 
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :ensure
-    :commands #'global-flycheck-mode
+    :ensure t
+    :commands global-flycheck-mode
     ;:defer t
     :hook (after-init . global-flycheck-mode)
     ;:config (flycheck-add-next-checker 'python-flake8 'python-pylint)
@@ -1099,6 +1485,12 @@ https://github.com/emacs-evil/evil-magit
     :after (magit evil))
 #+END_SRC
 
+** Gist
+
+#+BEGIN_SRC emacs-lisp
+(use-package gist
+  :ensure)
+#+END_SRC
 ** Git-gutter
 
 Indicate changes in buffer with markers in the margin.
@@ -1113,6 +1505,26 @@ Indicate changes in buffer with markers in the margin.
                 (",gn" . git-gutter:next-hunk)
                 (",gp" . git-gutter:previous-hunk)))
 #+END_SRC
+* Tmux
+
+   Emamux is probably overkill, but let's not fall into "not invented here"-syndrome.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emamux
+    :init
+    (defvar tmux-test-command "make test" "The command used to run tests in this project")
+    :bind
+    ([f5] . (lambda () (interactive) (emamux:send-command tmux-test-command))))
+#+END_SRC
+
+   Old self implemented version
+#+BEGIN_COMMENT
+(defun tmux-make ()
+  "Send command to specific tmux-session."
+  (interactive)
+  (call-process-shell-command "tmux send-keys -t brbes:1 make space test_backend enter"))
+#+END_COMMENT
+
 * Helm
 
 Helm makes almost everything better. Actually, Helm and Magit is a large part of why I use emacs.
@@ -1169,6 +1581,9 @@ https://github.com/emacs-helm/helm/wiki
     :ensure t
     :mode ("\\.org\\'" . org-mode)
     :config
+    (setq org-clock-persist 'history)
+    (org-clock-persistence-insinuate)
+    (setq org-log-done 'time)  ; Logging when tasks are done
     (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
                           (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
                           (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
@@ -1186,11 +1601,30 @@ Evil keybindings for org-mode.
     :ensure
     :after (evil org)
     :diminish evil-org-mode
+    :bind (:map evil-normal-state-map
+                (",ci" . org-clock-in)
+                (",cl" . org-clock-in-last)
+                (",co" . org-clock-out)
+                (",cg" . org-clock-goto)
+                (",cd" . org-clock-display)
+                (",cq" . org-clock-cancel)
+
+                (",oa" . org-agenda)
+                (",od" . org-deadline)
+                (",os" . org-schedule)
+                (",oo" . helm-org-rifle))
     :hook ((org-mode . evil-org-mode)
            (evil-org-mode . (lambda ()
                               (evil-org-set-key-theme)
                               (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
                               (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)))))
+#+END_SRC
+
+Rifle through org files
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-org-rifle
+    :after helm
+    :ensure t)
 #+END_SRC
 
 ** TODO Try to create reveal.js presentations from org-mode
@@ -1202,6 +1636,7 @@ Evil keybindings for org-mode.
 #+BEGIN_SRC emacs-lisp
   (use-package ox-reveal
     :ensure t
+    :disabled ; depends on org-mode version that's not available
     :after org)
 #+END_SRC
 
@@ -1253,7 +1688,7 @@ Helm interface for pass. Quite awesome actually.
 #+BEGIN_SRC emacs-lisp
     (use-package projectile
       :ensure t
-      :diminish projectile-mode
+      :diminish
       :config
       (projectile-mode t)
       (setq projectile-completion-system 'helm)
@@ -1295,6 +1730,18 @@ Helm interface for pass. Quite awesome actually.
           (", SPC p" . helm-projectile-switch-project)))
 #+END_SRC
 
+* Integration with other applications
+
+** Dash.app
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dash-at-point
+    :ensure t
+    :commands dash-at-point
+    :bind (:map evil-normal-state-map
+                (", d p" . dash-at-point)))
+#+END_SRC
+
 * Snippets (Yasnippet)
 
 #+BEGIN_SRC emacs-lisp
@@ -1312,53 +1759,33 @@ Helm interface for pass. Quite awesome actually.
 ** Company
 
 #+BEGIN_SRC emacs-lisp
-	(use-package company
-	  :after evil-mode
-	  :ensure t
-	  :defer t
-	  :config
-	  (evil-define-key 'insert company-mode-map (kbd "C-TAB") 'company-complete)
-
-	  ; The default colors are terrible
-	  (set-face-attribute 'company-tooltip nil
-						  :background "#fbfcfc"
-						  :foreground "#34495e")
-	  (set-face-attribute 'company-scrollbar-bg nil
-						  :background "#cad1d5")
-	  (set-face-attribute 'company-scrollbar-fg nil
-						  :background "#95a5a6")
-	  (set-face-attribute 'company-tooltip-selection nil
-						  :background "#f2ca27")
-	  (set-face-attribute 'company-tooltip-common nil
-						  :foreground "#7f8c8d")
-	  (set-face-attribute 'company-tooltip-annotation nil
-						  :foreground "#3498db")
-	  (set-face-attribute 'company-tooltip-search-selection nil
-						  :background "#f39c12"))
-#+END_SRC
-
-*** Theming company-mode popups
-
-The defaults are pretty terrible. This is probably better.
-
-#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :after evil
+    :ensure t
+    :diminish
+    :defer t
+    :hook (after-init . global-company-mode)
+    :config
+    ; Add more evil key-binding
+    (evil-define-key 'insert company-mode-map (kbd "C-TAB") 'company-complete))
 #+END_SRC
 
 * Spelling
-  
+
 Using flyspell to check spelling
 
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell
     :bind
     (:map evil-normal-state-map
-	  (", s s" . flyspell-mode)
-	  (", s l" . ispell-change-dictionary)
-	  ("z n" . flyspell-goto-next-error))
+      (", s s" . flyspell-mode)
+      (", s l" . ispell-change-dictionary)
+      ("z n" . evil-next-flyspell-error)
+      ("z p" . evil-prev-flyspell-error))
     :config
     (setq flyspell-issue-welcome-flag nil
-	  ispell-program-name "aspell"
-	  ispell-list-command "list"))
+      ispell-program-name "aspell"
+      ispell-list-command "list"))
 #+END_SRC
 
 * Worklog
@@ -1379,6 +1806,36 @@ My own additions to get support for easy work journal.
     (interactive)
     (goto-char (point-max))
     (insert (format-time-string (concat "\n## " current-date-time-format) (current-time))))
+#+END_SRC
+
+** Addon to update sign outside of office
+#+BEGIN_SRC emacs-lisp
+  (defvar worklog-meeting-tag "meeting"
+    "This tag is used to indicate which entries that are meetings.")
+  (defvar worklog-background-status-process nil
+    "This variable is used to store last background proccess.
+
+  This means that when rapid succession of clock events can kill the previous
+  status update.")
+  (defun worklog-clock-update-status ()
+    "This function should be called when clocked in.
+  It updates the file shown on the outside of my room with my current status"
+    (interactive)
+    (let ((status (if (org-clocking-p)
+                      (let* ((marker org-clock-marker)
+                             (is-meeting (with-current-buffer (marker-buffer marker)
+                                           (member-ignore-case worklog-meeting-tag
+                                                               (org-get-tags-at (marker-position marker))))))
+                        (if is-meeting
+                            (progn (message "In a meeting") '("occupied" "In a meeting"))
+                          (progn (message "Work work...") '("available" "Work work..."))))
+                    (progn (message "Clocked out") '("unavailable" "Not on the clock!")))))
+      (if (and (processp worklog-background-status-process)
+               (process-live-p worklog-background-status-process))
+          (interrupt-process worklog-background-status-process))
+      (setq worklog-background-status-process (start-process "update-status" nil "~/bin/status.sh" "-s" (car status) (car (cdr status))))))
+  (add-hook 'org-clock-in-hook 'worklog-clock-update-status)
+  (add-hook 'org-clock-out-hook 'worklog-clock-update-status)
 #+END_SRC
 
 ** Custom agenda or whatever
@@ -1559,39 +2016,59 @@ I mainly use this when I write written code reviews.
                     (buffer-file-name))))
     (when filename
       (kill-new filename)
-	  (message "Copied buffer file name '%s' to the clipboard." filename))))
+      (message "Copied buffer file name '%s' to the clipboard." filename))))
 
 (fset 'review-file-name 'copy-file-name-to-clipboard)
 
 (with-eval-after-load "projectile"
   (defun copy-project-file-name-to-clipboard ()
-	"Copy the current buffer path to the clipboard"
-	(interactive)
-	(let ((filename (buffer-file-name))
-		  (root-length (if (projectile-project-p)
-						   (length (projectile-project-root))
-						 0)))
-	  (let ((project-filename (substring filename root-length)))
-		(kill-new project-filename)
-		(message "Copied buffer file name '%s' to the clipboard." project-filename))))
+    "Copy the current buffer path to the clipboard"
+    (interactive)
+    (let ((filename (buffer-file-name))
+          (root-length (if (projectile-project-p)
+                           (length (projectile-project-root))
+                         0)))
+      (let ((project-filename (substring filename root-length)))
+        (kill-new project-filename)
+        (message "Copied buffer file name '%s' to the clipboard." project-filename))))
   (fset 'review-file-name 'copy-project-file-name-to-clipboard))
 
 (defun file-path-with-number ()
   "Set clipboard to the path of the file corresponding to the current buffer."
   (interactive)
   (let ((path-with-number (concat (review-file-name) ":" (number-to-string (line-number-at-pos)))))
-	(kill-new path-with-number)
-	(message "Copied buffer file name '%s' to the clipboard." path-with-number)))
+    (kill-new path-with-number)
+    (message "Copied buffer file name '%s' to the clipboard." path-with-number)))
 #+END_SRC
 
-** Tmux
-   
+** Autoreload dir-local variables
+
 #+BEGIN_SRC emacs-lisp
-(defun tmux-make ()
-  "Send command to specific tmux-session."
-  (interactive)
-  (call-process-shell-command "tmux send-keys -t brbes:1 make space test_backend enter"))
+  (defun my-reload-dir-locals-for-current-buffer ()
+    "Reload dir locals for the current buffer."
+    (interactive)
+    (let ((enable-local-variables :all))
+      (hack-dir-local-variables-non-file-buffer)))
+
+  (defun my-reload-dir-locals-for-all-buffers-in-this-directory ()
+    "For every buffer with the same `default-directory` as the
+  current buffer's, reload dir-locals."
+    (interactive)
+    (let ((dir default-directory))
+      (dolist (buffer (buffer-list))
+        (with-current-buffer buffer
+          (when (equal default-directory dir))
+          (my-reload-dir-locals-for-current-buffer)))))
+
+  (add-hook 'emacs-lisp-mode-hook
+            (defun enable-autoreload-for-dir-locals ()
+              (when (and (buffer-file-name)
+                         (equal dir-locals-file
+                                (file-name-nondirectory (buffer-file-name))))
+                (add-hook (make-variable-buffer-local 'after-save-hook)
+                          'my-reload-dir-locals-for-all-buffers-in-this-directory))))
 #+END_SRC
+
 * Emacs server
 
 #+BEGIN_SRC emacs-lisp
@@ -1607,24 +2084,41 @@ I mainly use this when I write written code reviews.
    https://emacs.stackexchange.com/questions/13080/reloading-directory-local-variables#13096
 
 ** TODO Restclient
-   
+
    Provides functionality to use a buffer for interacting with a rest interface.
-   
+
    https://github.com/pashky/restclient.el
 
-** TODO Hydra - menu library
+** DONE Hydra - menu library
+   CLOSED: [2019-02-12 Tue 13:03]
 
    Package which makes it easy to create popup/menues.
 
+   Kind of replaced this with which key.
+
    https://github.com/abo-abo/hydra
 
-** TODO Enhance discoverability of functions
+#+COMMENT
+(use-package hydra
+  :ensure t)
+
+(defhydra hydra-foo (:hint nil)
+  "
+Helm
+-------------------------------------------------------------------------------
+_a_: ripgrep   _t_: themes
+"
+  ("a" helm-rg)
+  ("t" helm-themes)
+  ("q" quit-window "quit" :color blue))
+
+(define-key evil-normal-state-map ",hf" 'hydra-foo/body)
+#+END
+
+** DONE Enhance discoverability of functions
+   CLOSED: [2019-02-25 Mon 22:33]
 
    https://www.masteringemacs.org/article/discoverel-discover-emacs-context-menus
-
-** TODO List for symbols in file (ilist)
-
-   https://github.com/bmag/imenu-list
 
 ** TODO Better search/navigation for org-mode
 
@@ -1632,8 +2126,68 @@ I mainly use this when I write written code reviews.
 
    https://github.com/alphapapa/helm-org-rifle
 
-** TODO Proper powerline and not my own ugly hack
+** DONE Proper powerline and not my own ugly hack
+   CLOSED: [2019-02-25 Mon 22:34]
 
    I hope...
 
    https://github.com/raugturi/powerline-evil
+
+** TODO Hide PROPERTIES drawers in org-mode
+
+   I found an interesting answer on [[https://stackoverflow.com/questions/17478260/completely-hide-the-properties-drawer-in-org-mode#17492723][Stack Overflow]]:
+
+   The following answer completely hides everything from :PROPERTIES: through :END:. It can be tested by evaluating (org-cycle-hide-drawers 'children), or (org-cycle-hide-drawers 'all), or in conjunction with the other functions relating to cycling the outline views. The standard functions to unfold that are included within the org-mode family all work -- e.g., show-all; org-show-subtree; etc.
+
+   # +BEGIN_SRC emacs-lisp
+     ;(require 'org)
+
+     (defun org-cycle-hide-drawers (state)
+       "Re-hide all drawers after a visibility state change."
+       (when (and (derived-mode-p 'org-mode)
+                  (not (memq state '(overview folded contents))))
+         (save-excursion
+           (let* ((globalp (memq state '(contents all)))
+                  (beg (if globalp
+                         (point-min)
+                         (point)))
+                  (end (if globalp
+                         (point-max)
+                         (if (eq state 'children)
+                           (save-excursion
+                             (outline-next-heading)
+                             (point))
+                           (org-end-of-subtree t)))))
+             (goto-char beg)
+             (while (re-search-forward org-drawer-regexp end t)
+               (save-excursion
+                 (beginning-of-line 1)
+                 (when (looking-at org-drawer-regexp)
+                   (let* ((start (1- (match-beginning 0)))
+                          (limit
+                            (save-excursion
+                              (outline-next-heading)
+                                (point)))
+                          (msg (format
+                                 (concat
+                                   "org-cycle-hide-drawers:  "
+                                   "`:END:`"
+                                   " line missing at position %s")
+                                 (1+ start))))
+                     (if (re-search-forward "^[ \t]*:END:" limit t)
+                       (outline-flag-region start (point-at-eol) t)
+                       (user-error msg))))))))))
+   # +END_SRC
+
+   For anyone who interested in tab cycling between all of the various views (including revealing what is inside the :PROPERTIES: drawer, there is an easy modification to org-cycle-internal-local by adding an additional condition before (t ;; Default action: hide the subtree...
+
+    ((eq org-cycle-subtree-status 'subtree)
+      (org-show-subtree)
+      (org-unlogged-message "ALL")
+      (setq org-cycle-subtree-status 'all))
+** TODO Evaluate stuff that is part of spacemacs
+** TODO Named prefixes in which-key
+** DONE Treemacs
+   CLOSED: [2019-02-25 Mon 22:34]
+
+   https://github.com/Alexander-Miller/treemacs
