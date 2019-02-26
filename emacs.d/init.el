@@ -19,13 +19,13 @@
       (tool-bar-mode -1) ; Hiding toolbar
       (scroll-bar-mode -1) ; Hide scrollbars
       ;(tabbar-mode -1) ; Disable tabbar
-	  ))
+      ))
 
 (if (not
-	 (and
-	  (display-graphic-p)
-	  (string-equal system-type "darwin")))
-	(menu-bar-mode -1))
+     (and
+      (display-graphic-p)
+      (string-equal system-type "darwin")))
+    (menu-bar-mode -1))
 
 (require 'package)
 ;;; Add package repository
@@ -38,7 +38,6 @@
 
 
 (put 'narrow-to-region 'disabled nil)
-
 
 ; Restore GC-limit
 (setq gc-cons-threshold my-old-gc-cons-threshold)
