@@ -1174,7 +1174,8 @@ Nice addon to markdown which allows for suggesting changes, commenting and so on
   (use-package cm-mode
     :after markdown-mode
     :ensure t
-    :commands cm-mode)
+    :commands cm-mode
+    :hook markdown)
 #+END_SRC
 
 ** Protobuf
@@ -1485,6 +1486,12 @@ https://github.com/emacs-evil/evil-magit
     :after (magit evil))
 #+END_SRC
 
+** Github/-lab integration
+#+BEGIN_SRC emacs-lisp
+  (use-package forge
+    :ensure
+    :after magit)
+#+END_SRC
 ** Gist
 
 #+BEGIN_SRC emacs-lisp
@@ -1576,56 +1583,62 @@ https://github.com/emacs-helm/helm/wiki
 
 * Org
 
-#+BEGIN_SRC emacs-lisp
-  (use-package org
-    :ensure t
-    :mode ("\\.org\\'" . org-mode)
-    :config
-    (setq org-clock-persist 'history)
-    (org-clock-persistence-insinuate)
-    (setq org-log-done 'time)  ; Logging when tasks are done
-    (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
-                          (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
-                          (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
-    :hook (org-mode . (lambda ()
-                        (tabs-disable)
-                        (ws-trim-mode)
-                        (visual-line-mode)
-                        (adaptive-wrap-prefix-mode))))
-#+END_SRC
+** Core package
+ #+BEGIN_SRC emacs-lisp
+   (use-package org
+     :ensure t
+     :mode ("\\.org\\'" . org-mode)
+     :config
+     (org-clock-persistence-insinuate)
+     (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
+                           (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+                           (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+     :custom
+     (org-log-done 'time "Logging when tasks are done")
+     (org-clock-persist 'history)
+     (org-todo-keywords '("TODO(t)" "|" "DONE(d!)" "CANCELED(c@)")) ; "WAIT(w@/!)"
+     :hook (org-mode . (lambda ()
+                         (tabs-disable)
+                         (ws-trim-mode)
+                         (visual-line-mode)
+                         (adaptive-wrap-prefix-mode))))
+ #+END_SRC
 
-Evil keybindings for org-mode.
+** Evil bindings
+ Evil keybindings for org-mode.
 
-#+BEGIN_SRC emacs-lisp
-  (use-package evil-org
-    :ensure
-    :after (evil org)
-    :diminish evil-org-mode
-    :bind (:map evil-normal-state-map
-                (",ci" . org-clock-in)
-                (",cl" . org-clock-in-last)
-                (",co" . org-clock-out)
-                (",cg" . org-clock-goto)
-                (",cd" . org-clock-display)
-                (",cq" . org-clock-cancel)
+ #+BEGIN_SRC emacs-lisp
+   (use-package evil-org
+     :ensure
+     :after (evil org)
+     :diminish evil-org-mode
+     :bind (:map evil-normal-state-map
+                 (",ci" . org-clock-in)
+                 (",cl" . org-clock-in-last)
+                 (",co" . org-clock-out)
+                 (",cg" . org-clock-goto)
+                 (",cd" . org-clock-display)
+                 (",cq" . org-clock-cancel)
 
-                (",oa" . org-agenda)
-                (",od" . org-deadline)
-                (",os" . org-schedule)
-                (",oo" . helm-org-rifle))
-    :hook ((org-mode . evil-org-mode)
-           (evil-org-mode . (lambda ()
-                              (evil-org-set-key-theme)
-                              (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
-                              (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)))))
-#+END_SRC
+                 (",oa" . org-agenda)
+                 (",oc" . org-capture)
+                 (",od" . org-deadline)
+                 (",os" . org-schedule)
+                 (",oo" . helm-org-rifle))
+     :hook ((org-mode . evil-org-mode)
+            (evil-org-mode . (lambda ()
+                               (evil-org-set-key-theme)
+                               (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
+                               (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)))))
+ #+END_SRC
 
-Rifle through org files
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-org-rifle
-    :after helm
-    :ensure t)
-#+END_SRC
+** Org rifle / search
+ Rifle through org files
+ #+BEGIN_SRC emacs-lisp
+   (use-package helm-org-rifle
+     :after helm
+     :ensure t)
+ #+END_SRC
 
 ** TODO Try to create reveal.js presentations from org-mode
 
@@ -1746,8 +1759,8 @@ Helm interface for pass. Quite awesome actually.
 
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
-    :commands (yas-mode yas-global-mode)
-    :diminish yas-minor-mode
+    ;:commands (yas-mode yas-global-mode)
+    ;:diminish yas-minor-mode
     ;:defer t
     :config
     (yas-global-mode 1))

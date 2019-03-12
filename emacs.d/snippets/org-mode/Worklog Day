@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: Worklog Day
+# key: ,wt
+# --
+* Workday
+  :PROPERTIES:
+  :CATEGORY: work
+  :END:
+** ${1:UCP}
+   $0
