@@ -1596,7 +1596,9 @@ https://github.com/emacs-helm/helm/wiki
      :custom
      (org-log-done 'time "Logging when tasks are done")
      (org-clock-persist 'history)
-     (org-todo-keywords '("TODO(t)" "|" "DONE(d!)" "CANCELED(c@)")) ; "WAIT(w@/!)"
+     (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
+                          (sequence "WAIT(w@/!)" "|")
+                          (sequence "|" "CANCELED(c@)")))
      :hook (org-mode . (lambda ()
                          (tabs-disable)
                          (ws-trim-mode)
