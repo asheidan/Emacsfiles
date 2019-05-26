@@ -100,7 +100,7 @@ A bunch of custom colors taken from the FlatUI theme.
     :config
     (doom-themes-treemacs-config)
     (doom-themes-org-config)
-    (load-theme 'doom-one t))
+    (load-theme 'doom-opera-light t))
 #+END_SRC
 *** FlatUI
 
@@ -218,6 +218,9 @@ Highlite the line the cursor is currently on.
     (setq doom-modeline-buffer-file-name-style 'relative-from-project)
     (setq doom-modeline-major-mode-icon nil)
     (setq doom-modeline-minor-modes t)
+
+    (setq doom-modeline-buffer-encoding nil)
+    (setq doom-modeline-indent-info nil)
     :hook (after-init . doom-modeline-mode))
 #+END_SRC
 
