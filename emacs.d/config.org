@@ -1599,6 +1599,14 @@ https://github.com/emacs-helm/helm/wiki
      (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
                           (sequence "WAIT(w@/!)" "|")
                           (sequence "|" "CANCELED(c@)")))
+     (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
+                                    ((agenda "" nil)
+                                     (alltodo "" nil))
+                                    nil)
+                                   ("i" "Inbox (Unscheduled, available TODOs"
+                                    tags-todo "-SCHEDULED={.+}"
+                                    ((org-agenda-overriding-header "Inbox (Unscheduled)"))
+                                    nil)))
      :hook (org-mode . (lambda ()
                          (tabs-disable)
                          (ws-trim-mode)
