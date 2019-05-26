@@ -63,6 +63,8 @@
  '(org-agenda-files
    (quote
 	("~/Dropbox/Worklog/2019/02 February" "~/Dropbox/Worklog/2019/03 March" "~/Dropbox/Worklog/Codemill" "~/Dropbox/Worklog/Pro7/UCP")))
+ '(org-agenda-window-frame-fractions (quote (0.3 . 0.75)))
+ '(org-agenda-window-setup (quote other-window))
  '(org-clock-clocked-in-display nil)
  '(org-clock-in-resume t)
  '(org-clock-out-remove-zero-time-clocks t)
