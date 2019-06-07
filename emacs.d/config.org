@@ -196,9 +196,11 @@ Not sure if this belongs here or in the Helm-section.
 #+END_SRC
 
 ** No blinking!!!
+
 #+BEGIN_SRC emacs-lisp
   (blink-cursor-mode 0)
 #+END_SRC
+
 ** Line highlighting
 
 Highlite the line the cursor is currently on.
@@ -981,7 +983,7 @@ Makes it possible to create *- and #-searches with a visual selection.
     :hook (lsp-after-open-hook . (lambda () (lsp-ui-flycheck-enable 1))))
 
   (use-package company-lsp
-    ;:ensure t
+    :ensure t
     :after company
     ;:commands company-lsp
     ;:init (push 'company-lsp company-backends)
@@ -1099,6 +1101,26 @@ Groovy baby! I use this mainly in Jenkins pipelines.
     ;; Sane indentation for haskell
     :hook (haskell-mode . turn-on-haskell-indentation))
 #+END_SRC
+
+** Ledger-mode
+
+   This is almost as broken as org-mode. A system for bookkeeping built as an aggregator on top of events stored in plaintext files which are easy to edit and maintain.
+
+   Way too much features for what I need. But it's kind of fun.
+
+   Combining this with org-mode gives you something totally bonkers.
+
+   #+BEGIN_SRC sh
+     cd ~/.emacs.d/vendor/ && git clone https://github.com/ledger/ledger-mode.git
+   #+END_SRC
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package ledger-mode
+       :load-path "vendor/ledger-mode"
+       :mode "\\.ledger\\'"
+       :custom (ledger-default-date-format "%Y-%m-%d")
+       )
+   #+END_SRC
 
 ** Less-CSS
 
