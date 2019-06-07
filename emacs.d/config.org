@@ -975,6 +975,7 @@ Makes it possible to create *- and #-searches with a visual selection.
     ;:after (:any lsp lsp-mode)
     :commands lsp-ui-mode
     :hook (java-mode . flycheck-mode)
+    :bind ([f1] . lsp-ui-doc-mode)
     )
 
   (use-package lsp-ui-flycheck
@@ -1620,6 +1621,7 @@ https://github.com/emacs-helm/helm/wiki
                            (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
                            (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
      :custom
+     (org-deadline-warning-days 5)
      (org-log-done 'time "Logging when tasks are done")
      (org-clock-persist 'history)
      (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
@@ -1730,6 +1732,7 @@ Helm interface for pass. Quite awesome actually.
     :defer t
     :commands (helm-pass))
 #+END_SRC
+
 * Projectile
 
 ** Projectile core
@@ -2235,7 +2238,8 @@ _a_: ripgrep   _t_: themes
       (org-unlogged-message "ALL")
       (setq org-cycle-subtree-status 'all))
 ** TODO Evaluate stuff that is part of spacemacs
-** TODO Named prefixes in which-key
+** DONE Named prefixes in which-key
+   CLOSED: [2019-03-26 Tue 14:39]
 ** DONE Treemacs
    CLOSED: [2019-02-25 Mon 22:34]
 
