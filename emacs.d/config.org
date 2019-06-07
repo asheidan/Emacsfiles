@@ -1635,6 +1635,12 @@ https://github.com/emacs-helm/helm/wiki
                                     tags-todo "-SCHEDULED={.+}"
                                     ((org-agenda-overriding-header "Inbox (Unscheduled)"))
                                     nil)))
+     (org-agenda-files '("~/Dropbox/Worklog/2019/04 April"
+                         "~/Dropbox/Worklog/2019/05 May"
+                         "~/Dropbox/Worklog/2019/06 June"
+                         "~/Dropbox/Worklog/Codemill"
+                         "~/Dropbox/Worklog/Pro7/UCP"))
+     (org-directory "~/Dropbox/Worklog")
      :hook (org-mode . (lambda ()
                          (tabs-disable)
                          (ws-trim-mode)
