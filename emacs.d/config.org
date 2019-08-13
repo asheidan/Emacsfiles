@@ -98,7 +98,7 @@ A bunch of custom colors taken from the FlatUI theme.
   (use-package doom-themes
     :ensure
     :config
-    (doom-themes-treemacs-config)
+    ;(doom-themes-treemacs-config)
     (doom-themes-org-config)
     (load-theme 'doom-opera-light t))
 #+END_SRC
@@ -389,7 +389,7 @@ Color the modeline according to the current vim-mode.
 
 **** Helper functions
 
-+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp
   ; taken from [[https://github.com/hlissner/doom-emacs/blob/master/modules/ui/doom-modeline/config.el][Doom modeline]]
   (defvar irksome-modeline-current-window (frame-selected-window)
     "Variable to store the currently focused window.")
@@ -409,7 +409,7 @@ Color the modeline according to the current vim-mode.
 
   (defsubst irksome-active ()
     (eq (selected-window) irksome-modeline-current-window))
-+END_SRC
+#+END_SRC
 
 Function used to "intelligently" shorten paths and names.
 I try to use this to shorten the project name as well as the relative path within a project for a buffer.
@@ -698,10 +698,14 @@ Helper function to open neotree relative to the current project root.
   (use-package treemacs
     :ensure t
     :defer t
-    :config
-    (treemacs-follow-mode t)
+    :bind (([f2] . treemacs))
+    :custom
+    (treemacs-collapse-dirs 10)
     (treemacs-filewatch-mode t)
-    (treemacs-fringe-indicator-mode t))
+    (treemacs-follow-mode t)
+    (treemacs-fringe-indicator-mode t)
+    (treemacs-no-png-images t "Disable icons")
+    (treemacs-show-hidden-files nil))
 
   (use-package treemacs-evil
     :after (treemacs evil)
@@ -843,12 +847,12 @@ Show the name of the current function/class at the top of the screen if it scrol
 ;; Fix option-key
 ;(setq default-input-method "MacOSX")
 (defvar mac-command-modifier)
-(defvar mac-allow-antialiasing)
+(defvar mac-allow-anti-aliasing)
 (defvar mac-command-key-is-meta)
 (if (string-equal system-type "darwin")
     (setq mac-option-modifier nil
       mac-command-modifier 'meta
-      mac-allow-antialiasing t
+      mac-allow-anti-aliasing t
       mac-command-key-is-meta t))
 (defvar x-meta-keysym)
 (defvar x-super-keysym)
@@ -1007,6 +1011,7 @@ Related debug-support
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-java
     :ensure t
+    :disabled
     :after (:any lsp lsp-mode)
     ;:hook (java-mode . #'lsp)
     )
@@ -1014,8 +1019,8 @@ Related debug-support
   (use-package dap-java
     :after lsp-java)
 
-  (use-package lsp-java-treemacs
-    :after (treemacs lsp-java))
+  ;(use-package lsp-java-treemacs
+  ;  :after (treemacs lsp-java))
 #+END_SRC
 
 ** C whatever
@@ -1084,6 +1089,11 @@ Should have learned org-mode instead.
     :after go-mode)
 #+END_SRC
 
+** Graphviz
+   #+BEGIN_SRC emacs-lisp
+     (use-package graphviz-dot-mode
+       :mode ("\\.dot\\'"))
+   #+END_SRC
 ** Groovy
 
 Groovy baby! I use this mainly in Jenkins pipelines.
@@ -1617,9 +1627,6 @@ https://github.com/emacs-helm/helm/wiki
      :mode ("\\.org\\'" . org-mode)
      :config
      (org-clock-persistence-insinuate)
-     (setq org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
-                           (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
-                           (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
      :custom
      (org-deadline-warning-days 5)
      (org-log-done 'time "Logging when tasks are done")
@@ -1635,12 +1642,21 @@ https://github.com/emacs-helm/helm/wiki
                                     tags-todo "-SCHEDULED={.+}"
                                     ((org-agenda-overriding-header "Inbox (Unscheduled)"))
                                     nil)))
-     (org-agenda-files '("~/Dropbox/Worklog/2019/04 April"
+     (org-agenda-files '("~/Dropbox/Worklog/inbox.org"
+                         "~/Dropbox/Worklog/2019/04 April"
                          "~/Dropbox/Worklog/2019/05 May"
                          "~/Dropbox/Worklog/2019/06 June"
+                         "~/Dropbox/Worklog/2019/07 July"
+                         "~/Dropbox/Worklog/2019/08 August"
                          "~/Dropbox/Worklog/Codemill"
                          "~/Dropbox/Worklog/Pro7/UCP"))
      (org-directory "~/Dropbox/Worklog")
+     (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
+     (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
+                      (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+                      (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+     (org-agenda-time-grid ((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
+                            "......" "----------------"))
      :hook (org-mode . (lambda ()
                          (tabs-disable)
                          (ws-trim-mode)

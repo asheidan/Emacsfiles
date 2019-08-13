@@ -20,20 +20,11 @@
  '(frame-brackground-mode (quote dark))
  '(helm-buffer-max-length 40)
  '(highlight-changes-colors (quote ("#FD5FF0" "#AE81FF")))
- '(highlight-tail-colors
-   (quote
-	(("#49483E" . 0)
-	 ("#67930F" . 20)
-	 ("#349B8D" . 30)
-	 ("#21889B" . 50)
-	 ("#968B26" . 60)
-	 ("#A45E0A" . 70)
-	 ("#A41F99" . 85)
-	 ("#49483E" . 100))))
  '(hl-paren-background-colors (quote ("#2492db" "#95a5a6" nil)))
  '(hl-paren-colors (quote ("#ecf0f1" "#ecf0f1" "#c0392b")))
  '(imenu-list-size 35 t)
  '(lsp-prefer-flymake nil)
+ '(lsp-ui-sideline-show-code-actions nil)
  '(magit-diff-use-overlays nil)
  '(neo-click-changes-root nil t)
  '(neo-force-change-root t t)
@@ -60,9 +51,6 @@
  '(org-agenda-clockreport-parameter-plist
    (quote
 	(:link t :maxlevel 3 :fileskip0 t :step day :stepskip0 t)))
- '(org-agenda-files
-   (quote
-	("~/Dropbox/Worklog/2019/02 February" "~/Dropbox/Worklog/2019/03 March" "~/Dropbox/Worklog/Codemill" "~/Dropbox/Worklog/Pro7/UCP")))
  '(org-agenda-window-frame-fractions (quote (0.3 . 0.75)))
  '(org-agenda-window-setup (quote other-window))
  '(org-clock-clocked-in-display nil)
@@ -113,10 +101,7 @@
  '(speedbar-verbosity-level 0)
  '(term-default-bg-color "#002b36")
  '(term-default-fg-color "#839496")
- '(treemacs-collapse-dirs 10)
- '(treemacs-no-png-images nil)
  '(treemacs-python-executable "/usr/local/bin/python3")
- '(treemacs-show-hidden-files nil)
  '(uniquify-buffer-name-style (quote forward) nil (uniquify))
  '(uniquify-separator "/")
  '(uniquify-strip-common-suffix nil)
