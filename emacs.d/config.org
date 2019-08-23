@@ -1417,6 +1417,14 @@ And then the actual emacs integration.
 
 **** TODO Look at difference between racer and company-racer for completion
 
+
+** Terraform
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package terraform-mode
+       :mode "\\.tf\\'"
+       :hook (terraform-mode . terraform-format-on-save-mode))
+   #+END_SRC
 ** Textile
 
 #+BEGIN_SRC emacs-lisp
@@ -1809,6 +1817,23 @@ Helm interface for pass. Quite awesome actually.
     :after pass
     :defer t
     :commands (helm-pass))
+#+END_SRC
+
+* Restclient
+
+#+BEGIN_SRC emacs-lisp
+  (use-package restclient
+    :ensure t)
+#+END_SRC
+
+* Databases
+
+** SQLi
+
+#+BEGIN_SRC emacs-lisp
+  (use-package sql
+    :custom
+    sql-postgres-program "/Applications/Postgres.app/Contents/Versions/10/bin/psql")
 #+END_SRC
 
 * Projectile
