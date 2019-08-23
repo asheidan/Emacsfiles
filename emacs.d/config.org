@@ -402,10 +402,10 @@ Color the modeline according to the current vim-mode.
         (unless (minibuffer-window-active-p win)
           (setq irksome-modeline-current-window win)))))
 
-  (add-hook 'window-configuration-change-hook #'irksome-modeline-set-selected-window)
-  (add-hook 'focus-in-hook #'irksome-modeline-set-selected-window)
-  (advice-add #'handle-switch-frame :after #'irksome-modeline-set-selected-window)
-  (advice-add #'select-window :after #'irksome-modeline-set-selected-window)
+  ;(add-hook 'window-configuration-change-hook #'irksome-modeline-set-selected-window)
+  ;(add-hook 'focus-in-hook #'irksome-modeline-set-selected-window)
+  ;(advice-add #'handle-switch-frame :after #'irksome-modeline-set-selected-window)
+  ;(advice-add #'select-window :after #'irksome-modeline-set-selected-window)
 
   (defsubst irksome-active ()
     (eq (selected-window) irksome-modeline-current-window))
@@ -671,7 +671,7 @@ Helper function to open neotree relative to the current project root.
                 (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
                 (evil-define-key 'normal neotree-mode-map (kbd "g r") 'neotree-refresh)
                 (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)))
-    :bind (([f2] . neotree-project-dir))
+    ;:bind (([f2] . neotree-project-dir))
     :custom
     (neo-force-change-root t)  ; Stop file not found, change root-dialogue
     (neo-window-width 35)
@@ -695,10 +695,16 @@ Helper function to open neotree relative to the current project root.
 *** Treemacs (replacing Neotree)
 
 #+BEGIN_SRC emacs-lisp
+  (defun my-ignore-pychache (filename absolute-path)
+    (or (string-equal "__pycache__" filename)
+        (string-suffix-p ".pyc" filename)))
+
   (use-package treemacs
     :ensure t
     :defer t
     :bind (([f2] . treemacs))
+    :config
+    (add-to-list 'treemacs-ignored-file-predicates #'my-ignore-pychache)
     :custom
     (treemacs-collapse-dirs 10)
     (treemacs-filewatch-mode t)
@@ -823,22 +829,72 @@ Show the name of the current function/class at the top of the screen if it scrol
     :diminish)
 #+END_SRC
 
+** Window splitting
+
+   Make emacs prefer vertical split.
+
+#+BEGIN_SRC emacs-lisp
+  (defun split-window-sensibly-prefer-horizontal (&optional window)
+    "Based on split-window-sensibly, but designed to prefer a horizontal split,
+  i.e. windows tiled side-by-side.
+
+  This should be more or less just a copy of split-windows-sensibly but with reversed priority between vertical and horizontal."
+    (let* ((window (or window (selected-window)))
+           (new-window
+            (or (and (window-splittable-p window t)
+                     ;; Split window horizontally
+                     (with-selected-window window
+                       (split-window-right)))
+                (and (window-splittable-p window)
+                     ;; Split window vertically
+                     (with-selected-window window
+                       (split-window-below)))
+                (and
+                 ;; If WINDOW is the only usable window on its frame (it is
+                 ;; the only one or, not being the only one, all the other
+                 ;; ones are dedicated) and is not the minibuffer window, try
+                 ;; to split it horizontally disregarding the value of
+                 ;; `split-height-threshold'.
+                 (let ((frame (window-frame window)))
+                   (or
+                    (eq window (frame-root-window frame))
+                    (catch 'done
+                      (walk-window-tree (lambda (w)
+                                          (unless (or (eq w window)
+                                                      (window-dedicated-p w))
+                                            (throw 'done nil)))
+                                        frame)
+                      t)))
+                 (not (window-minibuffer-p window))
+                 (let ((split-width-threshold 0))
+                   (when (window-splittable-p window t)
+                     (with-selected-window window
+                       (split-window-below))))))))
+      (if new-window
+          (progn
+            (balance-windows (window-parent))
+            new-window))))
+
+  (setq-default split-window-preferred-function
+                'split-window-sensibly-prefer-horizontal)
+#+END_SRC
+
 * Options
 
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t
-    initial-scratch-message nil)
+        initial-scratch-message nil)
 
   ; Include column number int mode-line
   (setq column-number-mode t
-    line-number-mode t)
+        line-number-mode t)
 
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
 
   (setq-default tab-width 4)
 
-  (setq split-height-threshold 80
-    split-width-threshold 220)
+  (setq-default split-height-threshold 40
+                split-width-threshold 160)
 #+END_SRC
 
 ** Mac specific stuff
@@ -1110,7 +1166,7 @@ Groovy baby! I use this mainly in Jenkins pipelines.
     :ensure
     :mode ("\\.hs\\'")
     ;; Sane indentation for haskell
-    :hook (haskell-mode . turn-on-haskell-indentation))
+    :hook (haskell-mode . haskell-indentation-mode))
 #+END_SRC
 
 ** Ledger-mode
@@ -1632,36 +1688,36 @@ https://github.com/emacs-helm/helm/wiki
      (org-log-done 'time "Logging when tasks are done")
      (org-clock-persist 'history)
      (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
-                          (sequence "WAIT(w@/!)" "|")
-                          (sequence "|" "CANCELED(c@)")))
+			  (sequence "WAIT(w@/!)" "|")
+			  (sequence "|" "CANCELED(c@)")))
      (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
-                                    ((agenda "" nil)
-                                     (alltodo "" nil))
-                                    nil)
-                                   ("i" "Inbox (Unscheduled, available TODOs"
-                                    tags-todo "-SCHEDULED={.+}"
-                                    ((org-agenda-overriding-header "Inbox (Unscheduled)"))
-                                    nil)))
+				    ((agenda "" nil)
+				     (alltodo "" nil))
+				    nil)
+				   ("i" "Inbox (Unscheduled, available TODOs"
+				    tags-todo "-SCHEDULED={.+}"
+				    ((org-agenda-overriding-header "Inbox (Unscheduled)"))
+				    nil)))
      (org-agenda-files '("~/Dropbox/Worklog/inbox.org"
-                         "~/Dropbox/Worklog/2019/04 April"
-                         "~/Dropbox/Worklog/2019/05 May"
-                         "~/Dropbox/Worklog/2019/06 June"
-                         "~/Dropbox/Worklog/2019/07 July"
-                         "~/Dropbox/Worklog/2019/08 August"
-                         "~/Dropbox/Worklog/Codemill"
-                         "~/Dropbox/Worklog/Pro7/UCP"))
+			 "~/Dropbox/Worklog/2019/04 April"
+			 "~/Dropbox/Worklog/2019/05 May"
+			 "~/Dropbox/Worklog/2019/06 June"
+			 "~/Dropbox/Worklog/2019/07 July"
+			 "~/Dropbox/Worklog/2019/08 August"
+			 "~/Dropbox/Worklog/Codemill"
+			 "~/Dropbox/Worklog/Pro7/UCP"))
      (org-directory "~/Dropbox/Worklog")
      (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
      (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
-                      (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
-                      (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
-     (org-agenda-time-grid ((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
-                            "......" "----------------"))
+		      (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+		      (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+	 (org-agenda-time-grid '((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
+			    "......" "----------------"))
      :hook (org-mode . (lambda ()
-                         (tabs-disable)
-                         (ws-trim-mode)
-                         (visual-line-mode)
-                         (adaptive-wrap-prefix-mode))))
+			 (tabs-disable)
+			 (ws-trim-mode)
+			 (visual-line-mode)
+			 (adaptive-wrap-prefix-mode))))
  #+END_SRC
 
 ** Evil bindings
