@@ -30,6 +30,12 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 
    Enable me to have different fonts on different platforms.
 
+   - Linux
+     - "ProFontWindows" 90 : Oldie but goldie
+     - "Fira Code" 80 : What I'm trying out right now for the ligatures
+   - Macos
+     - "ProfontIIx" 90 : I think this is the name. If the experiment with ligatures work out I'm probably moving to Fira Code here as well.
+
 #+BEGIN_SRC emacs-lisp
   (defvar my-default-font-family)
   (defvar my-default-font-height)
@@ -40,12 +46,20 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
       (setq my-default-font-family "ProfontIIx Nerd Font"
             my-default-font-height 90))
   (if (string-equal system-type "gnu/linux")
-      (setq my-default-font-family "ProFontWindows"
-            my-default-font-height 90))
+      (setq my-default-font-family "Fira Code"
+            my-default-font-height 80))
   (set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
   ;(set-face-attribute 'mode-line nil :box nil)
   ;(set-face-attribute 'mode-line-inactive nil :box nil)
+  (face-attribute 'default :family)
 #+END_SRC
+
+*** Fira Code ligatures
+
+    #+BEGIN_SRC emacs-lisp
+      (use-package fira-code-mode
+        :load-path "vendor/fira-code-mode")
+    #+END_SRC
 
 *** TODO Change the font-setting into a custom variable
 
@@ -1174,22 +1188,32 @@ Groovy baby! I use this mainly in Jenkins pipelines.
 
 ** Ledger-mode
 
-   This is almost as broken as org-mode. A system for bookkeeping built as an aggregator on top of events stored in plaintext files which are easy to edit and maintain.
+   This is almost as "broken" as org-mode. A system for bookkeeping built as an aggregator on top of events stored in plaintext files which are easy to edit and maintain.
 
    Way too much features for what I need. But it's kind of fun.
 
    Combining this with org-mode gives you something totally bonkers.
 
-   #+BEGIN_SRC sh
-     cd ~/.emacs.d/vendor/ && git clone https://github.com/ledger/ledger-mode.git
-   #+END_SRC
+   This is now available from melpa, trying melpa distribution since it seems to be up to date.
 
    #+BEGIN_SRC emacs-lisp
      (use-package ledger-mode
-       :load-path "vendor/ledger-mode"
+       :ensure t
+       ;:load-path "vendor/ledger-mode"
        :mode "\\.ledger\\'"
        :custom (ledger-default-date-format "%Y-%m-%d")
        )
+
+     (use-package evil-ledger
+       :ensure t
+       :after (ledger-mode evil)
+       :hook (ledger-mode . evil-ledger-mode))
+   #+END_SRC
+
+*** Downloading it directly from the repo
+
+   #+BEGIN_SRC sh
+     cd ~/.emacs.d/vendor/ && git clone https://github.com/ledger/ledger-mode.git
    #+END_SRC
 
 ** Less-CSS
