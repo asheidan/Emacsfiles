@@ -574,6 +574,9 @@ Helm interface for searching through keybindings.
 *** Hideshow
 
 #+BEGIN_SRC emacs-lisp
+  (defun line-is-list-item ()
+    (not (eq nil (string-match-p "^[\s-]*- " (thing-at-point 'line t)))))
+
   (use-package hideshow
     :commands (hs-minor-mode)
     ;:diminish hs-minor-mode
