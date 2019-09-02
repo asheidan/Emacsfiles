@@ -37,8 +37,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
       ;(:foundry "nil" :family "ProfontIIx")
       ; Source Code Pro:110
       ; ProfontIIx Nerd Font:90
-      (setq my-default-font-family "Source Code Pro"
-            my-default-font-height 120))
+      (setq my-default-font-family "ProfontIIx Nerd Font"
+            my-default-font-height 90))
   (if (string-equal system-type "gnu/linux")
       (setq my-default-font-family "ProFontWindows"
             my-default-font-height 90))
