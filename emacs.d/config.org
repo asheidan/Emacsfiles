@@ -715,38 +715,38 @@ Helper function to open neotree relative to the current project root.
 #+BEGIN_SRC emacs-lisp
   (defun my-ignore-pychache (filename absolute-path)
     (or (string-equal "__pycache__" filename)
-        (string-suffix-p ".pyc" filename)))
+    (string-suffix-p ".pyc" filename)))
 
   (use-package treemacs
+    :after evil
     :ensure t
-    :defer t
-    :bind (([f2] . treemacs))
+    :bind (([f2] . treemacs)
+           :map evil-normal-state-map
+           (",tt" . treemacs)
+           (",te" . treemacs-edit-workspaces)
+           (",ts" . treemacs-switch-workspace))
     :config
     (add-to-list 'treemacs-ignored-file-predicates #'my-ignore-pychache)
+
     :custom
     (treemacs-collapse-dirs 10)
     (treemacs-filewatch-mode t)
     (treemacs-follow-mode t)
     (treemacs-fringe-indicator-mode t)
-    (treemacs-no-png-images t "Disable icons")
+    (treemacs-no-png-images t)
     (treemacs-show-hidden-files nil))
 
-  (use-package treemacs-evil
-    :after (treemacs evil)
-    :ensure t
-    :bind
-    (:map evil-normal-state-map
-          (",tt" . treemacs)
-          (",te" . treemacs-edit-workspaces)
-          (",ts" . treemacs-switch-workspace)))
+    (use-package treemacs-evil
+      :after (treemacs evil)
+      :ensure t)
 
-  (use-package treemacs-projectile
-    :after (treemacs projectile)
-    :ensure t)
+    (use-package treemacs-projectile
+      :after (treemacs projectile)
+      :ensure t)
 
-  (use-package treemacs-magit
-    :after (treemacs magit)
-    :ensure t)
+    (use-package treemacs-magit
+      :after (treemacs magit)
+      :ensure t)
 #+END_SRC
 
 *** IMenu list
@@ -975,7 +975,7 @@ Miscellaneous packages and config related to the VI-emulator Evil.
       ;(define-key evil-normal-state-map ",e\S-r" 'reload-config-org)
 
   (use-package evil
-    :ensure
+    :ensure t
     :config
     (evil-mode t)
 
@@ -1475,16 +1475,16 @@ And then the actual emacs integration.
     (setq todotxt-default-file (expand-file-name "~/Dropbox/todo/todo.txt")
           todotxt-default-archive-file (expand-file-name "~/Dropbox/todo/done.txt"))
     :hook ((todotxt-mode . toggle-truncate-lines)
-           (todotxt-mode . (lambda () (auto-revert-mode 1))))
-    :bind
-    (:map evil-normal-state-map
-          (",tt" . todotxt-open-file)
-          (",ta" . todotxt-add-todo)
-          (",td" . todotxt-toggle-done)
-          (",tf-" . todotxt-clear-filter)
-          (",tfs" . todotxt-filter-by-status)
-          (",tfp" . todotxt-filter-by-project)
-          (",tft" . todotxt-filter-by-tag)))
+           (todotxt-mode . (lambda () (auto-revert-mode 1)))))
+    ;:bind
+    ;(:map evil-normal-state-map
+    ;      (",tt" . todotxt-open-file)
+    ;      (",ta" . todotxt-add-todo)
+    ;      (",td" . todotxt-toggle-done)
+    ;      (",tf-" . todotxt-clear-filter)
+    ;      (",tfs" . todotxt-filter-by-status)
+    ;      (",tfp" . todotxt-filter-by-project)
+    ;      (",tft" . todotxt-filter-by-tag))
 #+END_SRC
 
 ** TOML
