@@ -58,7 +58,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 
     #+BEGIN_SRC emacs-lisp
       (use-package fira-code-mode
-        :load-path "vendor/fira-code-mode")
+        :load-path "vendor/fira-code-mode"
+        :hook (prog-mode))
     #+END_SRC
 
 *** TODO Change the font-setting into a custom variable
