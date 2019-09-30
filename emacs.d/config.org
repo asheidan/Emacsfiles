@@ -8,7 +8,7 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 
 ** PATH
 
-   For some reasone MacOSX doesn't set the path variable the way I want it to.
+   For some reason MacOSX doesn't set the path variable the way I want it to.
    This will set it according to my wishes. Or at least closer.
 
 #+BEGIN_SRC emacs-lisp
@@ -1006,6 +1006,10 @@ Miscellaneous packages and config related to the VI-emulator Evil.
             ("config" . open-config-org))))
 #+END_SRC
 
+*** TODO Move package ex-bindings to package section
+
+    So :gstatus should be defined in the use-package call for magit.
+
 ** Evil surround
 
 Evil surrounds us!
@@ -1882,6 +1886,7 @@ Helm interface for pass. Quite awesome actually.
       (add-to-list 'projectile-globally-ignored-directories "virtualenvs")
       (add-to-list 'projectile-globally-ignored-directories "virtualenv")
       (add-to-list 'projectile-globally-ignored-directories "venv")
+      (add-to-list 'projectile-globally-ignored-directories "__pycache__")
 
       (add-to-list 'projectile-globally-ignored-file-suffixes "~")
       (add-to-list 'projectile-globally-ignored-file-suffixes ".pyc")
@@ -2272,32 +2277,6 @@ I mainly use this when I write written code reviews.
 
    https://github.com/pashky/restclient.el
 
-** DONE Hydra - menu library
-   CLOSED: [2019-02-12 Tue 13:03]
-
-   Package which makes it easy to create popup/menues.
-
-   Kind of replaced this with which key.
-
-   https://github.com/abo-abo/hydra
-
-#+COMMENT
-(use-package hydra
-  :ensure t)
-
-(defhydra hydra-foo (:hint nil)
-  "
-Helm
--------------------------------------------------------------------------------
-_a_: ripgrep   _t_: themes
-"
-  ("a" helm-rg)
-  ("t" helm-themes)
-  ("q" quit-window "quit" :color blue))
-
-(define-key evil-normal-state-map ",hf" 'hydra-foo/body)
-#+END
-
 ** DONE Enhance discoverability of functions
    CLOSED: [2019-02-25 Mon 22:33]
 
@@ -2369,9 +2348,8 @@ _a_: ripgrep   _t_: themes
       (org-unlogged-message "ALL")
       (setq org-cycle-subtree-status 'all))
 ** TODO Evaluate stuff that is part of spacemacs
-** DONE Named prefixes in which-key
-   CLOSED: [2019-03-26 Tue 14:39]
-** DONE Treemacs
-   CLOSED: [2019-02-25 Mon 22:34]
+** TODO Langtool
 
-   https://github.com/Alexander-Miller/treemacs
+   Grammar checking in emacs
+   - https://github.com/mhayashi1120/Emacs-langtool
+   - http://languagetool.org/
