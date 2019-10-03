@@ -40,24 +40,7 @@
    (quote
 	("#dc322f" "#cb4b16" "#b58900" "#546E00" "#B4C342" "#00629D" "#2aa198" "#d33682" "#6c71c4")))
  '(ns-antialias-text t)
- '(org-agenda-clock-consistency-checks
-   (quote
-	(:max-duration "10:00" :min-duration 1 :max-gap "0:05" :gap-ok-around
-				   ("4:00")
-				   :default-face
-				   ((:background "DarkRed")
-					(:foreground "white"))
-				   :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil)))
- '(org-agenda-clockreport-parameter-plist
-   (quote
-	(:link t :maxlevel 3 :fileskip0 t :step day :stepskip0 t)))
- '(org-agenda-window-frame-fractions (quote (0.3 . 0.75)))
- '(org-agenda-window-setup (quote other-window))
- '(org-clock-clocked-in-display nil)
  '(org-clock-in-resume t)
- '(org-clock-out-remove-zero-time-clocks t)
- '(org-clock-out-when-done nil)
- '(org-hide-leading-stars t)
  '(package-selected-packages
    (quote
 	(ack-and-a-half adaptive-wrap all-the-icons-dired-mode anaconda-mode ansible auto-indent-mode cm-mode color-theme color-theme-sanityinc-tomorrow company company-anaconda cyberpunk-theme dash-at-point dayone diminish docker docker-compose-mode docker-tramp dockerfile-mode evil-leader evil-magit evil-matchit evil-org evil-surround evil-text-object-python evil-visualstar flatland-theme flatui-theme flycheck-pyflakes flycheck-rust git-gutter gnuplot-mode gotham-theme gradle-mode graphviz-dot-mode groovy-mode gruber-darker-theme gruvbox-theme haskell-mode helm-ack helm-css-scss helm-dash helm-descbinds helm-flycheck helm-git helm-pass helm-projectile helm-themes helm-tramp htmlize indent-guide jedi jq-mode kubernetes kubernetes-evil lacarte less-css-mode magit-push-remote magit-svn magit-tramp markdown-mode markdown-mode+ material-theme modeline-posn molokai-theme monokai-theme multiple-cursors neotree org pass projectile puppet-mode pyvenv racer rust-mode scss-mode smart-mode-line smart-tabs-mode solarized-theme spacegray-theme spaceline sr-speedbar sublime-themes textile-mode todotxt-mode toml-mode use-package vagrant vagrant-tramp web-mode yaml-mode yasnippet)))

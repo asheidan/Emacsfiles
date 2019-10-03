@@ -1717,48 +1717,75 @@ https://github.com/emacs-helm/helm/wiki
 * Org
 
 ** Core package
- #+BEGIN_SRC emacs-lisp
-   (use-package org
-     :ensure t
-     :mode ("\\.org\\'" . org-mode)
-     :config
-     (org-clock-persistence-insinuate)
-     :custom
-     (org-deadline-warning-days 5)
-     (org-log-done 'time "Logging when tasks are done")
-     (org-clock-persist 'history)
-     (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
-			  (sequence "WAIT(w@/!)" "|")
-			  (sequence "|" "CANCELED(c@)")))
-     (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
-				    ((agenda "" nil)
-				     (alltodo "" nil))
-				    nil)
-				   ("i" "Inbox (Unscheduled, available TODOs"
-				    tags-todo "-SCHEDULED={.+}"
-				    ((org-agenda-overriding-header "Inbox (Unscheduled)"))
-				    nil)))
-     (org-agenda-files '("~/Dropbox/Worklog/inbox.org"
-			 "~/Dropbox/Worklog/2019/04 April"
-			 "~/Dropbox/Worklog/2019/05 May"
-			 "~/Dropbox/Worklog/2019/06 June"
-			 "~/Dropbox/Worklog/2019/07 July"
-			 "~/Dropbox/Worklog/2019/08 August"
-			 "~/Dropbox/Worklog/Codemill"
-			 "~/Dropbox/Worklog/Pro7/UCP"))
-     (org-directory "~/Dropbox/Worklog")
-     (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
-     (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
-		      (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
-		      (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
-	 (org-agenda-time-grid '((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
-			    "......" "----------------"))
-     :hook (org-mode . (lambda ()
-			 (tabs-disable)
-			 (ws-trim-mode)
-			 (visual-line-mode)
-			 (adaptive-wrap-prefix-mode))))
- #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (use-package org
+       :ensure t
+       :mode ("\\.org\\'" . org-mode)
+       :config
+       (org-clock-persistence-insinuate)
+       :custom
+       (org-hide-leading-stars t)
+
+       (org-deadline-warning-days 5)
+
+       (org-log-done 'time "Logging when tasks are done")
+       (org-log-into-drawer "LOGBOOK")
+       (org-log-state-notes-insert-after-drawers t)
+
+       (org-clock-persist 'history)
+       (org-clock-persist-query-resume nil
+        "Do not prompt to resume an active clock, just resume it")
+
+       (org-clock-out-remove-zero-time-clocks t "Remove empty clocklines")
+       (org-clock-out-when-done nil "Should we clock-out when marking as done")
+       (org-clock-clocked-in-display nil
+        "Don't display clock. Clock display does not seem to work with doom-modeline.")
+       (org-clock-in-resume t
+        "Resume clocking task on clock-in if the clock is open")
+       (org-todo-keywords '((sequence "TODO(t)" "|" "DONE(d)")
+                            (sequence "WAIT(w@/!)" "|")
+                            (sequence "|" "CANCELED(c@)")))
+
+       (org-agenda-window-setup 'other-window)
+       (org-agenda-window-frame-fractions (0.2 0.75))
+       (org-agenda-span 'day "Show single day by default")
+       (org-agenda-start-day nil "Start the agenda today")
+       (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
+                                      ((agenda "" nil)
+                                       (alltodo "" nil))
+                                      nil)
+                                     ("i" "Inbox (Unscheduled, available TODOs"
+                                      tags-todo "-SCHEDULED={.+}"
+                                      ((org-agenda-overriding-header "Inbox (Unscheduled)"))
+                                      nil)))
+       (org-agenda-files '("~/Dropbox/Worklog/inbox.org"
+                           "~/Dropbox/Worklog/2019/08 August"
+                           "~/Dropbox/Worklog/2019/09 September"
+                           "~/Dropbox/Worklog/2019/10 October"
+                           "~/Dropbox/Worklog/Codemill"))
+
+       (org-directory "~/Dropbox/Worklog")
+       (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
+       (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
+                        (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+                        (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+
+       (org-agenda-time-grid '((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
+                               "......" "----------------"))
+       (org-agenda-clock-consistency-checks
+        '(:max-duration "10:00" :min-duration 1 :max-gap "0:05" :gap-ok-around ("4:00")
+                        :default-face ((:background "DarkRed") (:foreground "white"))
+                        :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil))
+       (org-agenda-clockreport-parameter-plist
+        '(:link t :maxlevel 3 :fileskip0 t :step day :stepskip0 t))
+
+       :hook
+       (org-mode . (lambda ()
+                     (tabs-disable)
+                     (ws-trim-mode)
+                     (visual-line-mode)
+                     (adaptive-wrap-prefix-mode)))
+   #+END_SRC
 
 ** Evil bindings
  Evil keybindings for org-mode.
