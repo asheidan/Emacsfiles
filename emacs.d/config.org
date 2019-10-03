@@ -1747,7 +1747,7 @@ https://github.com/emacs-helm/helm/wiki
                             (sequence "|" "CANCELED(c@)")))
 
        (org-agenda-window-setup 'other-window)
-       (org-agenda-window-frame-fractions (0.2 0.75))
+       (org-agenda-window-frame-fractions '(0.2 0.75))
        (org-agenda-span 'day "Show single day by default")
        (org-agenda-start-day nil "Start the agenda today")
        (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
@@ -1784,7 +1784,7 @@ https://github.com/emacs-helm/helm/wiki
                      (tabs-disable)
                      (ws-trim-mode)
                      (visual-line-mode)
-                     (adaptive-wrap-prefix-mode)))
+                     (adaptive-wrap-prefix-mode))))
    #+END_SRC
 
 ** Evil bindings
