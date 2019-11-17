@@ -3,6 +3,11 @@
 
 Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
 
+* Current issue with TLS and gnu elpa workaround
+  https://www.reddit.com/r/emacs/comments/cdei4p/failed_to_download_gnu_archive_bad_request/
+  #+BEGIN_SRC emacs-lisp
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  #+END_SRC
 
 * Environment
 
