@@ -111,7 +111,7 @@ A bunch of custom colors taken from the FlatUI theme.
 
 #+BEGIN_SRC emacs-lisp
   (use-package doom-themes
-    :ensure
+    :ensure t
     :config
     ;(doom-themes-treemacs-config)
     (doom-themes-org-config)
@@ -1926,7 +1926,7 @@ Helm interface for pass. Quite awesome actually.
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile-ripgrep
-    :ensure t
+    :ensure ripgrep
     :after projectile)
 #+END_SRC
 
