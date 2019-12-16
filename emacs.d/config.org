@@ -48,6 +48,7 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
       ;(:foundry "nil" :family "ProfontIIx")
       ; Source Code Pro:110
       ; ProfontIIx Nerd Font:90
+      ; Fira Code:110
       (setq my-default-font-family "ProfontIIx Nerd Font"
             my-default-font-height 90))
   (if (string-equal system-type "gnu/linux")
@@ -63,8 +64,15 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
 
     #+BEGIN_SRC emacs-lisp
       (use-package fira-code-mode
-        :load-path "vendor/fira-code-mode"
-        :hook (prog-mode))
+        :load-path "vendor/fira-code-mode")
+        ;:hook (prog-mode)
+        ;:init
+        ;(add-hook 'python-mode-hook
+        ;          (lambda ()
+        ;            (mapc (lambda (pair) (push pair prettify-symbols-alist))
+        ;                  '(("in" . #x2208)
+        ;                    ("not in" . #x2209)
+        ;                    ("for" . #x2200)))))
     #+END_SRC
 
 *** TODO Change the font-setting into a custom variable
@@ -238,8 +246,16 @@ Highlite the line the cursor is currently on.
     ;(setq doom-modeline-height 25)
     ;(setq doom-modeline-bar-width 3)
     (setq doom-modeline-buffer-file-name-style 'relative-from-project)
-    (setq doom-modeline-major-mode-icon nil)
+
+    ; Modeline icons
+    (setq doom-modeline-icon (display-graphic-p))
+    (setq doom-modeline-evil-state-icon t)
+    (setq doom-modeline-major-mode-icon t)
+    (setq doom-modeline-major-mode-color-icon t)
+    (setq doom-modeilne-buffer-state-icon t)
+
     (setq doom-modeline-minor-modes t)
+    (setq doom-modeline-env-version t)
 
     (setq doom-modeline-buffer-encoding nil)
     (setq doom-modeline-indent-info nil)
@@ -355,7 +371,7 @@ Color the modeline according to the current vim-mode.
                               (t (list :background flatui-color-asbestos
                                        :path "#D9DFDF"
                                        :project "#B7C2C3"
-                                       :foreground flatui-color-concrete)))))
+                                       :foreground flatui-color-concrete))
 
 +BEGIN_SRC emacs-lisp
   (let ((current-color
@@ -575,7 +591,10 @@ Helm interface for searching through keybindings.
   (use-package which-key
     :ensure t
     :diminish
-    ;:custom (which-key-enable-extended-define-key t)
+    :custom
+    ;(which-key-enable-extended-define-key t)
+    (which-key-separator ": ")
+    (which-key-add-column-padding 2)
     :config
     (which-key-add-key-based-replacements "," "userstuff")
     (which-key-add-key-based-replacements ", SPC" "helm")
@@ -723,7 +742,7 @@ Helper function to open neotree relative to the current project root.
     (string-suffix-p ".pyc" filename)))
 
   (use-package treemacs
-    :after evil
+    :after (evil evil-states which-key)
     :ensure t
     :bind (([f2] . treemacs)
            :map evil-normal-state-map
@@ -1723,11 +1742,32 @@ https://github.com/emacs-helm/helm/wiki
 
 ** Core package
    #+BEGIN_SRC emacs-lisp
+     (defun worklog-open-current ()
+       (interactive)
+       (find-file "~/Dropbox/Worklog/current.org"))
+
+     (defun worklog-open-inbox ()
+       (interactive)
+       (find-file "~/Dropbox/Worklog/inbox.org"))
+
      (use-package org
        :ensure t
        :mode ("\\.org\\'" . org-mode)
+       :bind
+       (:map evil-normal-state-map
+             (",wc" . worklog-open-current)
+             (",wi" . worklog-open-inbox))
+
+       :init
+       (which-key-add-key-based-replacements ",wc" "current worklog")
+       (which-key-add-key-based-replacements ",wi" "inbox worklog")
+       (which-key-add-key-based-replacements ",wt" "today worklog ")
+
        :config
        (org-clock-persistence-insinuate)
+       (defun my-refile-targets ()
+         (interactive)
+         (concat org-directory (format-time-string "/%Y/%m %B/%Y-%m-%d.org" (current-time))))
        :custom
        (org-hide-leading-stars t)
 
@@ -1751,6 +1791,7 @@ https://github.com/emacs-helm/helm/wiki
                             (sequence "WAIT(w@/!)" "|")
                             (sequence "|" "CANCELED(c@)")))
 
+       ; Org Agenda
        (org-agenda-window-setup 'other-window)
        (org-agenda-window-frame-fractions '(0.2 0.75))
        (org-agenda-span 'day "Show single day by default")
@@ -1759,15 +1800,25 @@ https://github.com/emacs-helm/helm/wiki
                                       ((agenda "" nil)
                                        (alltodo "" nil))
                                       nil)
-                                     ("i" "Inbox (Unscheduled, available TODOs"
+                                     ("i" "Inbox (Unscheduled, available TODOs)"
                                       tags-todo "-SCHEDULED={.+}"
                                       ((org-agenda-overriding-header "Inbox (Unscheduled)"))
                                       nil)))
-       (org-agenda-files '("~/Dropbox/Worklog/inbox.org"
-                           "~/Dropbox/Worklog/2019/08 August"
-                           "~/Dropbox/Worklog/2019/09 September"
-                           "~/Dropbox/Worklog/2019/10 October"
+       (org-agenda-files '("~/Dropbox/Worklog/current.org"
+                           "~/Dropbox/Worklog/inbox.org"
+                           "~/Dropbox/Worklog/2019/11 November"
+                           "~/Dropbox/Worklog/2019/12 December"
                            "~/Dropbox/Worklog/Codemill"))
+
+       ; Org Refiling
+       (org-outline-path-complete-in-steps nil)
+       (org-refile-allow-creating-parent-nodes t)
+       (org-refile-use-outline-path 'file)
+       (org-refile-targets '(("~/Dropbox/Worklog/current.org" :maxlevel . 1)
+                             ;("~/Dropbox/Worklog/inbox.org" :level 0)
+                             ("~/Dropbox/Worklog/Codemill/recurring.org" :maxlevel . 1)
+                             ("~/Dropbox/Worklog/Codemill/longterm.org" :maxlevel . 1)
+                             (my-refile-targets :level . 1)))
 
        (org-directory "~/Dropbox/Worklog")
        (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
@@ -1817,7 +1868,10 @@ https://github.com/emacs-helm/helm/wiki
             (evil-org-mode . (lambda ()
                                (evil-org-set-key-theme)
                                (evil-define-key 'insert org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)
-                               (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive)))))
+                               (evil-define-key 'normal org-mode-map (kbd "C-c !") 'org-time-stamp-inactive))))
+     :config
+     (require 'evil-org-agenda)
+     (evil-org-agenda-set-keys))
  #+END_SRC
 
 ** Org rifle / search
@@ -2054,8 +2108,8 @@ My own additions to get support for easy work journal.
                (process-live-p worklog-background-status-process))
           (interrupt-process worklog-background-status-process))
       (setq worklog-background-status-process (start-process "update-status" nil "~/bin/status.sh" "-s" (car status) (car (cdr status))))))
-  (add-hook 'org-clock-in-hook 'worklog-clock-update-status)
-  (add-hook 'org-clock-out-hook 'worklog-clock-update-status)
+  ;(add-hook 'org-clock-in-hook 'worklog-clock-update-status)
+  ;(add-hook 'org-clock-out-hook 'worklog-clock-update-status)
 #+END_SRC
 
 ** Custom agenda or whatever
