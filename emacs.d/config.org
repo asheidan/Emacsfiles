@@ -9,6 +9,17 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
   #+END_SRC
 
+
+* Tweaks
+
+  Since I started using lsp i probably want the buffer size used when reading from processes to be larger than the default (* 4 1024).
+
+  Let's set it to 1mb and see what happens.
+
+#+BEGIN_SRC emacs-lisp
+  (setq read-process-output-max (* 1024 1024))
+#+END_SRC
+
 * Environment
 
 ** PATH
@@ -281,7 +292,7 @@ Highlite the line the cursor is currently on.
 
 #+BEGIN_SRC emacs-lisp
   (use-package minions
-    :ensure
+    :ensure t
     :config (minions-mode 1))
 #+END_SRC
 
@@ -559,7 +570,7 @@ This indents wrapped lines to the correct left margin.
 
 #+BEGIN_SRC emacs-lisp
   (use-package anzu
-    :ensure
+    :ensure t
     :config
     (setq-default anzu-cons-mode-line-p nil)
     (global-anzu-mode))
@@ -734,6 +745,16 @@ Helper function to open neotree relative to the current project root.
      (setq neo-force-change-root t)
 
 
+*** NS Auto Titlebar
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ns-auto-titlebar
+    :ensure t
+    :if (memq window-system '(ns mac))
+    :config
+    (ns-auto-titlebar-mode))
+#+END_SRC
+
 *** Treemacs (replacing Neotree)
 
 #+BEGIN_SRC emacs-lisp
@@ -805,6 +826,9 @@ https://www.emacswiki.org/emacs/SmartTabs
   (use-package speedbar
     :disabled t
     ;:bind (:map evil-normal-state-map ("<f2>" . speedbar))
+    :custom
+    (speedbar-indentation-width 2)
+    (speedbar-use-images nil)
     :config
     (speedbar-add-supported-extension ".css")
     (speedbar-add-supported-extension ".less")
@@ -1073,15 +1097,30 @@ Makes it possible to create *- and #-searches with a visual selection.
 
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
-    :commands lsp
-    :ensure t)
+    :commands (lsp lsp-deferred)
+    :ensure t
+    :init
+    (defvar lsp-pyls-plugins-mypy-enabled nil)
+    ;(add-hook 'pyvenv-post-activate-hooks #'lsp)
+    :config
+    (lsp-register-custom-settings '(("pyls.plugins.mypy.enabled" lsp-pyls-plugins-mypy-enabled t)))
+    :custom
+    (lsp-prefer-flymake nil)
+    (lsp-enable-symbol-highlighting nil "Should symbol under cursor be highlighted.")
+    (lsp-pyls-plugins-pycodestyle-enabled nil)
+    :hook ((python-mode . lsp)
+           (java-mode . lsp))
+    )
 
   (use-package lsp-ui
     :ensure t
     ;:after (:any lsp lsp-mode)
     :commands lsp-ui-mode
-    :hook (java-mode . flycheck-mode)
+    ;:hook (java-mode . flycheck-mode)
     :bind ([f1] . lsp-ui-doc-mode)
+    :custom
+    (lsp-ui-sideline-show-code-actions nil "Should actions be shown in sideline")
+    :hook lsp
     )
 
   (use-package lsp-ui-flycheck
@@ -1091,8 +1130,8 @@ Makes it possible to create *- and #-searches with a visual selection.
 
   (use-package company-lsp
     :ensure t
-    :after company
-    ;:commands company-lsp
+    ;:after company
+    :commands company-lsp
     ;:init (push 'company-lsp company-backends)
     )
 #+END_SRC
@@ -1101,12 +1140,13 @@ Related debug-support
 
 #+BEGIN_SRC emacs-lisp
   (use-package dap-mode
-    :after lsp-mode
     :ensure t
     :config
     (dap-mode t)
     (dap-ui-mode t))
 #+END_SRC
+
+**** TODO Evaluate/Test dap-mode for python
 
 *** LSP Java
 
@@ -1284,7 +1324,7 @@ Adding "outline" imenu structure to Lisp-files
 ** Kubernetes
 #+BEGIN_SRC emacs-lisp
   (use-package k8s-mode
-    :ensure)
+    :ensure t)
 #+END_SRC
 ** Markdown
 
@@ -1349,10 +1389,11 @@ Nice addon to markdown which allows for suggesting changes, commenting and so on
 Auto complete support for Python via Jedi. I have tried to replace this with anaconda-mode/company-anaconda instead.
 
 #+BEGIN_SRC emacs-lisp
-; (use-package jedi
-;   :commands jedi:setup
-;   ;:defer t
-;   :hook (python-mode . jedi:setup))
+  (use-package jedi
+    :disabled t
+    :commands jedi:setup
+    ;:defer t
+    :hook (python-mode . jedi:setup))
 #+END_SRC
 
 *** Anaconda
@@ -1383,6 +1424,19 @@ Here's to hoping that an update will appear soon that will fix the issue.
 
 https://github.com/proofit404/anaconda-mode
 
+*** Pyenv
+
+#+BEGIN_SRC emacs-lisp
+  (use-package pyvenv
+    :ensure t
+    :config
+    (add-hook 'pyvenv-post-activate-hooks #'doom-modeline-env-update-python)
+    (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
+    (add-hook 'pyvenv-post-activate-hooks #'lsp)
+    :hook
+    (python-mode . pyvenv-mode))
+#+END_SRC
+
 *** Pipenv
 
 Pipenv is now the officially recommended Python packaging tool. It manages virtual environments, adds and removes packages, and enables deterministic build dependencies, has Pipfile to finally replace all other requirements.txt hacks. Yay for Pipenv.
@@ -1391,6 +1445,7 @@ https://docs.pipenv.org/
 
 #+BEGIN_SRC emacs-lisp
   (use-package pipenv
+    :disabled t
     :after (projectile flycheck)
     :ensure t
     ;:diminish
@@ -1418,7 +1473,6 @@ https://docs.pipenv.org/
 
 **** TODO Fix workaround for activating in subdirectory
 
-
 *** TODO Pychecker
 
 Use multiple checkers for python
@@ -1437,6 +1491,12 @@ Use multiple checkers for python
     :after flycheck
     :hook (flycheck-mode . flycheck-pycheckers-setup)
     )
+#+END_SRC
+
+*** DAP Python
+
+#+BEGIN_SRC emacs-lisp
+  (use-package dap-python)
 #+END_SRC
 
 ** Rust
@@ -1472,7 +1532,6 @@ And then the actual emacs integration.
 #+END_SRC
 
 **** TODO Look at difference between racer and company-racer for completion
-
 
 ** Terraform
 
@@ -1652,8 +1711,10 @@ https://github.com/emacs-evil/evil-magit
 ** Gist
 
 #+BEGIN_SRC emacs-lisp
-(use-package gist
-  :ensure)
+  (use-package gist
+    :ensure
+    :disabled ; causes issue with recursive load in gh-2018...
+    )
 #+END_SRC
 ** Git-gutter
 
@@ -1706,6 +1767,8 @@ https://github.com/emacs-helm/helm/wiki
     :commands helm-mode
     ;:defer t
     :init (helm-mode 1)
+    :custom
+    (helm-completion-style emacs)
 
     :bind
     (("M-x". helm-M-x)
@@ -1985,7 +2048,7 @@ Helm interface for pass. Quite awesome actually.
 
 #+BEGIN_SRC emacs-lisp
   (use-package projectile-ripgrep
-    :ensure ripgrep
+    :ensure t
     :after projectile)
 #+END_SRC
 
