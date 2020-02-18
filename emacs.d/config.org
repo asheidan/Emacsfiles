@@ -1859,36 +1859,6 @@ https://github.com/emacs-helm/helm/wiki
        (org-agenda-window-frame-fractions '(0.2 0.75))
        (org-agenda-span 'day "Show single day by default")
        (org-agenda-start-day nil "Start the agenda today")
-       (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
-                                      ((agenda "" nil)
-                                       (alltodo "" nil))
-                                      nil)
-                                     ("i" "Inbox (Unscheduled, available TODOs)"
-                                      tags-todo "-SCHEDULED={.+}"
-                                      ((org-agenda-overriding-header "Inbox (Unscheduled)"))
-                                      nil)))
-       (org-agenda-files '("~/Dropbox/Worklog/current.org"
-                           "~/Dropbox/Worklog/inbox.org"
-                           "~/Dropbox/Worklog/2019/11 November"
-                           "~/Dropbox/Worklog/2019/12 December"
-                           "~/Dropbox/Worklog/Codemill"))
-
-       ; Org Refiling
-       (org-outline-path-complete-in-steps nil)
-       (org-refile-allow-creating-parent-nodes t)
-       (org-refile-use-outline-path 'file)
-       (org-refile-targets '(("~/Dropbox/Worklog/current.org" :maxlevel . 1)
-                             ;("~/Dropbox/Worklog/inbox.org" :level 0)
-                             ("~/Dropbox/Worklog/Codemill/recurring.org" :maxlevel . 1)
-                             ("~/Dropbox/Worklog/Codemill/longterm.org" :maxlevel . 1)
-                             (my-refile-targets :level . 1)))
-
-       (org-directory "~/Dropbox/Worklog")
-       (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
-       (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
-                        (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
-                        (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
-
        (org-agenda-time-grid '((daily today require-timed remove-match) (800 1000 1200 1400 1600 1800)
                                "......" "----------------"))
        (org-agenda-clock-consistency-checks
@@ -1897,6 +1867,36 @@ https://github.com/emacs-helm/helm/wiki
                         :overlap-face nil :gap-face nil :no-end-time-face nil :long-face nil :short-face nil))
        (org-agenda-clockreport-parameter-plist
         '(:link t :maxlevel 3 :fileskip0 t :step day :stepskip0 t))
+       (org-agenda-custom-commands '(("n" "Agenda and all TODOs"
+                                      ((agenda "" nil)
+                                       (alltodo "" nil))
+                                      nil)
+                                     ("i" "Inbox (Unscheduled, available TODOs)"
+                                      tags-todo "-SCHEDULED={.+}"
+                                      ((org-agenda-overriding-header "Inbox (Unscheduled)"))
+                                      nil)))
+       (org-agenda-files '("~/Worklog/current.org"
+                           "~/Worklog/inbox.org"
+                           "~/Worklog/2019/12 December"
+                           "~/Worklog/2020/01 January"
+                           "~/Worklog/Codemill"))
+
+       ; Org Refiling
+       (org-outline-path-complete-in-steps nil)
+       (org-refile-allow-creating-parent-nodes t)
+       (org-refile-use-outline-path 'file)
+       (org-refile-targets '(("~/Worklog/current.org" :maxlevel . 1)
+                             ;("~/Worklog/inbox.org" :level 0)
+                             ("~/Worklog/Codemill/recurring.org" :maxlevel . 1)
+                             ("~/Worklog/Codemill/longterm.org" :maxlevel . 1)
+                             (my-refile-targets :level . 1)))
+
+       (org-directory "~/Worklog")
+       (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
+       (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
+                        (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
+                        (:startgrouptag) ("codemill") (:grouptags) ("ap_com") (:endgrouptag)))
+
 
        :hook
        (org-mode . (lambda ()
