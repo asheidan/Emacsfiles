@@ -139,7 +139,7 @@ A bunch of custom colors taken from the FlatUI theme.
     :config
     ;(doom-themes-treemacs-config)
     (doom-themes-org-config)
-    (load-theme 'doom-opera-light t))
+    (load-theme 'doom-molokai t))
 #+END_SRC
 *** FlatUI
 
@@ -758,9 +758,9 @@ Helper function to open neotree relative to the current project root.
 *** Treemacs (replacing Neotree)
 
 #+BEGIN_SRC emacs-lisp
-  (defun my-ignore-pychache (filename absolute-path)
+  (defun my-ignore-pycache (filename absolute-path)
     (or (string-equal "__pycache__" filename)
-    (string-suffix-p ".pyc" filename)))
+        (string-suffix-p ".pyc" filename)))
 
   (use-package treemacs
     :after (evil evil-states which-key)
@@ -771,7 +771,8 @@ Helper function to open neotree relative to the current project root.
            (",te" . treemacs-edit-workspaces)
            (",ts" . treemacs-switch-workspace))
     :config
-    (add-to-list 'treemacs-ignored-file-predicates #'my-ignore-pychache)
+    (add-to-list 'treemacs-ignored-file-predicates #'my-ignore-pycache)
+    (treemacs-resize-icons 12)
 
     :custom
     (treemacs-collapse-dirs 10)
@@ -1100,14 +1101,25 @@ Makes it possible to create *- and #-searches with a visual selection.
     :commands (lsp lsp-deferred)
     :ensure t
     :init
-    (defvar lsp-pyls-plugins-mypy-enabled nil)
-    ;(add-hook 'pyvenv-post-activate-hooks #'lsp)
+
+    (defcustom lsp-pyls-plugins-mypy-enabled t
+      "Enable mypy checking."
+      :group 'lsp-pyls
+      :risky t)
+
+    (defcustom lsp-pyls-plugins-mypy-livemode nil
+      "Enable mypy live-mode."
+      :group 'lsp-pyls
+      :risky t)
+
+    ;(lsp-configuration-section "pyls.plugins.pycodestyle")
     :config
-    (lsp-register-custom-settings '(("pyls.plugins.mypy.enabled" lsp-pyls-plugins-mypy-enabled t)))
+    (lsp-register-custom-settings '(("pyls.plugins.pyls_mypy.enabled" lsp-pyls-plugins-mypy-enabled t)
+                                    ("pyls.plugins.pyls_mypy.live_mode" lsp-pyls-plugins-mypy-livemode t)))
     :custom
+    (lsp-pyls-plugins-pycodestyle-enabled nil)
     (lsp-prefer-flymake nil)
     (lsp-enable-symbol-highlighting nil "Should symbol under cursor be highlighted.")
-    (lsp-pyls-plugins-pycodestyle-enabled nil)
     :hook ((python-mode . lsp)
            (java-mode . lsp))
     )
@@ -1432,9 +1444,7 @@ https://github.com/proofit404/anaconda-mode
     :config
     (add-hook 'pyvenv-post-activate-hooks #'doom-modeline-env-update-python)
     (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
-    (add-hook 'pyvenv-post-activate-hooks #'lsp)
-    :hook
-    (python-mode . pyvenv-mode))
+    (add-hook 'pyvenv-post-activate-hooks #'lsp))
 #+END_SRC
 
 *** Pipenv
@@ -1741,8 +1751,13 @@ Indicate changes in buffer with markers in the margin.
     :ensure
     ;:defer t
     ;:diminish git-gutter-mode
+    :custom
+    (git-gutter:ask-p nil "Don't ask for confirmation when staging from git-gutter.")
     :bind (:map evil-normal-state-map
                 (",gg" . git-gutter-mode)
+                (",ghv" . git-gutter:popup-hunk)
+                (",ghs" . git-gutter:stage-hunk)
+                (",ghx" . git-gutter:revert-hunk)
                 (",gn" . git-gutter:next-hunk)
                 (",gp" . git-gutter:previous-hunk)))
 #+END_SRC
@@ -1784,7 +1799,7 @@ https://github.com/emacs-helm/helm/wiki
     ;:defer t
     :init (helm-mode 1)
     :custom
-    (helm-completion-style emacs)
+    (helm-completion-style 'emacs)
 
     :bind
     (("M-x". helm-M-x)
