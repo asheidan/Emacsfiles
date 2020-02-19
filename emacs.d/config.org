@@ -1607,6 +1607,22 @@ These might be interesting:
   ;(flycheck-has-current-errors-p)
   ;(flycheck-count-errors flycheck-current-errors)
 
+** Diction.el
+
+#+BEGIN_SRC emacs-lisp
+  (use-package diction
+    :load-path "vendor/"
+    :commands (diction-region diction-buffer))
+
+  (with-eval-after-load "flycheck"
+    (flycheck-define-checker diction-flycheck
+      "Use diction for grammar."
+      :command ("diction" "-s" source)
+      :error-patterns ((info line-start (file-name) ":" line ": " (message) line-end))
+      :modes markdown-mode)
+
+    (add-to-list 'flycheck-checkers 'diction-flycheck))
+#+END_SRC
 * Git
 ** Magit
 
