@@ -78,6 +78,7 @@ file to 'byte-code' before it is loaded."
 (put 'narrow-to-region 'disabled nil)
 
 ; Restore GC-limit
-(setq gc-cons-threshold my-old-gc-cons-threshold)
+;(setq gc-cons-threshold my-old-gc-cons-threshold)
+(setq gc-cons-threshold (* 32 1000 1000))
 (provide 'init)
 ;;; init.el ends here
