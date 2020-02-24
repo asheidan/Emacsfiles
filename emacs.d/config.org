@@ -1890,6 +1890,7 @@ https://github.com/emacs-helm/helm/wiki
                             (sequence "|" "CANCELED(c@)")))
 
        ; Org Agenda
+       (org-agenda-skip-scheduled-if-deadline-is-shown t)
        (org-agenda-window-setup 'other-window)
        (org-agenda-window-frame-fractions '(0.2 0.75))
        (org-agenda-span 'day "Show single day by default")
