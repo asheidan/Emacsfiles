@@ -1942,6 +1942,37 @@ https://github.com/emacs-helm/helm/wiki
                      (adaptive-wrap-prefix-mode))))
    #+END_SRC
 
+** Org super agenda
+
+   #+BEGIN_SRC emacs-lisp
+     (defun my-days-ago (days)
+       (format-time-string "%Y-%m-%d"
+                           (time-subtract (current-time)
+                                          (days-to-time days))))
+
+     (use-package org-super-agenda
+       :ensure t
+       :config
+       (org-super-agenda-mode)
+       :custom
+       (org-super-agenda-groups
+        `((:name "Schedule"
+                 :time-grid t)
+          (:name "Important"
+                 :and (:priority "A"
+                       :todo "TODO"))
+          (:name "Stale"
+                 :scheduled (before ,(my-days-ago 30))
+                 :deadline (before ,(my-days-ago 30))
+                 :order 200)
+          (:name "Waiting"
+                 :todo "WAIT"
+                 :order 100))))
+
+     (org-time-string-to-absolute "+1d")
+
+
+   #+END_SRC
 ** Evil bindings
  Evil keybindings for org-mode.
 
