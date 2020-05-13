@@ -250,11 +250,19 @@ Highlite the line the cursor is currently on.
 
 ** Modeline
 
+   Doom modeline needs all the icons
+
+#+BEGIN_SRC emacs-lisp
+  (use-package all-the-icons
+    :ensure t)
+#+END_SRC
+
+
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
     :config
-    ;(setq doom-modeline-height 25)
+    ;(setq doom-modeline-height 0)
     ;(setq doom-modeline-bar-width 3)
     (setq doom-modeline-buffer-file-name-style 'relative-from-project)
 
@@ -1842,14 +1850,15 @@ https://github.com/emacs-helm/helm/wiki
    #+BEGIN_SRC emacs-lisp
      (defun worklog-open-current ()
        (interactive)
-       (find-file "~/Dropbox/Worklog/current.org"))
+       (find-file "~/Worklog/current.org"))
 
      (defun worklog-open-inbox ()
        (interactive)
-       (find-file "~/Dropbox/Worklog/inbox.org"))
+       (find-file "~/Worklog/inbox.org"))
 
      (use-package org
        :ensure t
+       :pin gnu
        :mode ("\\.org\\'" . org-mode)
        :bind
        (:map evil-normal-state-map
@@ -1889,8 +1898,15 @@ https://github.com/emacs-helm/helm/wiki
                             (sequence "WAIT(w@/!)" "|")
                             (sequence "|" "CANCELED(c@)")))
 
+       (org-highest-priority ?A)
+       (org-default-priority ?C)
+       (org-lowest-priority ?E)
+
        ; Org Agenda
+       (org-agenda-skip-deadline-if-done t)
+       (org-agenda-skip-scheduled-if-done t)
        (org-agenda-skip-scheduled-if-deadline-is-shown t)
+
        (org-agenda-window-setup 'other-window)
        (org-agenda-window-frame-fractions '(0.2 0.75))
        (org-agenda-span 'day "Show single day by default")
@@ -1911,10 +1927,14 @@ https://github.com/emacs-helm/helm/wiki
                                       tags-todo "-SCHEDULED={.+}"
                                       ((org-agenda-overriding-header "Inbox (Unscheduled)"))
                                       nil)))
+
+       (org-directory "~/Worklog")
+
        (org-agenda-files '("~/Worklog/current.org"
                            "~/Worklog/inbox.org"
-                           "~/Worklog/2019/12 December"
-                           "~/Worklog/2020/01 January"
+                           "~/Worklog/2020/03 March"
+                           "~/Worklog/2020/04 April"
+                           "~/Worklog/2020/05 May"
                            "~/Worklog/Codemill"))
 
        ; Org Refiling
@@ -1927,7 +1947,6 @@ https://github.com/emacs-helm/helm/wiki
                              ("~/Worklog/Codemill/longterm.org" :maxlevel . 1)
                              (my-refile-targets :level . 1)))
 
-       (org-directory "~/Worklog")
        (org-tags-exclude-from-inheritance '("PROJECT" "GOAL"))
        (org-tag-alist '((:startgrouptag) ("work") (:grouptags) ("codemill") ("pro7") (:endgrouptag)
                         (:startgrouptag) ("pro7") (:grouptags) ("ucp") (:endgrouptag)
@@ -1992,6 +2011,7 @@ https://github.com/emacs-helm/helm/wiki
                  (",oa" . org-agenda)
                  (",oc" . org-capture)
                  (",od" . org-deadline)
+                 (",on" . org-narrow-to-subtree)
                  (",os" . org-schedule)
                  (",oo" . helm-org-rifle))
      :hook ((org-mode . evil-org-mode)
@@ -2012,7 +2032,31 @@ https://github.com/emacs-helm/helm/wiki
      :ensure t)
  #+END_SRC
 
-** TODO Try to create reveal.js presentations from org-mode
+** Org Roam
+   This is a try to implement [[https://roamresearch.com/][Roam research]] with emacs and org-mode. Roam research is more or less a Wiki but where the links are bidirectional which makes it easy to link "backlinks" as well.
+
+   I'm trying to use this to offload a lot of stuff that I know that I know but I want it in an easier to search and digest format.
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-roam
+       :ensure t
+       :hook
+       (after-init . org-roam-mode)
+       :config
+       (which-key-add-key-based-replacements ",r" '("roam" . "Roaming-keys"))
+       :bind
+       (:map evil-normal-state-map
+             (", r i" . org-roam-insert)
+             (", r t" . org-roam-buffer-toggle-display)
+             (", r n" . org-roam-find-file))
+       :custom
+       (org-roam-directory "/home/emil/Brain")
+       (org-roam-completion-system 'helm)
+       :custom-face
+       (org-roam-link ((t (:inherit org-link :weight normal)))))
+   #+END_SRC
+
+** Todo Try to create reveal.js presentations from org-mode
 
    There is a package for emacs called ox-reveal which should do the trick.
 
@@ -2200,7 +2244,7 @@ My own additions to get support for easy work journal.
   (defun worklog-open-today ()
     "Open worklog-file for today."
     (interactive)
-    (let ((file-name (format-time-string "~/Dropbox/Worklog/%Y/%m %B/%Y-%m-%d.org" (current-time))))
+    (let ((file-name (format-time-string "~/Worklog/%Y/%m %B/%Y-%m-%d.org" (current-time))))
       (find-file file-name)
       (goto-char (point-max))))
   (define-key evil-normal-state-map ",wt" 'worklog-open-today)
@@ -2247,7 +2291,7 @@ My own additions to get support for easy work journal.
 List all the files that's part of the worklog
 
 #+BEGIN_SRC emacs-lisp
-  (defvar worklog-directory "~/Dropbox/Worklog/")
+  (defvar worklog-directory "~/Worklog/")
 
   (defun worklog-get-file-list ()
     "Return list of files in worklog."
