@@ -2057,7 +2057,7 @@ https://github.com/emacs-helm/helm/wiki
              (", r t" . org-roam-buffer-toggle-display)
              (", r n" . org-roam-find-file))
        :custom
-       (org-roam-directory "/home/emil/Brain")
+       (org-roam-directory "~/Brain")
        (org-roam-completion-system 'helm)
        :custom-face
        (org-roam-link ((t (:inherit org-link :weight normal)))))
