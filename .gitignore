@@ -4,3 +4,9 @@
 # Packaging
 .cask
 config.el
+/elpa/
+/.cache
+/eclipse.jdt.ls/
+
+/.python-environments/
+/anaconda-mode/

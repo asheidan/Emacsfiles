@@ -3,6 +3,15 @@
 
 Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/config.org.
 
+* Environment fix
+
+  Trying to set LC_TIME to make worklog directory structure more consistent.
+
+  #+BEGIN_SRC emacs-lisp
+    (setq system-time-locale "en_GB.UTF-8")
+    ;(setenv "LC_TIME" "en_GB.UTF-8")
+  #+END_SRC
+
 * Current issue with TLS and gnu elpa workaround
   https://www.reddit.com/r/emacs/comments/cdei4p/failed_to_download_gnu_archive_bad_request/
   #+BEGIN_SRC emacs-lisp
@@ -63,8 +72,8 @@ Taking some inspiration from https://github.com/danielmai/.emacs.d/blob/master/c
       (setq my-default-font-family "ProfontIIx Nerd Font"
             my-default-font-height 90))
   (if (string-equal system-type "gnu/linux")
-      (setq my-default-font-family "Fira Code"
-            my-default-font-height 80))
+      (setq my-default-font-family "ProFontWindows"
+            my-default-font-height 90))
   (set-face-attribute 'default nil :height my-default-font-height :family my-default-font-family)
   ;(set-face-attribute 'mode-line nil :box nil)
   ;(set-face-attribute 'mode-line-inactive nil :box nil)
@@ -139,7 +148,7 @@ A bunch of custom colors taken from the FlatUI theme.
     :config
     ;(doom-themes-treemacs-config)
     (doom-themes-org-config)
-    (load-theme 'doom-molokai t))
+    (load-theme 'doom-opera-light t))
 #+END_SRC
 *** FlatUI
 
@@ -787,19 +796,19 @@ Helper function to open neotree relative to the current project root.
     (treemacs-filewatch-mode t)
     (treemacs-follow-mode t)
     (treemacs-fringe-indicator-mode t)
-    (treemacs-no-png-images t)
+    (treemacs-no-png-images nil)
     (treemacs-show-hidden-files nil))
 
     (use-package treemacs-evil
-      :after (treemacs evil)
+      :after treemacs evil
       :ensure t)
 
     (use-package treemacs-projectile
-      :after (treemacs projectile)
+      :after treemacs projectile
       :ensure t)
 
     (use-package treemacs-magit
-      :after (treemacs magit)
+      :after treemacs magit
       :ensure t)
 #+END_SRC
 
@@ -1456,7 +1465,8 @@ https://github.com/proofit404/anaconda-mode
     :config
     (add-hook 'pyvenv-post-activate-hooks #'doom-modeline-env-update-python)
     (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
-    (add-hook 'pyvenv-post-activate-hooks #'lsp))
+    ;(add-hook 'pyvenv-post-activate-hooks #'lsp)
+    )
 #+END_SRC
 
 *** Pipenv
@@ -1779,6 +1789,7 @@ Indicate changes in buffer with markers in the margin.
 
 #+BEGIN_SRC emacs-lisp
   (use-package emamux
+    :disabled t
     :init
     (defvar tmux-test-command "make test" "The command used to run tests in this project")
     :bind
@@ -1987,10 +1998,6 @@ https://github.com/emacs-helm/helm/wiki
           (:name "Waiting"
                  :todo "WAIT"
                  :order 100))))
-
-     (org-time-string-to-absolute "+1d")
-
-
    #+END_SRC
 ** Evil bindings
  Evil keybindings for org-mode.

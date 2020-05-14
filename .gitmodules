@@ -1,7 +1,10 @@
 [submodule "emacs.d/vendor/evil-rebellion"]
-	path = emacs.d/vendor/evil-rebellion
+	path = vendor/evil-rebellion
 	url = https://github.com/tarleb/evil-rebellion.git
 [submodule "emacs.d/vendor/helm-lacarte"]
-	path = emacs.d/vendor/helm-lacarte
+	path = vendor/helm-lacarte
 	url = https://github.com/emacs-helm/helm-lacarte.git
 	branch = master
+[submodule "vendor/ledger-mode"]
+	path = vendor/ledger-mode
+	url = https://github.com/ledger/ledger-mode.git
