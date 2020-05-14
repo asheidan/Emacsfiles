@@ -2063,6 +2063,15 @@ https://github.com/emacs-helm/helm/wiki
        (org-roam-link ((t (:inherit org-link :weight normal)))))
    #+END_SRC
 
+** Org-ref
+
+   #+BEGIN_SRC emacs-lisp
+     (use-package org-ref
+       :ensure t
+       :custom
+       (org-ref-default-bibliography '("~/Brain/bibliography/references.bib")))
+   #+END_SRC
+
 ** Todo Try to create reveal.js presentations from org-mode
 
    There is a package for emacs called ox-reveal which should do the trick.
