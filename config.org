@@ -588,12 +588,14 @@ This indents wrapped lines to the correct left margin.
 #+BEGIN_SRC emacs-lisp
   (use-package anzu
     :ensure t
+    :defer t
     :config
     (setq-default anzu-cons-mode-line-p nil)
     (global-anzu-mode))
 
   (use-package evil-anzu
     :ensure
+    :defer t
     :after (evil anzu))
 #+END_SRC
 
@@ -1174,6 +1176,7 @@ Related debug-support
 #+BEGIN_SRC emacs-lisp
   (use-package dap-mode
     :ensure t
+    :defer 5
     :config
     (dap-mode t)
     (dap-ui-mode t))
@@ -1253,7 +1256,8 @@ Should have learned org-mode instead.
 
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
-    :ensure t)
+    :ensure t
+    :mode ("\\.go\\'"))
 #+END_SRC
 
 *** Completion for Go via gocode
@@ -1528,7 +1532,8 @@ Use multiple checkers for python
 *** DAP Python
 
 #+BEGIN_SRC emacs-lisp
-  (use-package dap-python)
+  (use-package dap-python
+    :after dap-mode)
 #+END_SRC
 
 ** Rust
@@ -1620,7 +1625,8 @@ The configuration format used by cargo (rust).
 
 #+BEGIN_SRC emacs-lisp
   (use-package typescript-mode
-    :ensure t)
+    :ensure t
+    :mode ("\\.ts\\'" "\\.tsx\\'"))
 #+END_SRC
 
 ** Web
@@ -2050,6 +2056,7 @@ https://github.com/emacs-helm/helm/wiki
        :hook
        (after-init . org-roam-mode)
        :config
+       ;(org-roam-mode)
        (which-key-add-key-based-replacements ",r" '("roam" . "Roaming-keys"))
        :bind
        (:map evil-normal-state-map
