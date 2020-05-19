@@ -2552,7 +2552,8 @@ I mainly use this when I write written code reviews.
 
 * Interesting stuff
 
-
+** TODO Emacs startup
+   Delay loading of most of packages to speedup startup
 ** TODO Add function to reload dir-locals
 
    Do something similar to this:
