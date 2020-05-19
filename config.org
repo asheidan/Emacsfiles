@@ -633,11 +633,12 @@ Helm interface for searching through keybindings.
     (which-key-add-key-based-replacements ",e" '("emacs" . "Emacs-keys"))
     (which-key-add-key-based-replacements ",g" '("magit" . "Magit-keys"))
     (which-key-add-key-based-replacements ",o" '("org" . "Org-keys"))
+    (which-key-add-key-based-replacements ",r" '("roam" . "Roaming-keys"))
     (which-key-add-key-based-replacements ",s" '("spell" . "Spelling-keys"))
     (which-key-add-key-based-replacements ",t" '("treemacs" . "Treemacs-keys"))
     (which-key-add-key-based-replacements ",w" '("worklog" . "Worklog-keys"))
-    :init
-    (which-key-mode))
+    :hook
+    (after-init . which-key-mode))
 #+END_SRC
 
 *** Hideshow
@@ -1161,7 +1162,7 @@ Makes it possible to create *- and #-searches with a visual selection.
   (use-package lsp-ui-flycheck
     ; Provided by lsp-ui
     :after lsp-mode
-    :hook (lsp-after-open-hook . (lambda () (lsp-ui-flycheck-enable 1))))
+    :hook (lsp-after-open-hook . (lambda () (lsp-flycheck-enable 1))))
 
   (use-package company-lsp
     :ensure t
@@ -1195,6 +1196,7 @@ Related debug-support
     )
 
   (use-package dap-java
+    :disabled
     :after lsp-java)
 
   ;(use-package lsp-java-treemacs
@@ -1574,6 +1576,7 @@ And then the actual emacs integration.
 
    #+BEGIN_SRC emacs-lisp
      (use-package terraform-mode
+       :ensure t
        :mode "\\.tf\\'"
        :hook (terraform-mode . terraform-format-on-save-mode))
    #+END_SRC
@@ -1826,7 +1829,8 @@ https://github.com/emacs-helm/helm/wiki
     :diminish helm-mode
     :commands helm-mode
     ;:defer t
-    :init (helm-mode 1)
+    :config
+    (helm-mode 1)
     :custom
     (helm-completion-style 'emacs)
 
@@ -1834,7 +1838,7 @@ https://github.com/emacs-helm/helm/wiki
     (("M-x". helm-M-x)
      ("C-x C-f" . helm-find-files)
      ("C-x C-b" . helm-buffers-list)
-     :map helm-map
+     ;:map helm-map
      ;("C-m" . helm-toggle-visible-mark)
      :map evil-normal-state-map
      (", SPC b" . helm-buffers-list)
@@ -2055,9 +2059,6 @@ https://github.com/emacs-helm/helm/wiki
        :ensure t
        :hook
        (after-init . org-roam-mode)
-       :config
-       ;(org-roam-mode)
-       (which-key-add-key-based-replacements ",r" '("roam" . "Roaming-keys"))
        :bind
        (:map evil-normal-state-map
              (", r i" . org-roam-insert)
@@ -2075,6 +2076,7 @@ https://github.com/emacs-helm/helm/wiki
    #+BEGIN_SRC emacs-lisp
      (use-package org-ref
        :ensure t
+       :defer t
        :custom
        (org-ref-default-bibliography '("~/Brain/bibliography/references.bib")))
    #+END_SRC
@@ -2138,7 +2140,9 @@ Helm interface for pass. Quite awesome actually.
 
 #+BEGIN_SRC emacs-lisp
   (use-package restclient
-    :ensure t)
+    :ensure t
+    :defer t
+    :commands restclient-mode)
 #+END_SRC
 
 * Databases
