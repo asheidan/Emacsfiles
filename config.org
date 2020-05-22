@@ -1584,6 +1584,7 @@ And then the actual emacs integration.
 
 #+BEGIN_SRC emacs-lisp
   (use-package textile-mode
+    :ensure t
     :mode "\\.textile\\'"
     :hook (textile-mode . (lambda ()
                             (visual-line-mode t)
