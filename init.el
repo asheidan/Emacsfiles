@@ -2,11 +2,6 @@
 ;;; Commentary:
 ;;; Code:
 
-; Increase GC-limit during initialization
-(defvar my-old-gc-cons-threshold)
-(setq my-old-gc-cons-threshold gc-cons-threshold)
-(setq gc-cons-threshold 100000000)
-
 ; Profiling
 ; /Applications/Emacs.app/Contents/MacOS/Emacs -Q -l ./vendor/profile-dotemacs.el --eval "(setq profile-dotemacs-file (setq load-file-name\"~/.emacs.d/init.el\"))" -f profile-dotemacs
 
@@ -27,6 +22,11 @@
       (string-equal system-type "darwin")))
     (menu-bar-mode -1))
 
+; Increase GC-limit during initialization
+(defvar my-old-gc-cons-threshold)
+(setq my-old-gc-cons-threshold gc-cons-threshold)
+(setq gc-cons-threshold 100000000)
+
 (package-initialize)
 ;(require 'package)
 ;;; Add package repository
@@ -34,12 +34,12 @@
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 (eval-when-compile
-;  (add-to-list 'load-path "~/.emacs.d/elpa")
   (require 'use-package))
 (require 'diminish)
 (require 'bind-key)
 
 (require 'ob-tangle)
+
 (defun my/org-babel-load-file (file &optional compile)
   "Load Emacs Lisp source code blocks in the Org FILE.
 This function exports the source code using `org-babel-tangle'
@@ -73,7 +73,8 @@ file to 'byte-code' before it is loaded."
 	(progn (load-file compiled-file)
                (message "Loaded %s" compiled-file)))))
 
-(my/org-babel-load-file (concat user-emacs-directory "config.org") 'compile)
+;(my/org-babel-load-file (concat user-emacs-directory "config.org") 'compile)
+(load-file (concat user-emacs-directory "config.elc"))
 
 (put 'narrow-to-region 'disabled nil)
 

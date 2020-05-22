@@ -270,6 +270,7 @@ Highlite the line the cursor is currently on.
 #+BEGIN_SRC emacs-lisp
   (use-package doom-modeline
     :ensure t
+    :init (doom-modeline-mode 1)
     :config
     ;(setq doom-modeline-height 0)
     ;(setq doom-modeline-bar-width 3)
@@ -286,8 +287,7 @@ Highlite the line the cursor is currently on.
     (setq doom-modeline-env-version t)
 
     (setq doom-modeline-buffer-encoding nil)
-    (setq doom-modeline-indent-info nil)
-    :hook (after-init . doom-modeline-mode))
+    (setq doom-modeline-indent-info nil))
 #+END_SRC
 
 *** TODO Write own buffer-file-name-style
@@ -620,6 +620,9 @@ Helm interface for searching through keybindings.
 #+BEGIN_SRC emacs-lisp
   (use-package which-key
     :ensure t
+    :defer t
+    :init
+    (which-key-mode)
     :diminish
     :custom
     ;(which-key-enable-extended-define-key t)
@@ -636,9 +639,7 @@ Helm interface for searching through keybindings.
     (which-key-add-key-based-replacements ",r" '("roam" . "Roaming-keys"))
     (which-key-add-key-based-replacements ",s" '("spell" . "Spelling-keys"))
     (which-key-add-key-based-replacements ",t" '("treemacs" . "Treemacs-keys"))
-    (which-key-add-key-based-replacements ",w" '("worklog" . "Worklog-keys"))
-    :hook
-    (after-init . which-key-mode))
+    (which-key-add-key-based-replacements ",w" '("worklog" . "Worklog-keys")))
 #+END_SRC
 
 *** Hideshow
@@ -1468,6 +1469,7 @@ https://github.com/proofit404/anaconda-mode
 #+BEGIN_SRC emacs-lisp
   (use-package pyvenv
     :ensure t
+    :commands pyvenv-activate
     :config
     (add-hook 'pyvenv-post-activate-hooks #'doom-modeline-env-update-python)
     (add-hook 'pyvenv-post-activate-hooks #'pyvenv-restart-python)
@@ -1993,6 +1995,8 @@ https://github.com/emacs-helm/helm/wiki
 
      (use-package org-super-agenda
        :ensure t
+       :after org
+       :defer t
        :config
        (org-super-agenda-mode)
        :custom
@@ -2058,8 +2062,9 @@ https://github.com/emacs-helm/helm/wiki
    #+BEGIN_SRC emacs-lisp
      (use-package org-roam
        :ensure t
-       :hook
-       (after-init . org-roam-mode)
+       :after (evil org)
+       :defer t
+       :hook (org-mode . org-roam-mode)
        :bind
        (:map evil-normal-state-map
              (", r i" . org-roam-insert)
@@ -2163,6 +2168,7 @@ Helm interface for pass. Quite awesome actually.
 #+BEGIN_SRC emacs-lisp
     (use-package projectile
       :ensure t
+      :defer t
       :diminish
       :config
       (projectile-mode t)
@@ -2301,7 +2307,7 @@ My own additions to get support for easy work journal.
                       (let* ((marker org-clock-marker)
                              (is-meeting (with-current-buffer (marker-buffer marker)
                                            (member-ignore-case worklog-meeting-tag
-                                                               (org-get-tags-at (marker-position marker))))))
+                                                               (org-get-tags (marker-position marker))))))
                         (if is-meeting
                             (progn (message "In a meeting") '("occupied" "In a meeting"))
                           (progn (message "Work work...") '("available" "Work work..."))))
@@ -2369,7 +2375,7 @@ List all the files that's part of the worklog
         (mapc outputter file-list)
         (set-buffer-modified-p nil)
         (setq buffer-read-only t)
-        (hide-sublevels 1))))
+        (outline-hide-sublevels 1))))
   (define-key evil-normal-state-map ",wl" 'worklog-list-files)
 #+END_SRC
 
@@ -2453,7 +2459,7 @@ Shell out to external script to speed up directory iteration. Right now the perf
       (let ((p (point)))
         (org-mode)
         (insert (shell-command-to-string (concat org-tag-parser-script " " tag)))
-        (not-modified)
+        (set-buffer-modified-p nil)
         (setq buffer-read-only t)
         (goto-char p))))
 #+END_SRC
@@ -2555,6 +2561,16 @@ I mainly use this when I write written code reviews.
 
 ** TODO Emacs startup
    Delay loading of most of packages to speedup startup
+
+** TODO Fix issue with yasnippet
+
+** TODO Fix issue with after-init-hook
+   It seems that I shouldn't use after-init-hook
+
+** TODO Which completion am I actually using?
+   - company mode?
+   - lsp-whatever?
+
 ** TODO Add function to reload dir-locals
 
    Do something similar to this:
